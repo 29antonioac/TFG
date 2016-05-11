@@ -1,0 +1,35 @@
+---
+title: "Análisis exploratorio"
+author: "Antonio Álvarez Caballero"
+date: "11 de mayo de 2016"
+output: slidy_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(ggplot2)
+library(plotly)
+```
+
+## Comenzando
+
+Comenzamos
+
+```{r readData}
+data <- read.csv("~/Consultas/datosBIEN.csv")
+data_replay <- data[data$ReplayID==266,]
+```
+
+Vamos a dibujar algo
+
+```{r dibujo1}
+gg <- ggplot(data_replay, aes(Frame)) +
+geom_line(aes(y=Minerals, colour = as.factor(Winner))) +
+geom_line(aes(y=EnemyMinerals, colour = as.factor(-Winner)))
+
+gg
+
+ggplotly(gg)
+
+```
+
