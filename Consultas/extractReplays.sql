@@ -123,12 +123,12 @@ BEGIN
 		@enemyTotMinerals := IFNULL(EnemyTotalMinerals, @enemyTotMinerals) AS EnemyTotalMinerals,
 		@enemyTotGas := IFNULL(EnemyTotalGas, @enemyTotGas) AS EnemyTotalGas,
 		@enemyTotSupply := IFNULL(EnemyTotalSupply, @enemyTotSupply) AS EnemyTotalSupply,
-		@enemyGround := IFNULL(GroundUnitValue, @enemyGround) AS GroundUnitValue,
+		@enemyGround := IFNULL(EnemyGroundUnitValue, @enemyGround) AS EnemyGroundUnitValue,
 		@enemyBuilding := IFNULL(EnemyBuildingValue, @enemyBuilding) AS EnemyBuildingValue,
 		@enemyAir := IFNULL(EnemyAirUnitValue, @enemyAir) AS EnemyAirUnitValue,
-		@bObservedEnemyGround := IFNULL(AObservedEnemyGroundUnitValue, @bObservedEnemyGround) AS BObservedEnemyGroundUnitValue,
-		@bObservedEnemyBuilding := IFNULL(AObservedEnemyBuildingValue, @bObservedEnemyBuilding) AS BObservedEnemyBuildingValue,
-		@bObservedEnemyAir := IFNULL(AObservedEnemyAirUnitValue, @bObservedEnemyAir) AS BObservedEnemyAirUnitValue,
+		@bObservedEnemyGround := IFNULL(BObservedEnemyGroundUnitValue, @bObservedEnemyGround) AS BObservedEnemyGroundUnitValue,
+		@bObservedEnemyBuilding := IFNULL(BObservedEnemyBuildingValue, @bObservedEnemyBuilding) AS BObservedEnemyBuildingValue,
+		@bObservedEnemyAir := IFNULL(BObservedEnemyAirUnitValue, @bObservedEnemyAir) AS BObservedEnemyAirUnitValue,
 		@resourcesB := IFNULL(BObservedResourceValue, @resourcesB) AS BObservedResourceValue,
         @winnerA := IFNULL(WinnerA, @winnerA) AS WinnerA
 	FROM (
