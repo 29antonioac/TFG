@@ -9,13 +9,15 @@ output: slidy_presentation
 knitr::opts_chunk$set(echo = FALSE)
 library(ggplot2)
 library(plotly)
+library(xgboost)
 ```
 
 ## Columnas
 
 ```{r readData}
-data <- read.csv("../Datos/data.csv")
-data_replay <- data[data$ReplayID==266,]
+data <- read.csv("../Datos/data266.csv")
+data_replay <- data[data$ReplayID==266, ]
+data_replay <- data_replay[, !(colnames(data_replay) %in% c("ReplayID","Duration"))]
 print(colnames(data_replay))
 ```
 
@@ -25,9 +27,10 @@ print(colnames(data_replay))
 
 ```{r Minerales}
 gg <- ggplot(data_replay, aes(Frame)) +
-geom_line(aes(y=Minerals, colour = as.factor(Winner))) +
-geom_line(aes(y=EnemyMinerals, colour = as.factor(-Winner))) +
-ggtitle("Minerales")
+geom_point(aes(y=Minerals, colour = 'Ganador' )) +
+geom_point(aes(y=EnemyMinerals, colour = 'Perdedor' )) +
+ggtitle("Minerales") +
+theme(legend.title=element_blank())
 
 gg
 
@@ -39,20 +42,21 @@ ggplotly(gg)
 
 ```{r mineralesTotales}
 gg <- ggplot(data_replay, aes(Frame)) +
-geom_line(aes(y=TotalMinerals, colour = as.factor(Winner))) +
-geom_line(aes(y=EnemyTotalMinerals, colour = as.factor(-Winner))) +
-ggtitle("Minerales Totales")
-
+geom_line(aes(y=TotalMinerals, colour = 'Ganador' )) +
+geom_line(aes(y=EnemyTotalMinerals, colour = 'Perdedor' ))
 gg
+
+ggplotly(gg)
 ```
 
 ## Gas
 
 ```{r Gas}
 gg <- ggplot(data_replay, aes(Frame)) +
-geom_line(aes(y=Gas, colour = as.factor(Winner))) +
-geom_line(aes(y=EnemyGas, colour = as.factor(-Winner))) +
-ggtitle("Gas")
+geom_line(aes(y=Gas, colour = if(Winner=='A') as.factor('Ganador') else as.factor('Perdedor')  )) +
+geom_line(aes(y=EnemyGas, colour = if(Winner=='B') as.factor('Ganador') else as.factor('Perdedor') )) +
+ggtitle("Gas") +
+theme(legend.title=element_blank())
 
 gg
 ```
@@ -61,9 +65,10 @@ gg
 
 ```{r GasTotal}
 gg <- ggplot(data_replay, aes(Frame)) +
-geom_line(aes(y=TotalGas, colour = as.factor(Winner))) +
-geom_line(aes(y=EnemyTotalGas, colour = as.factor(-Winner))) +
-ggtitle("Gas Total")
+geom_line(aes(y=TotalGas, colour = if(Winner=='A') as.factor('Ganador') else as.factor('Perdedor') )) +
+geom_line(aes(y=EnemyTotalGas, colour = if(Winner=='B') as.factor('Ganador') else as.factor('Perdedor') )) +
+ggtitle("Gas Total") +
+theme(legend.title=element_blank())
 
 gg
 ```
@@ -72,9 +77,10 @@ gg
 
 ```{r Supply}
 gg <- ggplot(data_replay, aes(Frame)) +
-geom_line(aes(y=Supply, colour = as.factor(Winner))) +
-geom_line(aes(y=EnemySupply, colour = as.factor(-Winner))) +
-ggtitle("Supply")
+geom_line(aes(y=Supply, colour = if(Winner=='A') as.factor('Ganador') else as.factor('Perdedor') )) +
+geom_line(aes(y=EnemySupply, colour = if(Winner=='B') as.factor('Ganador') else as.factor('Perdedor') )) +
+ggtitle("Supply") +
+theme(legend.title=element_blank())
 
 gg
 ```
@@ -83,20 +89,71 @@ gg
 
 ```{r SupplyTotal}
 gg <- ggplot(data_replay, aes(Frame)) +
-geom_line(aes(y=TotalSupply, colour = as.factor(Winner))) +
-geom_line(aes(y=EnemyTotalSupply, colour = as.factor(-Winner))) +
-ggtitle("Supply Total")
+geom_line(aes(y=TotalSupply, colour = if(Winner=='A') as.factor('Ganador') else as.factor('Perdedor') )) +
+geom_line(aes(y=EnemyTotalSupply, colour = if(Winner=='B') as.factor('Ganador') else as.factor('Perdedor') )) +
+ggtitle("Supply Total") +
+theme(legend.title=element_blank())
 
 gg
 ```
 
+
+## GroundUnit
+
+```{r GroundUnitValue}
+gg <- ggplot(data_replay, aes(Frame)) +
+geom_line(aes(y=GroundUnitValue, colour = if(Winner=='A') as.factor('Ganador') else as.factor('Perdedor') )) +
+geom_line(aes(y=EnemyGroundUnitValue, colour = if(Winner=='B') as.factor('Ganador') else as.factor('Perdedor') )) +
+ggtitle("GroundUnitValue") +
+theme(legend.title=element_blank())
+
+gg
+```
+
+## GroundUnit observada
+
+```{r observedGroundUnitValue}
+gg <- ggplot(data_replay, aes(Frame)) +
+geom_line(aes(y=AObservedEnemyGroundUnitValue, colour = if(Winner=='A') as.factor('Ganador') else as.factor('Perdedor') )) +
+geom_line(aes(y=BObservedEnemyGroundUnitValue, colour = if(Winner=='B') as.factor('Ganador') else as.factor('Perdedor') )) +
+ggtitle("Observed GroundUnitValue") +
+theme(legend.title=element_blank())
+
+gg
+```
+
+
 ## Buildings
 
 ```{r buildingValue}
+
+regressionA <- lm(BuildingValue ~ Frame, data=data_replay)
+regressionB <- lm(EnemyBuildingValue ~ Frame, data=data_replay)
+
 gg <- ggplot(data_replay, aes(Frame)) +
-geom_line(aes(y=BuildingValue, colour = as.factor(Winner))) +
-geom_line(aes(y=EnemyBuildingValue, colour = as.factor(-Winner))) +
-ggtitle("BuildingValue")
+geom_line(aes(y=BuildingValue, colour = if(Winner=='A') as.factor('Ganador') else as.factor('Perdedor') )) +
+geom_line(aes(y=EnemyBuildingValue, colour = if(Winner=='B') as.factor('Ganador') else as.factor('Perdedor') )) +
+geom_abline(intercept=regressionA$coefficients[1], slope=regressionA$coefficients[2]) +
+geom_abline(intercept=regressionB$coefficients[1], slope=regressionB$coefficients[2]) +
+ggtitle("BuildingValue") +
+theme(legend.title=element_blank())
+
+gg
+
+print(paste("Pendiente recta ganador:",regressionA$coefficients[2]))
+print(paste("Pendiente recta perdedor:",regressionB$coefficients[2]))
+
+
+```
+
+## Buildings observadas
+
+```{r observedBuildingValue}
+gg <- ggplot(data_replay, aes(Frame)) +
+geom_line(aes(y=AObservedEnemyBuildingValue, colour = if(Winner=='A') as.factor('Ganador') else as.factor('Perdedor') )) +
+geom_line(aes(y=BObservedEnemyBuildingValue, colour = if(Winner=='B') as.factor('Ganador') else as.factor('Perdedor') )) +
+ggtitle("Observed BuildingValue") +
+theme(legend.title=element_blank())
 
 gg
 ```
@@ -105,20 +162,67 @@ gg
 
 ```{r AirUnitValue}
 gg <- ggplot(data_replay, aes(Frame)) +
-geom_line(aes(y=AirUnitValue, colour = as.factor(Winner))) +
-geom_line(aes(y=EnemyAirUnitValue, colour = as.factor(-Winner))) +
-ggtitle("AirUnitValue")
+geom_line(aes(y=AirUnitValue, colour = if(Winner=='A') as.factor('Ganador') else as.factor('Perdedor') )) +
+geom_line(aes(y=EnemyAirUnitValue, colour = if(Winner=='B') as.factor('Ganador') else as.factor('Perdedor') )) +
+ggtitle("AirUnitValue") +
+theme(legend.title=element_blank())
 
 gg
 ```
 
-## GroundUnit
+## AirUnits observadas
 
-```{r GroundUnitValue}
+```{r observedAirUnitValue}
 gg <- ggplot(data_replay, aes(Frame)) +
-geom_line(aes(y=GroundUnitValue, colour = as.factor(Winner))) +
-geom_line(aes(y=EnemyGroundUnitValue, colour = as.factor(-Winner))) +
-ggtitle("GroundUnitValue")
+geom_line(aes(y=AObservedEnemyAirUnitValue, colour = if(Winner=='A') as.factor('Ganador') else as.factor('Perdedor') )) +
+geom_line(aes(y=BObservedEnemyAirUnitValue, colour = if(Winner=='B') as.factor('Ganador') else as.factor('Perdedor') )) +
+ggtitle("Observed AirUnitValue") +
+theme(legend.title=element_blank())
 
 gg
 ```
+
+## ResourceValue
+
+```{r ResourceValue}
+gg <- ggplot(data_replay, aes(Frame)) +
+geom_line(aes(y=AObservedResourceValue, colour = if(Winner=='A') as.factor('Ganador') else as.factor('Perdedor') )) +
+geom_line(aes(y=BObservedResourceValue, colour = if(Winner=='B') as.factor('Ganador') else as.factor('Perdedor') )) +
+ggtitle("ResourceValue") +
+theme(legend.title=element_blank())
+
+gg
+```
+
+# Selección de características (No terminado)
+
+```{r featureSelection, eval = FALSE}
+set.seed(7)
+# load the library
+library(mlbench)
+library(caret)
+
+# prepare training scheme
+control <- trainControl(method="repeatedcv", number=10, repeats=3)
+# train the model
+model <- train(Winner~., data=data_replay, method="lvq", preProcess="scale", trControl=control)
+# estimate variable importance
+importance <- varImp(model, scale=FALSE)
+# summarize importance
+print(importance)
+# plot importance
+plot(importance)
+```
+
+```{r featureSelectionXGB}
+train <- data_replay[,!(colnames(data_replay) %in% "Winner")]
+label <- data_replay[,"Winner"]
+bst <- xgboost(data = train, label = label, max.depth = 2,
+               eta = 1, nthread = 8, nround = 2,objective = "binary:logistic")
+
+#train$data@Dimnames[[2]] represents the column names of the sparse matrix.
+importance_matrix <- xgb.importance(train$data@Dimnames[[2]], model = bst)
+xgb.plot.importance(importance_matrix)
+```
+
+
