@@ -10,13 +10,27 @@ knitr::opts_chunk$set(echo = FALSE)
 library(ggplot2)
 library(plotly)
 library(xgboost)
+library(Matrix)
 ```
+
+```{r aux, include = FALSE}
+draw <- function(data, x, y1, y2, title) {
+  ggplot(data_replay, aes_string(x) ) +
+  geom_line(aes_string(y=y1, colour = shQuote('A')) ) +
+  geom_line(aes_string(y=y2, colour = shQuote('B')) ) +
+  ggtitle(title) +
+  theme(legend.title=element_blank())
+}
+```
+
+
 
 ## Columnas
 
 ```{r readData}
-data <- read.csv("../Datos/data266.csv")
-data_replay <- data[data$ReplayID==266, ]
+data <- read.csv("../Datos/data.csv")
+clean_data <- data[,!(colnames(data) %in% c("ReplayID","Duration"))]
+data_replay <- data[data$ReplayID==114, ]
 data_replay <- data_replay[, !(colnames(data_replay) %in% c("ReplayID","Duration"))]
 print(colnames(data_replay))
 ```
@@ -59,6 +73,7 @@ ggtitle("Gas") +
 theme(legend.title=element_blank())
 
 gg
+ggplotly(gg)
 ```
 
 ## Gas Total
@@ -71,6 +86,7 @@ ggtitle("Gas Total") +
 theme(legend.title=element_blank())
 
 gg
+ggplotly(gg)
 ```
 
 ## Capacidad
@@ -83,6 +99,7 @@ ggtitle("Supply") +
 theme(legend.title=element_blank())
 
 gg
+ggplotly(gg)
 ```
 
 ## Capacidad Total
@@ -95,6 +112,7 @@ ggtitle("Supply Total") +
 theme(legend.title=element_blank())
 
 gg
+ggplotly(gg)
 ```
 
 
@@ -108,6 +126,7 @@ ggtitle("GroundUnitValue") +
 theme(legend.title=element_blank())
 
 gg
+ggplotly(gg)
 ```
 
 ## GroundUnit observada
@@ -120,6 +139,7 @@ ggtitle("Observed GroundUnitValue") +
 theme(legend.title=element_blank())
 
 gg
+ggplotly(gg)
 ```
 
 
@@ -139,6 +159,7 @@ ggtitle("BuildingValue") +
 theme(legend.title=element_blank())
 
 gg
+ggplotly(gg)
 
 print(paste("Pendiente recta ganador:",regressionA$coefficients[2]))
 print(paste("Pendiente recta perdedor:",regressionB$coefficients[2]))
@@ -156,6 +177,7 @@ ggtitle("Observed BuildingValue") +
 theme(legend.title=element_blank())
 
 gg
+ggplotly(gg)
 ```
 
 ## AirUnits
@@ -168,6 +190,8 @@ ggtitle("AirUnitValue") +
 theme(legend.title=element_blank())
 
 gg
+
+ggplotly(gg)
 ```
 
 ## AirUnits observadas
@@ -180,6 +204,7 @@ ggtitle("Observed AirUnitValue") +
 theme(legend.title=element_blank())
 
 gg
+ggplotly(gg)
 ```
 
 ## ResourceValue
@@ -192,9 +217,10 @@ ggtitle("ResourceValue") +
 theme(legend.title=element_blank())
 
 gg
+ggplotly(gg)
 ```
 
-# Selección de características (No terminado)
+## Selección de características (No terminado)
 
 ```{r featureSelection, eval = FALSE}
 set.seed(7)
@@ -214,15 +240,24 @@ print(importance)
 plot(importance)
 ```
 
-```{r featureSelectionXGB}
-train <- data_replay[,!(colnames(data_replay) %in% "Winner")]
-label <- data_replay[,"Winner"]
-bst <- xgboost(data = train, label = label, max.depth = 2,
-               eta = 1, nthread = 8, nround = 2,objective = "binary:logistic")
+```{r featureSelectionXGB, eval = FALSE}
+sparse_matrix <- sparse.model.matrix(Winner ~ .-1, data = clean_data)
+output_vector = data[,"Winner"] == "A"
 
-#train$data@Dimnames[[2]] represents the column names of the sparse matrix.
-importance_matrix <- xgb.importance(train$data@Dimnames[[2]], model = bst)
+bst <- xgboost(data = sparse_matrix, label = output_vector, max.depth = 48,
+               eta = 0.1, nthread = 8, nround = 100,objective = "binary:logistic")
+
+importance_matrix <- xgb.importance(colnames(clean_data), model = bst)
 xgb.plot.importance(importance_matrix)
+```
+
+
+## Validación cruzada 5x2
+
+```{r CV, eval = FALSE}
+cv.res <- xgb.cv(data = sparse_matrix, label = output_vector, max.depth = 48,
+               eta = 0.1, nthread = 8, nround = 100,objective = "binary:logistic", nfold = 5)
+cv.res
 ```
 
 
