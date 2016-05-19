@@ -32,8 +32,10 @@ data <- read.csv("../Datos/data.csv")
 clean_data <- data[,!(colnames(data) %in% c("ReplayID","Duration"))]
 data_replay <- data[data$ReplayID==114, ]
 data_replay <- data_replay[, !(colnames(data_replay) %in% c("ReplayID","Duration"))]
+winner <- data_replay[1,"Winner"]
+loser <- if(winner=='A') 'B' else 'A'
 print(colnames(data_replay))
-print(paste("El ganador es",data_replay[1,"Winner"]))
+print(paste("El ganador es",winner))
 ```
 
 
@@ -120,13 +122,16 @@ ggplotly(gg)
 regressionA <- lm(BuildingValue ~ Frame, data=data_replay)
 regressionB <- lm(EnemyBuildingValue ~ Frame, data=data_replay)
 
+coefs <- data.frame(A = regressionA$coefficients,
+                    B = regressionB$coefficients)
+
 gg <- draw(data_replay, y1 = "BuildingValue", y2 = "EnemyBuildingValue", title = "Building Values")
 
 gg
 ggplotly(gg)
 
-print(paste("Pendiente recta ganador:",regressionA$coefficients[2]))
-print(paste("Pendiente recta perdedor:",regressionB$coefficients[2]))
+print(paste("Pendiente recta ganador:",coefs[2,winner]))
+print(paste("Pendiente recta perdedor:",coefs[2,loser]))
 
 
 ```
@@ -188,7 +193,7 @@ print(importance)
 plot(importance)
 ```
 
-```{r featureSelectionXGB, eval = FALSE}
+```{r featureSelectionXGB, eval = T}
 sparse_matrix <- sparse.model.matrix(Winner ~ .-1, data = clean_data)
 output_vector = data[,"Winner"] == "A"
 
@@ -202,7 +207,7 @@ xgb.plot.importance(importance_matrix)
 
 ## Validación cruzada 5x2
 
-```{r CV, eval = FALSE}
+```{r CV, eval = T}
 cv.res <- xgb.cv(data = sparse_matrix, label = output_vector, max.depth = 48,
                eta = 0.1, nthread = 8, nround = 100,objective = "binary:logistic", nfold = 5)
 cv.res
