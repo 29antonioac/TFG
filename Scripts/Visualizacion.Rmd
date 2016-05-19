@@ -14,12 +14,12 @@ library(Matrix)
 ```
 
 ```{r aux, include = FALSE}
-draw <- function(data, x, y1, y2, title) {
-  ggplot(data_replay, aes_string(x) ) +
+draw <- function(replay, x = "Frame", y1, y2, title) {
+  ggplot(replay, aes_string(x) ) +
   geom_line(aes_string(y=y1, colour = shQuote('A')) ) +
   geom_line(aes_string(y=y2, colour = shQuote('B')) ) +
   ggtitle(title) +
-  theme(legend.title=element_blank())
+  labs(colour = paste("Ganador:",data_replay[1,"Winner"]))
 }
 ```
 
@@ -33,6 +33,7 @@ clean_data <- data[,!(colnames(data) %in% c("ReplayID","Duration"))]
 data_replay <- data[data$ReplayID==114, ]
 data_replay <- data_replay[, !(colnames(data_replay) %in% c("ReplayID","Duration"))]
 print(colnames(data_replay))
+print(paste("El ganador es",data_replay[1,"Winner"]))
 ```
 
 
@@ -40,11 +41,7 @@ print(colnames(data_replay))
 ## Minerales
 
 ```{r Minerales}
-gg <- ggplot(data_replay, aes(Frame)) +
-geom_point(aes(y=Minerals, colour = 'Ganador' )) +
-geom_point(aes(y=EnemyMinerals, colour = 'Perdedor' )) +
-ggtitle("Minerales") +
-theme(legend.title=element_blank())
+gg <- draw(data_replay, y1 = "Minerals", y2 = "EnemyMinerals", title = "Minerals")
 
 gg
 
@@ -55,9 +52,7 @@ ggplotly(gg)
 ## Minerales totales
 
 ```{r mineralesTotales}
-gg <- ggplot(data_replay, aes(Frame)) +
-geom_line(aes(y=TotalMinerals, colour = 'Ganador' )) +
-geom_line(aes(y=EnemyTotalMinerals, colour = 'Perdedor' ))
+gg <- draw(data_replay, y1 = "TotalMinerals", y2 = "EnemyTotalMinerals", title = "Total Minerals")
 gg
 
 ggplotly(gg)
@@ -66,11 +61,7 @@ ggplotly(gg)
 ## Gas
 
 ```{r Gas}
-gg <- ggplot(data_replay, aes(Frame)) +
-geom_line(aes(y=Gas, colour = if(Winner=='A') as.factor('Ganador') else as.factor('Perdedor')  )) +
-geom_line(aes(y=EnemyGas, colour = if(Winner=='B') as.factor('Ganador') else as.factor('Perdedor') )) +
-ggtitle("Gas") +
-theme(legend.title=element_blank())
+gg <- draw(data_replay, y1 = "Gas", y2 = "EnemyGas", title = "Gas")
 
 gg
 ggplotly(gg)
@@ -79,11 +70,7 @@ ggplotly(gg)
 ## Gas Total
 
 ```{r GasTotal}
-gg <- ggplot(data_replay, aes(Frame)) +
-geom_line(aes(y=TotalGas, colour = if(Winner=='A') as.factor('Ganador') else as.factor('Perdedor') )) +
-geom_line(aes(y=EnemyTotalGas, colour = if(Winner=='B') as.factor('Ganador') else as.factor('Perdedor') )) +
-ggtitle("Gas Total") +
-theme(legend.title=element_blank())
+gg <- draw(data_replay, y1 = "TotalGas", y2 = "EnemyTotalGas", title = "Total Gas")
 
 gg
 ggplotly(gg)
@@ -92,11 +79,7 @@ ggplotly(gg)
 ## Capacidad
 
 ```{r Supply}
-gg <- ggplot(data_replay, aes(Frame)) +
-geom_line(aes(y=Supply, colour = if(Winner=='A') as.factor('Ganador') else as.factor('Perdedor') )) +
-geom_line(aes(y=EnemySupply, colour = if(Winner=='B') as.factor('Ganador') else as.factor('Perdedor') )) +
-ggtitle("Supply") +
-theme(legend.title=element_blank())
+gg <- draw(data_replay, y1 = "Supply", y2 = "EnemySupply", title = "Supply")
 
 gg
 ggplotly(gg)
@@ -105,11 +88,7 @@ ggplotly(gg)
 ## Capacidad Total
 
 ```{r SupplyTotal}
-gg <- ggplot(data_replay, aes(Frame)) +
-geom_line(aes(y=TotalSupply, colour = if(Winner=='A') as.factor('Ganador') else as.factor('Perdedor') )) +
-geom_line(aes(y=EnemyTotalSupply, colour = if(Winner=='B') as.factor('Ganador') else as.factor('Perdedor') )) +
-ggtitle("Supply Total") +
-theme(legend.title=element_blank())
+gg <- draw(data_replay, y1 = "TotalSupply", y2 = "EnemyTotalSupply", title = "Total Supply")
 
 gg
 ggplotly(gg)
@@ -119,11 +98,7 @@ ggplotly(gg)
 ## GroundUnit
 
 ```{r GroundUnitValue}
-gg <- ggplot(data_replay, aes(Frame)) +
-geom_line(aes(y=GroundUnitValue, colour = if(Winner=='A') as.factor('Ganador') else as.factor('Perdedor') )) +
-geom_line(aes(y=EnemyGroundUnitValue, colour = if(Winner=='B') as.factor('Ganador') else as.factor('Perdedor') )) +
-ggtitle("GroundUnitValue") +
-theme(legend.title=element_blank())
+gg <- draw(data_replay, y1 = "GroundUnitValue", y2 = "EnemyGroundUnitValue", title = "Ground Unit Values")
 
 gg
 ggplotly(gg)
@@ -132,12 +107,7 @@ ggplotly(gg)
 ## GroundUnit observada
 
 ```{r observedGroundUnitValue}
-gg <- ggplot(data_replay, aes(Frame)) +
-geom_line(aes(y=AObservedEnemyGroundUnitValue, colour = if(Winner=='A') as.factor('Ganador') else as.factor('Perdedor') )) +
-geom_line(aes(y=BObservedEnemyGroundUnitValue, colour = if(Winner=='B') as.factor('Ganador') else as.factor('Perdedor') )) +
-ggtitle("Observed GroundUnitValue") +
-theme(legend.title=element_blank())
-
+gg <- draw(data_replay, y1 = "AObservedEnemyGroundUnitValue", y2 = "BObservedEnemyGroundUnitValue", title = "Observed Ground Unit Values")
 gg
 ggplotly(gg)
 ```
@@ -150,13 +120,7 @@ ggplotly(gg)
 regressionA <- lm(BuildingValue ~ Frame, data=data_replay)
 regressionB <- lm(EnemyBuildingValue ~ Frame, data=data_replay)
 
-gg <- ggplot(data_replay, aes(Frame)) +
-geom_line(aes(y=BuildingValue, colour = if(Winner=='A') as.factor('Ganador') else as.factor('Perdedor') )) +
-geom_line(aes(y=EnemyBuildingValue, colour = if(Winner=='B') as.factor('Ganador') else as.factor('Perdedor') )) +
-geom_abline(intercept=regressionA$coefficients[1], slope=regressionA$coefficients[2]) +
-geom_abline(intercept=regressionB$coefficients[1], slope=regressionB$coefficients[2]) +
-ggtitle("BuildingValue") +
-theme(legend.title=element_blank())
+gg <- draw(data_replay, y1 = "BuildingValue", y2 = "EnemyBuildingValue", title = "Building Values")
 
 gg
 ggplotly(gg)
@@ -170,11 +134,7 @@ print(paste("Pendiente recta perdedor:",regressionB$coefficients[2]))
 ## Buildings observadas
 
 ```{r observedBuildingValue}
-gg <- ggplot(data_replay, aes(Frame)) +
-geom_line(aes(y=AObservedEnemyBuildingValue, colour = if(Winner=='A') as.factor('Ganador') else as.factor('Perdedor') )) +
-geom_line(aes(y=BObservedEnemyBuildingValue, colour = if(Winner=='B') as.factor('Ganador') else as.factor('Perdedor') )) +
-ggtitle("Observed BuildingValue") +
-theme(legend.title=element_blank())
+gg <- draw(data_replay, y1 = "AObservedEnemyBuildingValue", y2 = "BObservedEnemyBuildingValue", title = "Observed Building Values")
 
 gg
 ggplotly(gg)
@@ -183,11 +143,7 @@ ggplotly(gg)
 ## AirUnits
 
 ```{r AirUnitValue}
-gg <- ggplot(data_replay, aes(Frame)) +
-geom_line(aes(y=AirUnitValue, colour = if(Winner=='A') as.factor('Ganador') else as.factor('Perdedor') )) +
-geom_line(aes(y=EnemyAirUnitValue, colour = if(Winner=='B') as.factor('Ganador') else as.factor('Perdedor') )) +
-ggtitle("AirUnitValue") +
-theme(legend.title=element_blank())
+gg <- draw(data_replay, y1 = "AirUnitValue", y2 = "EnemyAirUnitValue", title = "Air Unit Values")
 
 gg
 
@@ -197,11 +153,7 @@ ggplotly(gg)
 ## AirUnits observadas
 
 ```{r observedAirUnitValue}
-gg <- ggplot(data_replay, aes(Frame)) +
-geom_line(aes(y=AObservedEnemyAirUnitValue, colour = if(Winner=='A') as.factor('Ganador') else as.factor('Perdedor') )) +
-geom_line(aes(y=BObservedEnemyAirUnitValue, colour = if(Winner=='B') as.factor('Ganador') else as.factor('Perdedor') )) +
-ggtitle("Observed AirUnitValue") +
-theme(legend.title=element_blank())
+gg <- draw(data_replay, y1 = "AObservedEnemyAirUnitValue", y2 = "BObservedEnemyAirUnitValue", title = "Observed Air Unit Values")
 
 gg
 ggplotly(gg)
@@ -210,11 +162,7 @@ ggplotly(gg)
 ## ResourceValue
 
 ```{r ResourceValue}
-gg <- ggplot(data_replay, aes(Frame)) +
-geom_line(aes(y=AObservedResourceValue, colour = if(Winner=='A') as.factor('Ganador') else as.factor('Perdedor') )) +
-geom_line(aes(y=BObservedResourceValue, colour = if(Winner=='B') as.factor('Ganador') else as.factor('Perdedor') )) +
-ggtitle("ResourceValue") +
-theme(legend.title=element_blank())
+gg <- draw(data_replay, y1 = "AObservedResourceValue", y2 = "BObservedResourceValue", title = "Observed Resource Values")
 
 gg
 ggplotly(gg)
