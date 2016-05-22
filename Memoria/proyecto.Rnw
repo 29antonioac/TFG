@@ -3,6 +3,7 @@
 \usepackage{listings}
 \usepackage[utf8]{inputenc}
 \usepackage[spanish]{babel}
+\usepackage{float}
 
 % \usepackage[style=list, number=none]{glossary} %
 %\usepackage{titlesec}
