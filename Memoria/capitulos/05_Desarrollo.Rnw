@@ -1,12 +1,23 @@
 \chapter{Desarrollo}
+\section{Matemáticas}
+Aquí Mates
+\section{Ingeniería Informática}
+Una vez se dispone de todas las herramientas matemáticas necesarias, se puede comenzar con el desarrollo de la parte de Ingeniería Informática que se aborda en el trabajo.
+
 En primer lugar en cualquier problema de Ciencia de Datos, el primer paso es \emph{comprender el problema y los datos que se disponen}.
 
-El problema a abordar es el siguiente: a partir de un conjunto de partidas antiguas de StarCraft \cite{dataset2014}, se busca predecir el momento
-en el que la partida está decidida con una confianza determinada. Para ello, partimos de 6 bases de datos relacionales (SQL) con gran cantidad de partidas almacenadas, cada una con muchas características a observar.
+El problema a abordar es el siguiente: a partir de un conjunto de partidas antiguas de StarCraft \cite{dataset2014}, se busca predecir el momento en el que la partida está decidida con una confianza determinada. Para ello, partimos de 6 bases de datos relacionales (SQL) con gran cantidad de partidas almacenadas, cada una con muchas características a observar.
 
 Cada una de estas bases de datos posee esta estructura:
 
-\includegraphics[width=\maxwidth]{figure/Robertson14DatabaseDiagram}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\maxwidth]{figure/Robertson14DatabaseDiagram}
+    \caption{Base de datos de partidas de StarCraft}
+\end{figure}
+
+
 
 Una vez se tiene conocimiento del problema y un conjunto de datos, se debe decidir qué datos y características van a ser usados y de qué forma. El principal problema de este paso es conocer el conjunto de datos del que se dispone, ya que usualmente no es extraído por los investigadores.
 
@@ -16,7 +27,12 @@ Las características que van a ser usados en este trabajo son, principalmente, l
 
 Las características con las que se va a trabajar, según el diagrama mostrado anteriormente, son estas:
 
-\includegraphics[width=\maxwidth]{figure/Robertson14DatabaseDiagramSeleccion}
+\begin{figure}
+    \centering
+    \includegraphics[width=\maxwidth]{figure/Robertson14DatabaseDiagramSeleccion}
+    \caption{Base de datos de partidas de StarCraft con características seleccionadas}
+\end{figure}
+
 
 Estas características son, según cada tabla:
 
@@ -59,5 +75,3 @@ Estas características son, según cada tabla:
 \end{itemize}
 
 Una vez se ha decidido qué vamos a usar, hay que pasar al cómo. Esta fase es el \emph{preprocesamiento de los datos}, que es la fase donde se organizan los datos, se corrigen si hubiera datos perdidos o ruido... para poder abordar el problema a resolver.
-
- 
