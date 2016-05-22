@@ -226,7 +226,7 @@ pdfproducer = {pdflatex}
 %\input{portada/portada}
 %\input{prefacios/prefacio}
 %\frontmatter
-%\tableofcontents
+\tableofcontents
 %\listoffigures
 %\listoftables
 %
@@ -236,13 +236,14 @@ pdfproducer = {pdflatex}
 
 
 
-%\input{capitulos/03_Introduccion}
-%
-%\input{capitulos/04_Objetivos}
-%
-% \input{capitulos/05_Desarrollo}
 
-\chapter*{Desarrollo}
+\chapter{Introducción}
+
+
+\chapter{Objetivos} 
+
+
+\chapter{Desarrollo}
 En primer lugar en cualquier problema de Ciencia de Datos, el primer paso es comprender el problema y los datos que se disponen.
 
 El problema a abordar es el siguiente: a partir de un conjunto de partidas antiguas de StarCraft \cite{dataset2014}, se busca predecir el momento
@@ -252,12 +253,62 @@ Cada una de estas bases de datos posee esta estructura:
 
 \includegraphics[width=\maxwidth]{figure/Robertson14DatabaseDiagram}
 
-Una vez se tiene conocimiento del problema y un conjunto de datos, se debe decidir qué datos van a ser usados y de qué forma. El principal problema de este paso es conocer el conjunto de datos del que se dispone, ya que usualmente, este conjunto de datos no es extraído por los investigadores.  
-%
-%\input{capitulos/06_Conclusiones}
-%
-%\input{capitulos/07_Bibliografia}
-%
+Una vez se tiene conocimiento del problema y un conjunto de datos, se debe decidir qué datos van a ser usados y de qué forma. El principal problema de este paso es conocer el conjunto de datos del que se dispone, ya que usualmente el conjunto de datos no es extraído por los investigadores.
+
+Estos datos están sacados casi en su totalidad directamente de valores que proporciona la API que permite interactuar con StarCraft, \emph{BWAPI}. Los datos que van a ser usados en este trabajo son, principalmente, los recursos de cada jugador, sus batallones (que son medidos de una manera determinada que se explican con más detalle más adelante), sus construcciones, y los valores estimados de batallones y contrucciones que tienen un jugador del otro. Además, también se tiene en cuenta los recursos restantes del mapa que cada jugador estima que quedan.
+
+Las características con las que se trabaja, según el diagrama mostrado anteriormente, son estos:
+
+\includegraphics[width=\maxwidth]{figure/Robertson14DatabaseDiagramSeleccion}
+
+Estas características son, según cada tabla:
+
+\begin{itemize}
+  \item replay: Esta tabla contiene datos asociados a cada partida.
+  \begin{itemize}
+    \item ReplayID: Identificador de cada partida.
+    \item Duration: Duración (en frames) de cada partida. 15 frames equivalen a 1 segundo.
+  \end{itemize}
+  \item playerreplay: Esta tabla contiene datos asociados a un jugador en una partida.
+  \begin{itemize}
+    \item PlayerReplayID: Identificador de un jugador en una partida.
+    \item ReplayID: Identificador de partida asociado.
+    \item Winner: Ganador de cada partida.
+  \end{itemize}
+  \item resourcechange: Esta tabla contiene datos asociados a cambios en los recursos de un jugador.
+  \begin{itemize}
+    \item PlayerReplayID: Identificador del jugador que produce un cambio.
+    \item Frame: Frame en el que se produce un cambio.
+    \item Minerals: Cantidad de minerales que tiene un jugador en ese momento.
+    \item Gas: Cantidad de gas que tiene un jugador en ese momento.
+    \item Supply: Capacidad de carga del jugador.
+    \item TotalMinerals: Cantidad total de minerales que ha obtenido un jugador, sin contar gastos.
+    \item TotalGas: Cantidad total de gas que ha obtenido un jugador, sin contar gastos.
+    \item TotalSupply: Capacidad que ha obtenido un jugador, sin contar gastos.
+  \end{itemize}
+  \item regionvaluechange: Esta tabla contiene datos asociados a cambios de un jugador en una región del mapa determinada. Cada \emph{value}, que llamaremos de aquí en adelante \emph{valor}, es la suma del precio de una unidad en Minerales y Gas.
+  \begin{itemize}
+    \item PlayerReplayID: Identificador del jugador que produce un cambio.
+    \item RegionID: Identificador de la región del mapa donde se produce un cambio.
+    \item Frame: Frame en el que se produce el cambio.
+    \item GroundUnitValue: Valor de las unidades terrestres en esta región.
+    \item BuildingValue: Valor de las construcciones en esta región.
+    \item AirUnitValue: Valor de las unidades aéreas en esta región.
+    \item EnemyGroundUnitValue: Valor de las unidades terrestres del enemigo en esta región. Este valor es estimado, sólo se conoce lo que el jugador puede ver del enemigo.
+    \item EnemyBuildingValue: Valor de las contrucciones del enemigo en esta región. Este valor es estimado, sólo se conoce lo que el jugador puede ver del enemigo.
+    \item EnemyAirUnitValue: Valor de las unidades aéreas del enemigo en esta región. Este valor es estimado, sólo se conoce lo que el jugador puede ver del enemigo.
+    \item ResourceValue: Valor de los recursos en esta región. Este valor es estimado, sólo se conoce lo que el jugador puede ver del mapa. Si el jugador no conoce una zona, estima que los recursos restantes es la totalidad de lo disponible en la región.
+  \end{itemize}
+
+
+
+
+
+\end{itemize}
+
+
+\chapter{Conclusiones} 
+
 %%\chapter{Conclusiones y Trabajos Futuros}
 %
 %

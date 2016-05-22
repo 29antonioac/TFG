@@ -176,7 +176,7 @@ pdfproducer = {pdflatex}
 %\input{portada/portada}
 %\input{prefacios/prefacio}
 %\frontmatter
-%\tableofcontents
+\tableofcontents
 %\listoffigures
 %\listoftables
 %
@@ -193,18 +193,18 @@ read_chunk("scripts/prueba.R")
 @
 
 
-%\input{capitulos/03_Introduccion}
-%
-%\input{capitulos/04_Objetivos}
-%
-% \input{capitulos/05_Desarrollo}
+<<Introduccion, child='capitulos/03_Introduccion.Rnw'>>=
+@
+
+<<Objetivos, child='capitulos/04_Objetivos.Rnw'>>=
+@
+
 <<Desarrollo, child='capitulos/05_Desarrollo.Rnw'>>=
 @
-%
-%\input{capitulos/06_Conclusiones}
-%
-%\input{capitulos/07_Bibliografia}
-%
+
+<<Conclusiones, child='capitulos/06_Conclusiones.Rnw'>>=
+@
+
 %%\chapter{Conclusiones y Trabajos Futuros}
 %
 %
