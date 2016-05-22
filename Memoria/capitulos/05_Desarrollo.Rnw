@@ -1,0 +1,15 @@
+\chapter*{Desarrollo}
+En primer lugar en cualquier problema de Ciencia de Datos, el primer paso es comprender el problema y los datos que se disponen.
+
+El problema a abordar es el siguiente: a partir de un conjunto de partidas antiguas de StarCraft \cite{dataset2014}, se busca predecir el momento
+en el que la partida está decidida con una confianza determinada. Para ello, partimos de 6 bases de datos relacionales (SQL) con gran cantidad de partidas almacenadas, cada una con muchas características a observar.
+
+Cada una de estas bases de datos posee esta estructura:
+
+\includegraphics[width=\maxwidth]{figure/Robertson14DatabaseDiagram}
+
+Una vez se tiene conocimiento del problema y un conjunto de datos, se debe decidir qué datos van a ser usados y de qué forma. El principal problema de este paso es conocer el conjunto de datos del que se dispone, ya que usualmente el conjunto de datos no es extraído por los investigadores.
+
+Estos datos están sacados casi en su totalidad directamente de valores que proporciona la API que permite interactuar con StarCraft, \emph{BWAPI}. Los datos que van a ser usados en este trabajo son, principalmente, los recursos de cada jugador, sus batallones (que son medidos de una manera determinada que se explican con más detalle más adelante), sus construcciones, y los valores estimados de batallones y contrucciones que tienen un jugador del otro. Además, también se tiene en cuenta los recursos restantes del mapa que cada jugador estima que quedan.
+
+Los datos
