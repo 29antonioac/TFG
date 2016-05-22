@@ -223,8 +223,8 @@ pdfproducer = {pdflatex}
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
 %\SweaveOpts{concordance=TRUE}
-\input{portada/portada}
-\input{prefacios/prefacio}
+%\input{portada/portada}
+%\input{prefacios/prefacio}
 %\frontmatter
 %\tableofcontents
 %\listoffigures
@@ -236,22 +236,23 @@ pdfproducer = {pdflatex}
 
 
 
-Esto es una gráfica aleatoria.
-
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
-\includegraphics[width=\maxwidth]{figure/summary_plot-1} 
-
-\end{knitrout}
-
-Fin de la aleatoria.
-
-
 %\input{capitulos/03_Introduccion}
 %
 %\input{capitulos/04_Objetivos}
 %
-\input{capitulos/05_Desarrollo}
+% \input{capitulos/05_Desarrollo}
+
+\chapter*{Desarrollo}
+En primer lugar en cualquier problema de Ciencia de Datos, el primer paso es comprender el problema y los datos que se disponen.
+
+El problema a abordar es el siguiente: a partir de un conjunto de partidas antiguas de StarCraft \cite{dataset2014}, se busca predecir el momento
+en el que la partida está decidida con una confianza determinada. Para ello, partimos de 6 bases de datos relacionales (SQL) con gran cantidad de partidas almacenadas, cada una con muchas características a observar.
+
+Cada una de estas bases de datos posee esta estructura:
+
+\includegraphics[width=\maxwidth]{figure/Robertson14DatabaseDiagram}
+
+Una vez se tiene conocimiento del problema y un conjunto de datos, se debe decidir qué datos van a ser usados y de qué forma. El principal problema de este paso es conocer el conjunto de datos del que se dispone, ya que usualmente, este conjunto de datos no es extraído por los investigadores.  
 %
 %\input{capitulos/06_Conclusiones}
 %
@@ -272,5 +273,8 @@ Fin de la aleatoria.
 % \printglossary
 \chapter*{}
 \thispagestyle{empty}
+
+\bibliography{bibliografia}{}
+\bibliographystyle{plain}
 
 \end{document}

@@ -173,8 +173,8 @@ pdfproducer = {pdflatex}
 \usepackage{pdfpages}
 \begin{document}
 %\SweaveOpts{concordance=TRUE}
-\input{portada/portada}
-\input{prefacios/prefacio}
+%\input{portada/portada}
+%\input{prefacios/prefacio}
 %\frontmatter
 %\tableofcontents
 %\listoffigures
@@ -183,28 +183,23 @@ pdfproducer = {pdflatex}
 %\mainmatter
 %\setlength{\parskip}{5pt}
 
-<<setup, include=FALSE>>=
+<<setup, include=FALSE, cache=FALSE>>=
+require(knitr)
 require(ggplot2)
 require(xgboost)
 require(Matrix)
+opts_chunk$set(cache=TRUE, autodep=TRUE)
+read_chunk("scripts/prueba.R")
 @
-
-
-Esto es una gráfica aleatoria.
-
-<<summary_plot, echo=FALSE>>=
-df <- data.frame(x = runif(500), y = runif(500))
-ggplot(df, aes(x, y)) + geom_point()
-@
-
-Fin de la aleatoria.
 
 
 %\input{capitulos/03_Introduccion}
 %
 %\input{capitulos/04_Objetivos}
 %
-\input{capitulos/05_Desarrollo}
+% \input{capitulos/05_Desarrollo}
+<<Desarrollo, child='capitulos/05_Desarrollo.Rnw'>>=
+@
 %
 %\input{capitulos/06_Conclusiones}
 %
@@ -225,5 +220,8 @@ Fin de la aleatoria.
 % \printglossary
 \chapter*{}
 \thispagestyle{empty}
+
+\bibliography{bibliografia}{}
+\bibliographystyle{plain}
 
 \end{document}
