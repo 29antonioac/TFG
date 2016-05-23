@@ -1,0 +1,3 @@
+#README
+
+Para compilar esto hay que usar...
