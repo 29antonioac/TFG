@@ -1,0 +1,352 @@
+\documentclass[a4paper,11pt]{book}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+%\documentclass[a4paper,twoside,11pt,titlepage]{book}
+\usepackage{listings}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{float}
+
+% \usepackage[style=list, number=none]{glossary} %
+%\usepackage{titlesec}
+%\usepackage{pailatino}
+
+\decimalpoint
+\usepackage{dcolumn}
+\newcolumntype{.}{D{.}{\esperiod}{-1}}
+\makeatletter
+\addto\shorthandsspanish{\let\esperiod\es@period@code}
+\makeatother
+
+
+%\usepackage[chapter]{algorithm}
+\RequirePackage{verbatim}
+%\RequirePackage[Glenn]{fncychap}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{afterpage}
+
+\usepackage{longtable}
+
+\usepackage[pdfborder={000}]{hyperref} %referencia
+
+% ********************************************************************
+% Re-usable information
+% ********************************************************************
+\newcommand{\myTitle}{Título del proyecto\xspace}
+\newcommand{\myDegree}{Grado en ...\xspace}
+\newcommand{\myName}{Nombre Apllido1 Apellido2 (alumno)\xspace}
+\newcommand{\myProf}{Nombre Apllido1 Apellido2 (tutor1)\xspace}
+\newcommand{\myOtherProf}{Nombre Apllido1 Apellido2 (tutor2)\xspace}
+%\newcommand{\mySupervisor}{Put name here\xspace}
+\newcommand{\myFaculty}{Escuela Técnica Superior de Ingenierías Informática y de
+Telecomunicación\xspace}
+\newcommand{\myFacultyShort}{E.T.S. de Ingenierías Informática y de
+Telecomunicación\xspace}
+\newcommand{\myDepartment}{Departamento de ...\xspace}
+\newcommand{\myUni}{\protect{Universidad de Granada}\xspace}
+\newcommand{\myLocation}{Granada\xspace}
+\newcommand{\myTime}{\today\xspace}
+\newcommand{\myVersion}{Version 0.1\xspace}
+
+
+\hypersetup{
+pdfauthor = {\myName (email (en) ugr (punto) es)},
+pdftitle = {\myTitle},
+pdfsubject = {},
+pdfkeywords = {palabra_clave1, palabra_clave2, palabra_clave3, ...},
+pdfcreator = {LaTeX con el paquete ....},
+pdfproducer = {pdflatex}
+}
+
+%\hyphenation{}
+
+
+%\usepackage{doxygen/doxygen}
+%\usepackage{pdfpages}
+\usepackage{url}
+\usepackage{colortbl,longtable}
+\usepackage[stable]{footmisc}
+%\usepackage{index}
+
+%\makeindex
+%\usepackage[style=long, cols=2,border=plain,toc=true,number=none]{glossary}
+% \makeglossary
+
+% Definición de comandos que me son tiles:
+%\renewcommand{\indexname}{Índice alfabético}
+%\renewcommand{\glossaryname}{Glosario}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LO]{\leftmark}
+\fancyhead[RE]{\rightmark}
+\fancyhead[RO,LE]{\textbf{\thepage}}
+\renewcommand{\chaptermark}[1]{\markboth{\textbf{#1}}{}}
+\renewcommand{\sectionmark}[1]{\markright{\textbf{\thesection. #1}}}
+
+\setlength{\headheight}{1.5\headheight}
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+%Definimos los tipos teorema, ejemplo y definición podremos usar estos tipos
+%simplemente poniendo \begin{teorema} \end{teorema} ...
+\newtheorem{teorema}{Teorema}[chapter]
+\newtheorem{ejemplo}{Ejemplo}[chapter]
+\newtheorem{definicion}{Definición}[chapter]
+
+\definecolor{gray97}{gray}{.97}
+\definecolor{gray75}{gray}{.75}
+\definecolor{gray45}{gray}{.45}
+\definecolor{gray30}{gray}{.94}
+
+\lstset{ frame=Ltb,
+     framerule=0.5pt,
+     aboveskip=0.5cm,
+     framextopmargin=3pt,
+     framexbottommargin=3pt,
+     framexleftmargin=0.1cm,
+     framesep=0pt,
+     rulesep=.4pt,
+     backgroundcolor=\color{gray97},
+     rulesepcolor=\color{black},
+     %
+     stringstyle=\ttfamily,
+     showstringspaces = false,
+     basicstyle=\scriptsize\ttfamily,
+     commentstyle=\color{gray45},
+     keywordstyle=\bfseries,
+     %
+     numbers=left,
+     numbersep=6pt,
+     numberstyle=\tiny,
+     numberfirstline = false,
+     breaklines=true,
+   }
+
+% minimizar fragmentado de listados
+\lstnewenvironment{listing}[1][]
+   {\lstset{#1}\pagebreak[0]}{\pagebreak[0]}
+
+\lstdefinestyle{CodigoC}
+   {
+	basicstyle=\scriptsize,
+	frame=single,
+	language=C,
+	numbers=left
+   }
+\lstdefinestyle{CodigoC++}
+   {
+	basicstyle=\small,
+	frame=single,
+	backgroundcolor=\color{gray30},
+	language=C++,
+	numbers=left
+   }
+
+
+\lstdefinestyle{Consola}
+   {basicstyle=\scriptsize\bf\ttfamily,
+    backgroundcolor=\color{gray30},
+    frame=single,
+    numbers=none
+   }
+
+
+\newcommand{\bigrule}{\titlerule[0.5mm]}
+
+
+%Para conseguir que en las páginas en blanco no ponga cabecerass
+\makeatletter
+\def\clearpage{%
+  \ifvmode
+    \ifnum \@dbltopnum =\m@ne
+      \ifdim \pagetotal <\topskip
+        \hbox{}
+      \fi
+    \fi
+  \fi
+  \newpage
+  \thispagestyle{empty}
+  \write\m@ne{}
+  \vbox{}
+  \penalty -\@Mi
+}
+\makeatother
+
+\usepackage{pdfpages}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\begin{document}
+%\SweaveOpts{concordance=TRUE}
+%\input{portada/portada}
+%\input{prefacios/prefacio}
+%\frontmatter
+\tableofcontents
+%\listoffigures
+%\listoftables
+%
+%\mainmatter
+%\setlength{\parskip}{5pt}
+
+
+
+
+
+\chapter{Introducción}
+
+
+\chapter{Objetivos} 
+
+
+\chapter{Desarrollo}
+Introducción
+
+\section{Matemáticas}
+Aquí Mates
+
+\section{Ingeniería Informática}
+Una vez se dispone de todas las herramientas matemáticas necesarias, se puede comenzar con el desarrollo de la parte de Ingeniería Informática que se aborda en el trabajo.
+
+\subsection{Comprensión del problema y de los datos}
+
+En primer lugar en cualquier problema de Ciencia de Datos, el primer paso es \emph{comprender el problema y los datos que se disponen}.
+
+El problema a abordar es el siguiente: a partir de un conjunto de partidas antiguas de StarCraft \cite{dataset2014}, se busca predecir el momento en el que la partida está decidida con una confianza determinada. Para ello, partimos de 6 bases de datos relacionales (SQL) con gran cantidad de partidas almacenadas, cada una con muchas características a observar. Cada una de ellas posee las características presentes en la figura \ref{dataset}.
+
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\maxwidth]{figure/Robertson14DatabaseDiagram}
+    \caption{Base de datos de partidas de StarCraft}
+    \label{dataset}
+\end{figure}
+
+
+
+Una vez se tiene conocimiento del problema y un conjunto de datos, se debe decidir qué datos y características van a ser usados y de qué forma. El principal problema de este paso es conocer el conjunto de datos del que se dispone, ya que usualmente no es extraído por los investigadores.
+
+Las características están sacadas casi en su totalidad directamente de valores que proporciona la API que permite interactuar con StarCraft, \emph{BWAPI}. Otros son datos derivados, como la distancia de un jugador a la base más cercana, por ejemplo.
+
+Las características que van a ser usados en este trabajo son, principalmente, los recursos de cada jugador, sus batallones (que son medidos de una manera determinada que se explican con más detalle más adelante), sus construcciones, y los valores estimados de batallones y contrucciones que tienen un jugador del otro. Además, también se tiene en cuenta los recursos restantes del mapa que cada jugador estima que quedan. Estas características quedan reflejadas en la figura \ref{datasetSeleccionado}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\maxwidth]{figure/Robertson14DatabaseDiagramSeleccion}
+    \caption{Características seleccionadas de las bases de datos}
+    \label{datasetSeleccionado}
+\end{figure}
+
+
+Estas características son, según cada tabla:
+
+\begin{itemize}
+  \item replay: Esta tabla contiene datos asociados a cada partida.
+  \begin{itemize}
+    \item ReplayID: Identificador de cada partida.
+    \item Duration: Duración (en frames) de cada partida. 15 frames equivalen a 1 segundo.
+  \end{itemize}
+  \item playerreplay: Esta tabla contiene datos asociados a un jugador en una partida.
+  \begin{itemize}
+    \item PlayerReplayID: Identificador de un jugador en una partida.
+    \item ReplayID: Identificador de partida asociado.
+    \item Winner: Ganador de cada partida.
+  \end{itemize}
+  \item resourcechange: Esta tabla contiene datos asociados a cambios en los recursos de un jugador.
+  \begin{itemize}
+    \item PlayerReplayID: Identificador del jugador que produce un cambio.
+    \item Frame: Frame en el que se produce un cambio.
+    \item Minerals: Cantidad de minerales que tiene un jugador en ese momento.
+    \item Gas: Cantidad de gas que tiene un jugador en ese momento.
+    \item Supply: Capacidad de carga del jugador.
+    \item TotalMinerals: Cantidad total de minerales que ha obtenido un jugador, sin contar gastos.
+    \item TotalGas: Cantidad total de gas que ha obtenido un jugador, sin contar gastos.
+    \item TotalSupply: Capacidad que ha obtenido un jugador, sin contar gastos.
+  \end{itemize}
+  \item regionvaluechange: Esta tabla contiene datos asociados a cambios de un jugador en una región del mapa determinada. Cada \emph{value}, que llamaremos de aquí en adelante \emph{valor}, es la suma del precio de una unidad en Minerales y Gas.
+  \begin{itemize}
+    \item PlayerReplayID: Identificador del jugador que produce un cambio.
+    \item RegionID: Identificador de la región del mapa donde se produce un cambio.
+    \item Frame: Frame en el que se produce el cambio.
+    \item GroundUnitValue: Valor de las unidades terrestres en esta región.
+    \item BuildingValue: Valor de las construcciones en esta región.
+    \item AirUnitValue: Valor de las unidades aéreas en esta región.
+    \item EnemyGroundUnitValue: Valor de las unidades terrestres del enemigo en esta región. Este valor es estimado, sólo se conoce lo que el jugador puede ver del enemigo.
+    \item EnemyBuildingValue: Valor de las contrucciones del enemigo en esta región. Este valor es estimado, sólo se conoce lo que el jugador puede ver del enemigo.
+    \item EnemyAirUnitValue: Valor de las unidades aéreas del enemigo en esta región. Este valor es estimado, sólo se conoce lo que el jugador puede ver del enemigo.
+    \item ResourceValue: Valor de los recursos en esta región. Este valor es estimado, sólo se conoce lo que el jugador puede ver del mapa. Si el jugador no conoce una zona, estima que los recursos restantes es la totalidad de lo disponible en la región.
+  \end{itemize}
+\end{itemize}
+
+Una vez se ha decidido qué vamos a usar, hay que pasar al cómo. Esta fase es el \emph{preprocesamiento de los datos}, que es la fase donde se organizan los datos, se corrigen si hubiera datos perdidos o ruido... para poder abordar el problema a resolver.
+
+\subsection{Preprocesamiento de datos}
+
+
+\chapter{Conclusiones} 
+
+%%\chapter{Conclusiones y Trabajos Futuros}
+%
+%
+%%\nocite{*}
+%\bibliography{bibliografia/bibliografia}\addcontentsline{toc}{chapter}{Bibliografía}
+%\bibliographystyle{miunsrturl}
+%
+%\appendix
+%\input{apendices/manual_usuario/manual_usuario}
+%%\input{apendices/paper/paper}
+%\input{glosario/entradas_glosario}
+% \addcontentsline{toc}{chapter}{Glosario}
+% \printglossary
+\chapter*{}
+\thispagestyle{empty}
+
+\bibliography{bibliografia}{}
+\bibliographystyle{plain}
+
+\end{document}
