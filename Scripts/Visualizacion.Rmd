@@ -205,12 +205,21 @@ xgb.plot.importance(importance_matrix)
 ```
 
 
-## Validación cruzada 5x2
+## Validación cruzada 10 particiones
+
+Vamos a entrenar un modelo con validación cruzada 
 
 ```{r CV, eval = T}
-cv.res <- xgb.cv(data = sparse_matrix, label = output_vector, max.depth = 48,
-               eta = 0.1, nthread = 8, nround = 100,objective = "binary:logistic", nfold = 5)
-cv.res
+result_list <- sapply(seq(min(clean_data$Duration)/2,max(clean_data$Duration),1000),
+                      function(max_frame) {
+                        data_subset <- clean_data[clean_data$Frame < max_frame] 
+                        sparse_matrix <- sparse.model.matrix(Winner ~ .-1, data = data_subset)
+                        output_vector = data_subset[,"Winner"] == "A"
+                        cv.res <- xgb.cv(data = sparse_matrix, label = output_vector, max.depth = 48, silent = 1,
+                                       eta = 0.1, nthread = 8, nround = 100,objective = "binary:logistic", nfold = 10)
+                        return(cv.res)
+                      })
+
 ```
 
 
