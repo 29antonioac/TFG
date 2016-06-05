@@ -10,17 +10,15 @@ require(parallel)
 
 ## ---- transformReplay ----
 # It's supossed we have the correct features
-transformReplay <- function(replayID, dataset, max.frame = NA, auc = FALSE) {
-  if (is.na(max.frame))
-    data.replay <- dataset[dataset$ReplayID == replayID,]
-  else
-    data.replay <- dataset[dataset$ReplayID == replayID & dataset$Frame <= max.frame,]
-  
+transformReplay <- function(replayID, dataset, auc = FALSE) {
+    
+  data.replay <- dataset[dataset$ReplayID == replayID,]
+
   features <- c("Minerals","Gas","Supply","TotalMinerals","TotalGas","TotalSupply",
                 "GroundUnitValue","BuildingValue","AirUnitValue",
                 "ObservedEnemyGroundUnitValue","ObservedEnemyBuildingValue","ObservedEnemyAirUnitValue",
                 "ObservedResourceValue")
-  
+
   if (auc)
     f <- function(feature) {
       A.value <- MESS::auc(x = data.replay[,"Frame"], y = data.replay[,feature])
@@ -37,31 +35,35 @@ transformReplay <- function(replayID, dataset, max.frame = NA, auc = FALSE) {
       names(res) <- c(feature, paste0("Enemy",feature))
       res
     }
-  
+
   result <- unlist(lapply(features, f))
-  
-  result$Max.Frame <- if (is.na(max.frame)) max(data.replay$Frame) else max.frame
+
+  result$Max.Frame <- max(data.replay$Frame)
   result$ReplayID <- replayID
   result$Duration <- unique(dataset[dataset$ReplayID == replayID,"Duration"])
   result$Winner <- unique(dataset[dataset$ReplayID == replayID,"Winner"])
 
   return(result)
-  
+
 }
 
 
 ## ---- transformData ----
 transformData <- function(data, max.frame = NA, auc = FALSE) {
   replays <- unique(data[,"ReplayID"])
-  
-  cl <- makeCluster(getOption("cl.cores", 4))
-  
-  replays.list <- parLapply(cl,replays, transformReplay, dataset = data, max.frame = max.frame, auc = auc)
+  if (is.na(max.frame))
+    data.subset <- data
+  else
+    data.subset <- data[data$Frame <= max.frame,]
+
+  cl <- makeCluster(getOption("cl.cores", 2))
+
+  replays.list <- parLapply(cl,replays, transformReplay, dataset = data.subset, auc = auc)
   stopCluster(cl)
-  
+
   data.transformed <- rbindlist(replays.list)
   data.transformed
-  
+
 }
 
 
@@ -80,18 +82,15 @@ data.full <- rbind(cbind(data.pvp, Races = "PvP"), cbind(data.pvt, Races = "PvT"
                    cbind(data.tvz, Races = "TvZ"), cbind(data.zvz, Races = "ZvZ"))
 
 data.full$ReplayID  <- as.factor(paste(data.full$Races,data.full$ReplayID,sep = "_"))
+setDT(data.full)
 
 metadata <- data.full[, colnames(data.full) %in% c("ReplayID","Duration", "Races")]
 metadata <- unique(metadata[order(-metadata$Duration),])
 metadata <- transform(metadata, ReplayID=reorder(ReplayID, -Duration) ) 
 
-# Change all ReplayIDs because there are duplicates
-# metadata$ReplayID <- 1:nrow(metadata)
-# data.full$ReplayID <- metadata$ReplayID
-
 # clean_data <- data.full[,!(colnames(data) %in% c("ReplayID"))]
 system.time(data.full.transformed <- transformData(data.full))
-data.full.transformed.auc <- transformData(data.full, auc = T)
+system.time(data.full.transformed.auc <- transformData(data.full, auc = T))
 
 ## ---- testgg ----
 set.seed(1234566)
@@ -102,13 +101,13 @@ ggplot(data.frame(x = runif(100), y= runif(100)), aes(x,y)) + geom_point() +
 
 ## ---- replaysHistogram ----
 gg <- ggplot(data=metadata) +
-  geom_bar(aes(x=ReplayID,y=Duration,fill=Duration), stat="identity", width = 0.75) +
+  geom_bar(aes(x=ReplayID,y=Duration,fill=Races), stat="identity", width = 0.75) +
   geom_hline(yintercept = mean(metadata$Duration), color = "red",linetype="dashed") +
   theme(panel.grid.major.x = element_blank(),
         panel.grid.minor.x = element_blank())
 gg
 gg <- ggplot(data=metadata) +
-  geom_bar(aes(x=levels(ReplayID),y=Duration,fill=Duration), stat="identity", width = 0.75) +
+  geom_bar(aes(x=levels(ReplayID),y=Duration,fill=Races), stat="identity", width = 0.75) +
   geom_hline(yintercept = mean(metadata$Duration), color = "red",linetype="dashed") +
   theme(panel.grid.major.x = element_blank(),
         panel.grid.minor.x = element_blank())
@@ -116,18 +115,18 @@ gg
 
 ## ---- replayRaceHistogram
 gg.facet <- ggplot(data=metadata) +
-  geom_bar(aes(x=ReplayID,y=Duration,fill=Duration), stat="identity") +
-  geom_hline(yintercept = mean(metadata$Duration), color = "red",linetype="dashed", size=.1) + 
+  geom_bar(aes(x=ReplayID,y=Duration,fill=Races), stat="identity") +
+  geom_hline(yintercept = mean(metadata$Duration), color = "red",linetype="dashed", size=.1) +
   theme(panel.grid.major.x = element_blank(),
         panel.grid.minor.x = element_blank()) +
-  facet_grid(Races ~ .) 
+  facet_grid(Races ~ .)
 gg.facet
 gg.facet <- ggplot(data=metadata) +
-  geom_bar(aes(x=levels(ReplayID),y=Duration,fill=Duration), stat="identity") +
-  geom_hline(yintercept = mean(metadata$Duration), color = "red",linetype="dashed", size=.1) + 
+  geom_bar(aes(x=levels(ReplayID),y=Duration,fill=Races), stat="identity") +
+  geom_hline(yintercept = mean(metadata$Duration), color = "red",linetype="dashed", size=.1) +
   theme(panel.grid.major.x = element_blank(),
         panel.grid.minor.x = element_blank()) +
-  facet_grid(Races ~ .) 
+  facet_grid(Races ~ .)
 gg.facet
 
 ## ---- CV ----
@@ -151,7 +150,7 @@ result_list <- sapply(seq(max(data.full$Duration),max(data.full$Duration),1000),
                         output_vector = data.subset[,"Winner"] == "A"
                         cv.res <- xgb.cv(data = sparse_matrix, label = output_vector, max.depth = 5, silent = 1,
                                          eta = 0.1, nthread = 6, nround = 10,objective = "binary:logistic", nfold = 10)
-                        
+
                         return(cv.res)
                       })
 
@@ -167,7 +166,7 @@ result_list <- sapply(seq(min(data.full$Duration)/2,max(data.full$Duration),1000
                         print("Entrenando...")
                         cv.res <- xgb.cv(data = sparse_matrix, label = output_vector, max.depth = 5, silent = 1,
                                          eta = 0.1, nthread = 6, nround = 10,objective = "binary:logistic", nfold = 10)
-                       
+
                         return(cv.res)
                       })
 
@@ -183,13 +182,30 @@ output_vector <- data.full.transformed.auc$Winner == "A"
 cv.res <- xgb.cv(data = sparse_matrix, label = output_vector, max.depth = 10, silent = 1,
                  eta = 0.1, nthread = 8, nround = 100,objective = "binary:logistic", nfold = 10)
 
-## ---- Importance ----
-sparse.matrix <- sparse.model.matrix(Winner ~ . -ReplayID)
-xgb.data <- xgb.DMatrix(as.matrix(data.full.transformed[,!colnames(data.full.transformed) %in% c("Winner", "ReplayID", "Max.Frame", "Duration")]), label = as.numeric(data.full.transformed[,"Winner"] == "A"))
+## ---- ImportanceReg ----
+xgb.data <- xgb.DMatrix(data = as.matrix(data.full.transformed[,!c("Winner", "ReplayID", "Max.Frame", "Duration"), with=F] ), 
+                        label = as.numeric(data.full.transformed[,Winner] == "A"))
 bst <- xgboost(data = xgb.data, max.depth = 10,
-               eta = 0.1, nthread = 8, nround = 100,objective = "binary:logistic")
+               eta = 0.1, nthread = 8, nround = 10,objective = "binary:logistic")
 
-importance_matrix <- xgb.importance(colnames(clean_data), model = bst)
+importance_matrix <- xgb.importance(colnames(data.full.transformed[,!c("Winner", "ReplayID", "Max.Frame", "Duration"), with=F] ), model = bst)
 xgb.plot.importance(importance_matrix)
 
+## ---- ImportanceAUC ----
+xgb.data <- xgb.DMatrix(data = as.matrix(data.full.transformed.auc[,!c("Winner", "ReplayID", "Max.Frame", "Duration"), with=F] ), 
+                        label = as.numeric(data.full.transformed.auc[,Winner] == "A"))
+bst <- xgboost(data = xgb.data, max.depth = 10,
+               eta = 0.1, nthread = 8, nround = 10,objective = "binary:logistic")
 
+importance_matrix <- xgb.importance(colnames(data.full.transformed.auc[,!c("Winner", "ReplayID", "Max.Frame", "Duration"), with=F] ), model = bst)
+xgb.plot.importance(importance_matrix)
+
+## ---- ImportanceFull ----
+data.full.clean <- data.full[,!c("Winner", "ReplayID", "Races"), with=F] 
+xgb.data <- xgb.DMatrix(data = data.matrix(sapply(data.full.clean,as.numeric )), 
+                        label = as.numeric(data.full.clean[,Winner] == "A"))
+bst <- xgboost(data = xgb.data, max.depth = 10,
+               eta = 0.1, nthread = 8, nround = 10,objective = "binary:logistic")
+
+importance_matrix <- xgb.importance(colnames(data.full[,!c("Winner", "ReplayID"), with=F] ), model = bst)
+xgb.plot.importance(importance_matrix)
