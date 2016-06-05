@@ -26,3 +26,13 @@
 * [An Improvement to Genetic Algorithms for Multimodal Optimization in Noisy Environments: Re-evaluation of All Individuals per Generation](http://ieeexplore.ieee.org/xpl/articleDetails.jsp?arnumber=7065566&queryText=noisy%20fitness&ranges=2012_2015_Year&searchField=Search_All)
 
 * [Optimization of noisy fitness functions with univariate marginal distribution algorithm](http://ieeexplore.ieee.org/xpl/articleDetails.jsp?arnumber=1554855&newsearch=true&queryText=noisy%20fitness)
+
+## Predicción en StarCraft
+
+* [A Bayesian Model for Opening Prediction in RTS Games with Application to StarCraft](http://emotion.inrialpes.fr/people/synnaeve/index_files/OpeningPrediction_proceedings.pdf)
+
+* [ASPIRE Adaptive strategy prediction in a RTS environment](https://bora.uib.no/handle/1956/5976)
+
+* [Making and Acting on Predictions in StarCraft: Brood War](http://publications.lib.chalmers.se/records/fulltext/203120/203120.pdf)
+
+* [Predicting Opponent’s Production in Real-Time Strategy Games with Answer Set Programming](http://agents.fel.cvut.cz/~certicky/files/publications/tciaig2014.pdf)
