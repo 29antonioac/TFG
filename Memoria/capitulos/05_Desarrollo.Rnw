@@ -1,19 +1,23 @@
 \chapter{Desarrollo}
+
+<<setup05, cache = FALSE>>=
+list.files("../scripts")
+read_chunk("../scripts/05_Desarrollo.R")
+@
 Introducción
 
 \section{Matemáticas}
 Aquí Mates
 
 \section{Ingeniería Informática}
-Una vez se dispone de todas las herramientas matemáticas necesarias, se puede comenzar con el desarrollo de la parte de Ingeniería Informática que se aborda en el trabajo.
+Una vez se dispone de todas las herramientas matemáticas necesarias,
+se puede comenzar con el desarrollo de la parte de Ingeniería Informática que
+se aborda en el trabajo.
 
 \subsection{Comprensión del problema y de los datos}
 
 En primer lugar en cualquier problema de Ciencia de Datos, el primer
-paso es \emph{comprender el problema y los datos que se disponen}. 
-% El primer paso es motivar el estudio del problema. Tienes que decir
-% por qué te has decidido a hacer el TFM sobre eso y qué importancia
-% puede tener en su contexto: IA en juegos, por ejemplo. 
+paso es \emph{comprender el problema y los datos que se disponen}.
 
 El problema a abordar es el siguiente: a partir de un conjunto de
 partidas antiguas de StarCraft \cite{dataset2014}, se busca predecir
@@ -21,7 +25,7 @@ el momento en el que la partida está decidida con una confianza
 determinada. Para ello, partimos de 6 bases de datos relacionales
 (SQL) con gran cantidad de partidas almacenadas, cada una con muchas
 características a observar. Cada una de ellas posee las
-características presentes en la figura \ref{dataset}. 
+características presentes en la figura \ref{dataset}.
 
 
 \begin{figure}
@@ -37,12 +41,12 @@ Una vez se tiene conocimiento del problema y un conjunto de datos, se
 debe decidir qué datos y características van a ser usados y de qué
 forma. El principal problema de este paso es conocer el conjunto de
 datos del que se dispone, ya que usualmente no es extraído por los
-investigadores. 
+investigadores.
 
 Las características están sacadas casi en su totalidad directamente de
 valores que proporciona la API que permite interactuar con StarCraft,
 \emph{BWAPI}. Otros son datos derivados, como la distancia de un
-jugador a la base más cercana, por ejemplo. 
+jugador a la base más cercana, por ejemplo.
 
 Las características que van a ser usados en este trabajo son,
 principalmente, los recursos de cada jugador, sus batallones (que son
@@ -51,7 +55,7 @@ adelante), sus construcciones, y los valores estimados de batallones y
 contrucciones que tienen un jugador del otro. Además, también se tiene
 en cuenta los recursos restantes del mapa que cada jugador estima que
 quedan. Estas características quedan reflejadas en la figura
-\ref{datasetSeleccionado}. 
+\ref{datasetSeleccionado}.
 
 \begin{figure}
     \centering
@@ -104,3 +108,30 @@ Estas características son, según cada tabla:
 Una vez se ha decidido qué vamos a usar, hay que pasar al cómo. Esta fase es el \emph{preprocesamiento de los datos}, que es la fase donde se organizan los datos, se corrigen si hubiera datos perdidos o ruido... para poder abordar el problema a resolver.
 
 \subsection{Preprocesamiento de datos}
+
+\subsubsection{Análisis exploratorio de datos}
+
+Lectura de datos
+
+<<readData>>=
+@
+
+Histograma
+
+<<histograma>>=
+ggplot(data=metadata) +
+geom_bar(aes(x=ReplayID,y=Duration,fill=Duration), stat="identity") +
+geom_hline(yintercept = mean(metadata$Duration))
+print(mean(metadata$Duration))
+@
+
+Quitar partida ``ruido''
+
+<<ruido>>=
+clean_data <- data[data$ReplayID != 271,]
+clean_metadata <- unique(clean_data[, colnames(data) %in% c("ReplayID","Duration")])
+ggplot(data=clean_metadata) +
+geom_bar(aes(x=ReplayID,y=Duration,fill=Duration), stat="identity") +
+geom_hline(yintercept = mean(clean_metadata$Duration))
+print(mean(clean_metadata$Duration))
+@

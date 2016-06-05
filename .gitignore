@@ -4,7 +4,7 @@
 .Rapp.history
 
 # Session Data files
-.RData
+*.RData
 
 # Example code in package build process
 *-Ex.R
@@ -26,8 +26,8 @@ vignettes/*.pdf
 .httr-oauth
 
 # knitr and R markdown default cache directories
-/*_cache/
-/cache/
+Memoria/*_cache/
+Memoria/cache/
 
 # Temporary files created by R markdown
 *.utf8.md
@@ -217,3 +217,7 @@ TSWLatexianTemp*
 
 ### Datos antiguos
 Datos/
+
+# Temporalmente, datos
+*.csv
+*.RData
