@@ -66,3 +66,38 @@ A los conjuntos de datos que cumplen esto los llamaremos \emph{linealmente separ
 Este hecho no es lo usual en un problema de aprendizaje real. Ni siquiera se sabe
 a priori si, ante nuevos datos, esta recta los seguirá separando correctamente.
 Incluso, ante nuevos datos, el conjunto podría pasar a ser no linealmente separable.
+
+\subsection{Factibilidad del aprendizaje}
+
+El aprendizaje estadístico busca \emph{obtener información desde los datos},
+utilizando para ello técnicas estadísticas. Se empezará estudiando una cuestión
+que se ha planteado antes por encima: ante la llegada de nuevos datos, ¿se tiene
+un modelo adecuado? ¿Es factible aprender?
+
+\begin{definicion}
+  Error dentro de la muestra ($E_{in}$). Es la fracción de $\mathcal{D}$ donde la función escogida $h$ y la objetivo $f$ difieren.
+
+  \[
+    E_{in}(h) = \frac{1}{N} \sum\limits_{n=1}^N \chi(h(x_n) \neq f(x_n))
+  \]
+\end{definicion}
+
+\begin{definicion}
+  Error fuera de la muestra ($E_{out}$). Es la probabilidad, basada en la distribución
+  de $\mathcal{X}$, de que la función escogida $h$ y la objetivo $f$ difieren.
+
+  \[
+    E_{out}(h) = \mathbb{P}[h(\textbf{x}) \neq f(\textbf{x})]
+  \]
+\end{definicion}
+
+% Meter Hoeffding
+% Páginas 22-24 de LfD
+% Meter Hoeffding general, con g
+% Concluir con la factibilidad con H finito, pag 25-26.
+
+\subsection{Generalización: Teoría de Vapnik-Chervonenkis}
+
+\subsection{Sobreajuste}
+
+\subsection{Modelos de árboles: Boosting}

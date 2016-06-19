@@ -25,6 +25,7 @@
 \usepackage{afterpage}
 \usepackage{amsfonts}
 \usepackage{longtable}
+\usepackage{amsthm}
 
 \usepackage[pdfborder={000}]{hyperref} %referencia
 
@@ -88,10 +89,12 @@ pdfproducer = {pdflatex}
 \newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
 %Definimos los tipos teorema, ejemplo y definición podremos usar estos tipos
 %simplemente poniendo \begin{teorema} \end{teorema} ...
+\theoremstyle{plain}
 \newtheorem{teorema}{Teorema}[chapter]
+\newtheorem{corolario}{Corolario}[chapter]
+\theoremstyle{definition}
 \newtheorem{ejemplo}{Ejemplo}[chapter]
 \newtheorem{definicion}{Definición}[chapter]
-\newtheorem{corolario}{Corolario}[chapter]
 
 \definecolor{gray97}{gray}{.97}
 \definecolor{gray75}{gray}{.75}

@@ -74,6 +74,7 @@
 \usepackage{afterpage}
 \usepackage{amsfonts}
 \usepackage{longtable}
+\usepackage{amsthm}
 
 \usepackage[pdfborder={000}]{hyperref} %referencia
 
@@ -137,10 +138,12 @@ pdfproducer = {pdflatex}
 \newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
 %Definimos los tipos teorema, ejemplo y definición podremos usar estos tipos
 %simplemente poniendo \begin{teorema} \end{teorema} ...
+\theoremstyle{plain}
 \newtheorem{teorema}{Teorema}[chapter]
+\newtheorem{corolario}{Corolario}[chapter]
+\theoremstyle{definition}
 \newtheorem{ejemplo}{Ejemplo}[chapter]
 \newtheorem{definicion}{Definición}[chapter]
-\newtheorem{corolario}{Corolario}[chapter]
 
 \definecolor{gray97}{gray}{.97}
 \definecolor{gray75}{gray}{.75}
@@ -322,7 +325,8 @@ se desea conseguir una función de un determinado espacio de hipótesis,
 $g \in \mathcal{H}$ que se asemeje todo lo posible a la función objetivo
 $f$, $g \approx f$.
 
-% Tengo que explicar matemáticamente los tres problemas
+% Tengo que explicar matemáticamente los tres problemas.
+% No sé si para ser algo matemático es la mejor introducción posible.
 
 En el aprendizaje se distinguen muchos problemas, siendo tres los más conocidos:
 \begin{itemize}
@@ -366,9 +370,44 @@ Así se puede ver en la figura~\ref{fig:classificationExample}.
 En este sencillo caso se puede deducir lo siguiente: en un lado de la recta obtenida
 se tienen todos los datos con etiquetas $1$ y en el otro los que tienen etiquetas $-1$.
 A los conjuntos de datos que cumplen esto los llamaremos \emph{linealmente separables}.
-Este hecho no es lo usual en un problema de aprendizaje real. Ni siquiera sabemos
-si, ante nuevos datos, esta recta seguirá separando correctamente los datos. Incluso,
-ante nuevos datos, el conjunto podría pasar a ser no linealmente separable.
+Este hecho no es lo usual en un problema de aprendizaje real. Ni siquiera se sabe
+a priori si, ante nuevos datos, esta recta los seguirá separando correctamente.
+Incluso, ante nuevos datos, el conjunto podría pasar a ser no linealmente separable.
+
+\subsection{Factibilidad del aprendizaje}
+
+El aprendizaje estadístico busca \emph{obtener información desde los datos},
+utilizando para ello técnicas estadísticas. Se empezará estudiando una cuestión
+que se ha planteado antes por encima: ante la llegada de nuevos datos, ¿se tiene
+un modelo adecuado? ¿Es factible aprender?
+
+\begin{definicion}
+  Error dentro de la muestra ($E_{in}$). Es la fracción de $\mathcal{D}$ donde la función escogida $h$ y la objetivo $f$ difieren.
+
+  \[
+    E_{in}(h) = \frac{1}{N} \sum\limits_{n=1}^N \chi(h(x_n) \neq f(x_n))
+  \]
+\end{definicion}
+
+\begin{definicion}
+  Error fuera de la muestra ($E_{out}$). Es la probabilidad, basada en la distribución
+  de $\mathcal{X}$, de que la función escogida $h$ y la objetivo $f$ difieren.
+
+  \[
+    E_{out}(h) = \mathbb{P}[h(\textbf{x}) \neq f(\textbf{x})]
+  \]
+\end{definicion}
+
+% Meter Hoeffding
+% Páginas 22-24 de LfD
+% Meter Hoeffding general, con g
+% Concluir con la factibilidad con H finito, pag 25-26.
+
+\subsection{Generalización: Teoría de Vapnik-Chervonenkis}
+
+\subsection{Sobreajuste}
+
+\subsection{Modelos de árboles: Boosting}
 
 \newpage
 \section{Ingeniería Informática}
