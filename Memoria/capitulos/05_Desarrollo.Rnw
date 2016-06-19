@@ -3,7 +3,35 @@
 <<setup05, cache = FALSE, include = FALSE>>=
 read_chunk("../scripts/05_Desarrollo.R")
 @
-Introducción
+
+Este trabajo ha sido desarrollando utilizando las siguientes herramientas:
+
+\begin{itemize}
+  \item \LaTeX como procesador de textos científico.
+  \item \emph{R} como lenguaje de tratamiento de datos. Junto a \emph{knitr},
+  se ha escrito este documento con el paradigma de \emph{programación literaria},
+  donde el documento y los programas están en simbiosis, ofreciendo comodidad
+  tanto para escribir como para leer.
+  \item MariaDB como sistema gestor de bases de datos relacionales (SQL).
+\end{itemize}
+
+Estas decisiones se han tomado, principalmente, por ser las mejores herramientas
+en cada uno de sus ámbitos, con la grandísima ventaja de ser software libre.
+
+Además, la plataforma donde se ha realizado la computación, es la siguiente:
+\begin{itemize}
+  \item Intel i7 6700K @ 4.2Ghz
+  \item G.Skill Ripjaws V DDR4 2400Mhz 4x8GB
+  \item eVGA GTX 960 4GB ACX2.0+
+  \item 2x128GB SSD + 2x750GB HDD en RAID0 vía hardware.
+\end{itemize}
+
+La decisión de usar un RAID0 es por la falta de discos para formar un sistema
+con redundancia. Con este sistema tenemos un sistema rápido y de gran capacidad,
+para albergar las grandes bases de datos que se precisan, aunque sin tolerancia
+a fallos. Al ser vía hardware, la tasa de fallo es mucho menor que uno vía
+software, por lo que en un entorno doméstico es suficiente.
+
 
 \section{Matemáticas}
 <<mates, child='05_Desarrollo_Matematicas.Rnw'>>=

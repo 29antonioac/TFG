@@ -14,7 +14,8 @@ no sea muy útil. Los seres humanos no han aprendido qué es un árbol con una d
 matemática, sino viendo árboles. Han aprendido desde los \emph{datos}.
 
 Este tipo de aprendizaje puede ser modelado matemáticamente para solucionar una gran
-cantidad de problemas en ciencia, ingeniería, economía, \ldots, etc.
+cantidad de problemas en ciencia, ingeniería, economía, \ldots, etc. Esta rama de
+las matemáticas se llama \emph{Aprendizaje Estadístico}.
 
 Matemáticamente, el problema del aprendizaje es, dado un conjunto de puntos de entrada
 $\mathcal{X} \in \mathbb{R}^d$, un espacio de salida $\mathcal{Y}$, una función objetivo
@@ -63,4 +64,4 @@ se tienen todos los datos con etiquetas $1$ y en el otro los que tienen etiqueta
 A los conjuntos de datos que cumplen esto los llamaremos \emph{linealmente separables}.
 Este hecho no es lo usual en un problema de aprendizaje real. Ni siquiera sabemos
 si, ante nuevos datos, esta recta seguirá separando correctamente los datos. Incluso,
-ante nuevos datos, el conjunto podría pasar a ser no linealmente separable. 
+ante nuevos datos, el conjunto podría pasar a ser no linealmente separable.
