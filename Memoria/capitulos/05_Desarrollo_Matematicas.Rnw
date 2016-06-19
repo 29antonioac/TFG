@@ -26,7 +26,8 @@ se desea conseguir una función de un determinado espacio de hipótesis,
 $g \in \mathcal{H}$ que se asemeje todo lo posible a la función objetivo
 $f$, $g \approx f$.
 
-% Tengo que explicar matemáticamente los tres problemas
+% Tengo que explicar matemáticamente los tres problemas.
+% No sé si para ser algo matemático es la mejor introducción posible.
 
 En el aprendizaje se distinguen muchos problemas, siendo tres los más conocidos:
 \begin{itemize}
@@ -62,6 +63,6 @@ Así se puede ver en la figura~\ref{fig:classificationExample}.
 En este sencillo caso se puede deducir lo siguiente: en un lado de la recta obtenida
 se tienen todos los datos con etiquetas $1$ y en el otro los que tienen etiquetas $-1$.
 A los conjuntos de datos que cumplen esto los llamaremos \emph{linealmente separables}.
-Este hecho no es lo usual en un problema de aprendizaje real. Ni siquiera sabemos
-si, ante nuevos datos, esta recta seguirá separando correctamente los datos. Incluso,
-ante nuevos datos, el conjunto podría pasar a ser no linealmente separable.
+Este hecho no es lo usual en un problema de aprendizaje real. Ni siquiera se sabe
+a priori si, ante nuevos datos, esta recta los seguirá separando correctamente.
+Incluso, ante nuevos datos, el conjunto podría pasar a ser no linealmente separable.
