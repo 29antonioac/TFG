@@ -284,14 +284,34 @@ Este tipo de aprendizaje puede ser modelado matemáticamente para solucionar una
 cantidad de problemas en ciencia, ingeniería, economía, \ldots, etc.
 
 Matemáticamente, el problema del aprendizaje es, dado un conjunto de puntos de entrada
-$\mathcal{X} \in \mathbb{R}^d$, una función objetivo \textbf{desconocida}
-$f:\mathcal{X} \rightarrow \mathcal{Y}$ y $N$ muestras $\big((x_1,y_1),\ldots,(x_N,y_N) \big)$
+$\mathcal{X} \in \mathbb{R}^d$, un espacio de salida $\mathcal{Y}$, una función objetivo
+\textbf{desconocida}$f:\mathcal{X} \rightarrow \mathcal{Y}$ y $N$ muestras
+$\big((x_1,y_1),\ldots,(x_N,y_N) \big)$
 tal que $f(x_i) = y_i, \; i = 1,\ldots,N$,
-se desea conseguir una función de un determinado espacio de hipótesis, $g \in \mathcal{H}$ que se
-asemeje todo lo posible a la función objetivo $f$, $g \approx f$.
+se desea conseguir una función de un determinado espacio de hipótesis,
+$g \in \mathcal{H}$ que se asemeje todo lo posible a la función objetivo
+$f$, $g \approx f$.
 
-Sea $\mathcal{X} \subseteq \mathbb{R}^2$ e $\mathcal{Y} = \{+1,-1\}$ el espacio de salida (sí/no).
-Con estos espacios, un ejemplo sencillo sería el de la figura~\ref{fig:classificationExample}.
+% Tengo que explicar matemáticamente los tres problemas
+
+En el aprendizaje se distinguen muchos problemas, siendo tres los más conocidos:
+\begin{itemize}
+  \item Regresión.
+  \item Clasificación.
+  \item Estimación de densidad.
+\end{itemize}
+
+Un ejemplo de clasificación sería el siguiente:
+sea $\mathcal{X} \subseteq [0,1] \times [0,1]$ e $\mathcal{Y} = \{+1,-1\}$ el espacio
+de salida, el cual se puede considerar sí/no, $f$ la función objetivo.
+Generando muestras aleatorias, un ejemplo sencillo sería el de la
+figura~\ref{fig:dataExample}. En lenguaje natural, tenemos dos características
+con las que se puede decidir si un correo electrónico entrante es spam, por ejemplo.
+Se necesita una función $g$ que cumpla que $\forall x \in \mathcal{X}$, $g(x) = f(x)$.
+Intuitivamente, en el caso de clasificación se busca una función que \emph{separe}
+los conjuntos de datos con distintas etiquetas. ¿Existe un separador para este conjunto?
+En este caso, \textbf{sí}, siendo además el más sencillo, un separador \emph{lineal}.
+Así se puede ver en la figura~\ref{fig:classificationExample}.
 
 
 
@@ -312,6 +332,13 @@ Con estos espacios, un ejemplo sencillo sería el de la figura~\ref{fig:classifi
 
 
 \end{knitrout}
+
+En este sencillo caso se puede deducir lo siguiente: en un lado de la recta obtenida
+se tienen todos los datos con etiquetas $1$ y en el otro los que tienen etiquetas $-1$.
+A los conjuntos de datos que cumplen esto los llamaremos \emph{linealmente separables}.
+Este hecho no es lo usual en un problema de aprendizaje real. Ni siquiera sabemos
+si, ante nuevos datos, esta recta seguirá separando correctamente los datos. Incluso,
+ante nuevos datos, el conjunto podría pasar a ser no linealmente separable. 
 
 \newpage
 \section{Ingeniería Informática}
