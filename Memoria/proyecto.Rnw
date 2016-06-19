@@ -23,7 +23,7 @@
 \usepackage{fancyhdr}
 \usepackage{graphicx}
 \usepackage{afterpage}
-
+\usepackage{amsfonts}
 \usepackage{longtable}
 
 \usepackage[pdfborder={000}]{hyperref} %referencia
@@ -91,6 +91,7 @@ pdfproducer = {pdflatex}
 \newtheorem{teorema}{Teorema}[chapter]
 \newtheorem{ejemplo}{Ejemplo}[chapter]
 \newtheorem{definicion}{Definición}[chapter]
+\newtheorem{corolario}{Corolario}[chapter]
 
 \definecolor{gray97}{gray}{.97}
 \definecolor{gray75}{gray}{.75}

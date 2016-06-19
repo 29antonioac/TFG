@@ -72,7 +72,7 @@
 \usepackage{fancyhdr}
 \usepackage{graphicx}
 \usepackage{afterpage}
-
+\usepackage{amsfonts}
 \usepackage{longtable}
 
 \usepackage[pdfborder={000}]{hyperref} %referencia
@@ -140,6 +140,7 @@ pdfproducer = {pdflatex}
 \newtheorem{teorema}{Teorema}[chapter]
 \newtheorem{ejemplo}{Ejemplo}[chapter]
 \newtheorem{definicion}{Definición}[chapter]
+\newtheorem{corolario}{Corolario}[chapter]
 
 \definecolor{gray97}{gray}{.97}
 \definecolor{gray75}{gray}{.75}
@@ -262,24 +263,57 @@ pdfproducer = {pdflatex}
 
 \chapter{Desarrollo}
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{list.files}\hlstd{(}\hlstr{"../scripts"}\hlstd{)}
-\end{alltt}
-\begin{verbatim}
-## [1] "05_Desarrollo.R" "prueba.R"
-\end{verbatim}
-\begin{alltt}
-\hlkwd{read_chunk}\hlstd{(}\hlstr{"../scripts/05_Desarrollo.R"}\hlstd{)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+
 Introducción
 
 \section{Matemáticas}
-Aquí Mates
 
+Se introducen las herramientas matemáticas necesarias para la consecución de este trabajo.
+
+
+
+\subsection{Introducción al problema}
+
+Parafraseando a~\cite{Abu-Mostafa:2012:LD:2207825}, si a un niño pequeño se le pregunta si hay un árbol
+en una foto, lo más probable es que dé la respuesta correcta. Si a uno algo mayor
+se le pregunta ``¿Qué es un árbol'', posiblemente no sabrá contestar o su respuesta
+no sea muy útil. Los seres humanos no han aprendido qué es un árbol con una definición
+matemática, sino viendo árboles. Han aprendido desde los \emph{datos}.
+
+Este tipo de aprendizaje puede ser modelado matemáticamente para solucionar una gran
+cantidad de problemas en ciencia, ingeniería, economía, \ldots, etc.
+
+Matemáticamente, el problema del aprendizaje es, dado un conjunto de puntos de entrada
+$\mathcal{X} \in \mathbb{R}^d$, una función objetivo \textbf{desconocida}
+$f:\mathcal{X} \rightarrow \mathcal{Y}$ y $N$ muestras $\big((x_1,y_1),\ldots,(x_N,y_N) \big)$
+tal que $f(x_i) = y_i, \; i = 1,\ldots,N$,
+se desea conseguir una función de un determinado espacio de hipótesis, $g \in \mathcal{H}$ que se
+asemeje todo lo posible a la función objetivo $f$, $g \approx f$.
+
+Sea $\mathcal{X} \subseteq \mathbb{R}^2$ e $\mathcal{Y} = \{+1,-1\}$ el espacio de salida (sí/no).
+Con estos espacios, un ejemplo sencillo sería el de la figura~\ref{fig:classificationExample}.
+
+
+
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}
+\includegraphics[width=\maxwidth]{figure/dataExample-1} \caption[Datos de ejemplo]{Datos de ejemplo}\label{fig:dataExample}
+\end{figure}
+
+
+\end{knitrout}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}
+\includegraphics[width=\maxwidth]{figure/classificationExample-1} \caption[Primer clasificador]{Primer clasificador}\label{fig:classificationExample}
+\end{figure}
+
+
+\end{knitrout}
+
+\newpage
 \section{Ingeniería Informática}
 Una vez se dispone de todas las herramientas matemáticas necesarias,
 se puede comenzar con el desarrollo de la parte de Ingeniería Informática que
@@ -361,7 +395,9 @@ Estas características son, según cada tabla:
     \item TotalGas: Cantidad total de gas que ha obtenido un jugador, sin contar gastos.
     \item TotalSupply: Capacidad que ha obtenido un jugador, sin contar gastos.
   \end{itemize}
-  \item regionvaluechange: Esta tabla contiene datos asociados a cambios de un jugador en una región del mapa determinada. Cada \emph{value}, que llamaremos de aquí en adelante \emph{valor}, es la suma del precio de una unidad en Minerales y Gas.
+  \item regionvaluechange: Esta tabla contiene datos asociados a cambios de un jugador
+  en una región del mapa determinada. Cada \emph{value}, que llamaremos de aquí en adelante
+  \emph{valor}, es la suma del precio de una unidad en Minerales y Gas.
   \begin{itemize}
     \item PlayerReplayID: Identificador del jugador que produce un cambio.
     \item RegionID: Identificador de la región del mapa donde se produce un cambio.
@@ -369,16 +405,22 @@ Estas características son, según cada tabla:
     \item GroundUnitValue: Valor de las unidades terrestres en esta región.
     \item BuildingValue: Valor de las construcciones en esta región.
     \item AirUnitValue: Valor de las unidades aéreas en esta región.
-    \item EnemyGroundUnitValue: Valor de las unidades terrestres del enemigo en esta región. Este valor es estimado, sólo se conoce lo que el jugador puede ver del enemigo.
-    \item EnemyBuildingValue: Valor de las contrucciones del enemigo en esta región. Este valor es estimado, sólo se conoce lo que el jugador puede ver del enemigo.
-    \item EnemyAirUnitValue: Valor de las unidades aéreas del enemigo en esta región. Este valor es estimado, sólo se conoce lo que el jugador puede ver del enemigo.
-    \item ResourceValue: Valor de los recursos en esta región. Este valor es estimado, sólo se conoce lo que el jugador puede ver del mapa. Si el jugador no conoce una zona, estima que los recursos restantes es la totalidad de lo disponible en la región.
+    \item EnemyGroundUnitValue: Valor de las unidades terrestres del enemigo en esta región.
+    Este valor es estimado, sólo se conoce lo que el jugador puede ver del enemigo.
+    \item EnemyBuildingValue: Valor de las contrucciones del enemigo en esta región.
+    Este valor es estimado, sólo se conoce lo que el jugador puede ver del enemigo.
+    \item EnemyAirUnitValue: Valor de las unidades aéreas del enemigo en esta región.
+    Este valor es estimado, sólo se conoce lo que el jugador puede ver del enemigo.
+    \item ResourceValue: Valor de los recursos en esta región. Este valor es estimado,
+    sólo se conoce lo que el jugador puede ver del mapa. Si el jugador no conoce una zona, estima que los recursos restantes es la totalidad de lo disponible en la región.
   \end{itemize}
 \end{itemize}
 
 Una vez se ha decidido qué vamos a usar, hay que pasar al cómo. Esta fase es el \emph{preprocesamiento de los datos}, que es la fase donde se organizan los datos, se corrigen si hubiera datos perdidos o ruido... para poder abordar el problema a resolver.
 
 \subsection{Preprocesamiento de datos}
+
+Aquí meter toda la lógica que se ha usado para extraer los datos. Qué y cómo se ha hecho.
 
 \subsubsection{Análisis exploratorio de datos}
 
@@ -393,15 +435,93 @@ Lectura de datos
 ## [1] "/home/antonio/Git/TFG/Memoria/capitulos"
 \end{verbatim}
 \begin{alltt}
-\hlstd{data} \hlkwb{<-} \hlkwd{read.csv}\hlstd{(}\hlstr{"../datos/data_pvp.csv"}\hlstd{)}
-\hlstd{metadata} \hlkwb{<-} \hlkwd{unique}\hlstd{(data[,} \hlkwd{colnames}\hlstd{(data)} \hlopt{%in%} \hlkwd{c}\hlstd{(}\hlstr{"ReplayID"}\hlstd{,}\hlstr{"Duration"}\hlstd{)])}
-\hlcom{# clean_data <- data[,!(colnames(data) %in% c("ReplayID","Duration"))]}
-\hlcom{# data_replay <- data[data$ReplayID==114, ]}
-\hlcom{# data_replay <- data_replay[, !(colnames(data_replay) %in% c("ReplayID","Duration"))]}
-\hlcom{# winner <- data_replay[1,"Winner"]}
-\hlcom{# loser <- if(winner=='A') 'B' else 'A'}
+\hlstd{data.pvp} \hlkwb{<-} \hlkwd{read.csv}\hlstd{(}\hlstr{"../datos/data_pvp.csv"}\hlstd{)}
 \end{alltt}
-\end{kframe}
+
+
+{\ttfamily\noindent\color{warningcolor}{\#\# Warning in file(file, "{}rt"{}): no fue posible abrir el archivo '../datos/data\_pvp.csv': No existe el fichero o el directorio}}
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in file(file, "{}rt"{}): no se puede abrir la conexión}}\begin{alltt}
+\hlstd{data.pvt} \hlkwb{<-} \hlkwd{read.csv}\hlstd{(}\hlstr{"../datos/data_pvt.csv"}\hlstd{)}
+\end{alltt}
+
+
+{\ttfamily\noindent\color{warningcolor}{\#\# Warning in file(file, "{}rt"{}): no fue posible abrir el archivo '../datos/data\_pvt.csv': No existe el fichero o el directorio}}
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in file(file, "{}rt"{}): no se puede abrir la conexión}}\begin{alltt}
+\hlstd{data.pvz} \hlkwb{<-} \hlkwd{read.csv}\hlstd{(}\hlstr{"../datos/data_pvz.csv"}\hlstd{)}
+\end{alltt}
+
+
+{\ttfamily\noindent\color{warningcolor}{\#\# Warning in file(file, "{}rt"{}): no fue posible abrir el archivo '../datos/data\_pvz.csv': No existe el fichero o el directorio}}
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in file(file, "{}rt"{}): no se puede abrir la conexión}}\begin{alltt}
+\hlstd{data.tvt} \hlkwb{<-} \hlkwd{read.csv}\hlstd{(}\hlstr{"../datos/data_tvt.csv"}\hlstd{)}
+\end{alltt}
+
+
+{\ttfamily\noindent\color{warningcolor}{\#\# Warning in file(file, "{}rt"{}): no fue posible abrir el archivo '../datos/data\_tvt.csv': No existe el fichero o el directorio}}
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in file(file, "{}rt"{}): no se puede abrir la conexión}}\begin{alltt}
+\hlstd{data.tvz} \hlkwb{<-} \hlkwd{read.csv}\hlstd{(}\hlstr{"../datos/data_tvz.csv"}\hlstd{)}
+\end{alltt}
+
+
+{\ttfamily\noindent\color{warningcolor}{\#\# Warning in file(file, "{}rt"{}): no fue posible abrir el archivo '../datos/data\_tvz.csv': No existe el fichero o el directorio}}
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in file(file, "{}rt"{}): no se puede abrir la conexión}}\begin{alltt}
+\hlstd{data.zvz} \hlkwb{<-} \hlkwd{read.csv}\hlstd{(}\hlstr{"../datos/data_zvz.csv"}\hlstd{)}
+\end{alltt}
+
+
+{\ttfamily\noindent\color{warningcolor}{\#\# Warning in file(file, "{}rt"{}): no fue posible abrir el archivo '../datos/data\_zvz.csv': No existe el fichero o el directorio}}
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in file(file, "{}rt"{}): no se puede abrir la conexión}}\begin{alltt}
+\hlstd{data.full} \hlkwb{<-} \hlkwd{rbind}\hlstd{(}\hlkwd{cbind}\hlstd{(data.pvp,} \hlkwc{Races} \hlstd{=} \hlstr{"PvP"}\hlstd{),} \hlkwd{cbind}\hlstd{(data.pvt,} \hlkwc{Races} \hlstd{=} \hlstr{"PvT"}\hlstd{),}
+                   \hlkwd{cbind}\hlstd{(data.pvz,} \hlkwc{Races} \hlstd{=} \hlstr{"PvZ"}\hlstd{),} \hlkwd{cbind}\hlstd{(data.tvt,} \hlkwc{Races} \hlstd{=} \hlstr{"TvT"}\hlstd{),}
+                   \hlkwd{cbind}\hlstd{(data.tvz,} \hlkwc{Races} \hlstd{=} \hlstr{"TvZ"}\hlstd{),} \hlkwd{cbind}\hlstd{(data.zvz,} \hlkwc{Races} \hlstd{=} \hlstr{"ZvZ"}\hlstd{))}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in cbind(data.pvp, Races = "{}PvP"{}): objeto 'data.pvp' no encontrado}}\begin{alltt}
+\hlstd{data.full}\hlopt{$}\hlstd{ReplayID}  \hlkwb{<-} \hlkwd{as.factor}\hlstd{(}\hlkwd{paste}\hlstd{(data.full}\hlopt{$}\hlstd{Races,data.full}\hlopt{$}\hlstd{ReplayID,}\hlkwc{sep} \hlstd{=} \hlstr{"_"}\hlstd{))}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in paste(data.full\$Races, data.full\$ReplayID, sep = "{}\_"{}): objeto 'data.full' no encontrado}}\begin{alltt}
+\hlstd{metadata} \hlkwb{<-} \hlstd{data.full[,} \hlkwd{colnames}\hlstd{(data.full)} \hlopt{%in%} \hlkwd{c}\hlstd{(}\hlstr{"ReplayID"}\hlstd{,}\hlstr{"Duration"}\hlstd{,} \hlstr{"Races"}\hlstd{)]}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in eval(expr, envir, enclos): objeto 'data.full' no encontrado}}\begin{alltt}
+\hlstd{metadata} \hlkwb{<-} \hlkwd{unique}\hlstd{(metadata[}\hlkwd{order}\hlstd{(}\hlopt{-}\hlstd{metadata}\hlopt{$}\hlstd{Duration),])}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in unique(metadata[order(-metadata\$Duration), ]): objeto 'metadata' no encontrado}}\begin{alltt}
+\hlstd{metadata} \hlkwb{<-} \hlkwd{transform}\hlstd{(metadata,} \hlkwc{ReplayID}\hlstd{=}\hlkwd{reorder}\hlstd{(ReplayID,} \hlopt{-}\hlstd{Duration) )}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in transform(metadata, ReplayID = reorder(ReplayID, -Duration)): objeto 'metadata' no encontrado}}\begin{alltt}
+\hlcom{# Change all ReplayIDs because there are duplicates}
+\hlcom{# metadata$ReplayID <- 1:nrow(metadata)}
+\hlcom{# data.full$ReplayID <- metadata$ReplayID}
+
+\hlcom{# clean_data <- data.full[,!(colnames(data) %in% c("ReplayID"))]}
+\hlkwd{system.time}\hlstd{(data.full.transformed} \hlkwb{<-} \hlkwd{transformData}\hlstd{(data.full))}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in system.time(data.full.transformed <- transformData(data.full)): no se pudo encontrar la función "{}transformData"{}}}\begin{verbatim}
+## Timing stopped at: 0 0 0
+\end{verbatim}
+\begin{alltt}
+\hlstd{data.full.transformed.auc} \hlkwb{<-} \hlkwd{transformData}\hlstd{(data.full,} \hlkwc{auc} \hlstd{= T)}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in eval(expr, envir, enclos): no se pudo encontrar la función "{}transformData"{}}}\end{kframe}
 \end{knitrout}
 
 Histograma
@@ -413,37 +533,14 @@ Histograma
 \hlkwd{geom_bar}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=ReplayID,}\hlkwc{y}\hlstd{=Duration,}\hlkwc{fill}\hlstd{=Duration),} \hlkwc{stat}\hlstd{=}\hlstr{"identity"}\hlstd{)} \hlopt{+}
 \hlkwd{geom_hline}\hlstd{(}\hlkwc{yintercept} \hlstd{=} \hlkwd{mean}\hlstd{(metadata}\hlopt{$}\hlstd{Duration))}
 \end{alltt}
-\end{kframe}
-\includegraphics[width=\maxwidth]{figure/histograma-1} 
-\begin{kframe}\begin{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in ggplot(data = metadata): objeto 'metadata' no encontrado}}\begin{alltt}
 \hlkwd{print}\hlstd{(}\hlkwd{mean}\hlstd{(metadata}\hlopt{$}\hlstd{Duration))}
 \end{alltt}
-\begin{verbatim}
-## [1] 32036.08
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
 
-Quitar partida ``ruido''
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{clean_data} \hlkwb{<-} \hlstd{data[data}\hlopt{$}\hlstd{ReplayID} \hlopt{!=} \hlnum{271}\hlstd{,]}
-\hlstd{clean_metadata} \hlkwb{<-} \hlkwd{unique}\hlstd{(clean_data[,} \hlkwd{colnames}\hlstd{(data)} \hlopt{%in%} \hlkwd{c}\hlstd{(}\hlstr{"ReplayID"}\hlstd{,}\hlstr{"Duration"}\hlstd{)])}
-\hlkwd{ggplot}\hlstd{(}\hlkwc{data}\hlstd{=clean_metadata)} \hlopt{+}
-\hlkwd{geom_bar}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=ReplayID,}\hlkwc{y}\hlstd{=Duration,}\hlkwc{fill}\hlstd{=Duration),} \hlkwc{stat}\hlstd{=}\hlstr{"identity"}\hlstd{)} \hlopt{+}
-\hlkwd{geom_hline}\hlstd{(}\hlkwc{yintercept} \hlstd{=} \hlkwd{mean}\hlstd{(clean_metadata}\hlopt{$}\hlstd{Duration))}
-\end{alltt}
-\end{kframe}
-\includegraphics[width=\maxwidth]{figure/ruido-1} 
-\begin{kframe}\begin{alltt}
-\hlkwd{print}\hlstd{(}\hlkwd{mean}\hlstd{(clean_metadata}\hlopt{$}\hlstd{Duration))}
-\end{alltt}
-\begin{verbatim}
-## [1] 31582.96
-\end{verbatim}
-\end{kframe}
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in mean(metadata\$Duration): objeto 'metadata' no encontrado}}\end{kframe}
 \end{knitrout}
 
 

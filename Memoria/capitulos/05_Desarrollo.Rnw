@@ -1,14 +1,15 @@
 \chapter{Desarrollo}
 
-<<setup05, cache = FALSE>>=
-list.files("../scripts")
+<<setup05, cache = FALSE, include = FALSE>>=
 read_chunk("../scripts/05_Desarrollo.R")
 @
 Introducción
 
 \section{Matemáticas}
-Aquí Mates
+<<mates, child='05_Desarrollo_Matematicas.Rnw'>>=
+@
 
+\newpage
 \section{Ingeniería Informática}
 Una vez se dispone de todas las herramientas matemáticas necesarias,
 se puede comenzar con el desarrollo de la parte de Ingeniería Informática que
@@ -90,7 +91,9 @@ Estas características son, según cada tabla:
     \item TotalGas: Cantidad total de gas que ha obtenido un jugador, sin contar gastos.
     \item TotalSupply: Capacidad que ha obtenido un jugador, sin contar gastos.
   \end{itemize}
-  \item regionvaluechange: Esta tabla contiene datos asociados a cambios de un jugador en una región del mapa determinada. Cada \emph{value}, que llamaremos de aquí en adelante \emph{valor}, es la suma del precio de una unidad en Minerales y Gas.
+  \item regionvaluechange: Esta tabla contiene datos asociados a cambios de un jugador
+  en una región del mapa determinada. Cada \emph{value}, que llamaremos de aquí en adelante
+  \emph{valor}, es la suma del precio de una unidad en Minerales y Gas.
   \begin{itemize}
     \item PlayerReplayID: Identificador del jugador que produce un cambio.
     \item RegionID: Identificador de la región del mapa donde se produce un cambio.
@@ -98,16 +101,22 @@ Estas características son, según cada tabla:
     \item GroundUnitValue: Valor de las unidades terrestres en esta región.
     \item BuildingValue: Valor de las construcciones en esta región.
     \item AirUnitValue: Valor de las unidades aéreas en esta región.
-    \item EnemyGroundUnitValue: Valor de las unidades terrestres del enemigo en esta región. Este valor es estimado, sólo se conoce lo que el jugador puede ver del enemigo.
-    \item EnemyBuildingValue: Valor de las contrucciones del enemigo en esta región. Este valor es estimado, sólo se conoce lo que el jugador puede ver del enemigo.
-    \item EnemyAirUnitValue: Valor de las unidades aéreas del enemigo en esta región. Este valor es estimado, sólo se conoce lo que el jugador puede ver del enemigo.
-    \item ResourceValue: Valor de los recursos en esta región. Este valor es estimado, sólo se conoce lo que el jugador puede ver del mapa. Si el jugador no conoce una zona, estima que los recursos restantes es la totalidad de lo disponible en la región.
+    \item EnemyGroundUnitValue: Valor de las unidades terrestres del enemigo en esta región.
+    Este valor es estimado, sólo se conoce lo que el jugador puede ver del enemigo.
+    \item EnemyBuildingValue: Valor de las contrucciones del enemigo en esta región.
+    Este valor es estimado, sólo se conoce lo que el jugador puede ver del enemigo.
+    \item EnemyAirUnitValue: Valor de las unidades aéreas del enemigo en esta región.
+    Este valor es estimado, sólo se conoce lo que el jugador puede ver del enemigo.
+    \item ResourceValue: Valor de los recursos en esta región. Este valor es estimado,
+    sólo se conoce lo que el jugador puede ver del mapa. Si el jugador no conoce una zona, estima que los recursos restantes es la totalidad de lo disponible en la región.
   \end{itemize}
 \end{itemize}
 
 Una vez se ha decidido qué vamos a usar, hay que pasar al cómo. Esta fase es el \emph{preprocesamiento de los datos}, que es la fase donde se organizan los datos, se corrigen si hubiera datos perdidos o ruido... para poder abordar el problema a resolver.
 
 \subsection{Preprocesamiento de datos}
+
+Aquí meter toda la lógica que se ha usado para extraer los datos. Qué y cómo se ha hecho.
 
 \subsubsection{Análisis exploratorio de datos}
 
@@ -123,15 +132,4 @@ ggplot(data=metadata) +
 geom_bar(aes(x=ReplayID,y=Duration,fill=Duration), stat="identity") +
 geom_hline(yintercept = mean(metadata$Duration))
 print(mean(metadata$Duration))
-@
-
-Quitar partida ``ruido''
-
-<<ruido>>=
-clean_data <- data[data$ReplayID != 271,]
-clean_metadata <- unique(clean_data[, colnames(data) %in% c("ReplayID","Duration")])
-ggplot(data=clean_metadata) +
-geom_bar(aes(x=ReplayID,y=Duration,fill=Duration), stat="identity") +
-geom_hline(yintercept = mean(clean_metadata$Duration))
-print(mean(clean_metadata$Duration))
 @
