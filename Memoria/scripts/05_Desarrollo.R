@@ -56,10 +56,11 @@ transformData <- function(data, max.frame = NA, auc = FALSE) {
   else
     data.subset <- data[data$Frame <= max.frame,]
 
-  cl <- makeCluster(getOption("cl.cores", 2))
-
+  cl <- makeCluster(getOption("cl.cores", 7))
   replays.list <- parLapply(cl,replays, transformReplay, dataset = data.subset, auc = auc)
   stopCluster(cl)
+  
+  # replays.list <- lapply(replays, transformReplay, dataset = data.subset, auc = auc)
 
   data.transformed <- rbindlist(replays.list)
   data.transformed
@@ -88,7 +89,6 @@ metadata <- data.full[, colnames(data.full) %in% c("ReplayID","Duration", "Races
 metadata <- unique(metadata[order(-metadata$Duration),])
 metadata <- transform(metadata, ReplayID=reorder(ReplayID, -Duration) ) 
 
-# clean_data <- data.full[,!(colnames(data) %in% c("ReplayID"))]
 system.time(data.full.transformed <- transformData(data.full))
 system.time(data.full.transformed.auc <- transformData(data.full, auc = T))
 

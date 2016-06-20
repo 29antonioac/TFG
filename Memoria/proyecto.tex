@@ -221,6 +221,7 @@ pdfproducer = {pdflatex}
 \makeatother
 
 \usepackage{pdfpages}
+\usepackage[T1]{fontenc}
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
 %\SweaveOpts{concordance=TRUE}
@@ -236,6 +237,21 @@ pdfproducer = {pdflatex}
 
 
 
+
+\chapter{Resumen}
+
+
+\chapter{Abstract}
+
+
+\chapter{Introducción}
+% El primer paso es motivar el estudio del problema. Tienes que decir
+% por qué te has decidido a hacer el TFM sobre eso y qué importancia
+% puede tener en su contexto: IA en juegos, por ejemplo.
+
+
+Probando
+
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}
 
@@ -249,12 +265,7 @@ pdfproducer = {pdflatex}
 
 \end{knitrout}
 
-
-
-\chapter{Introducción}
-% El primer paso es motivar el estudio del problema. Tienes que decir
-% por qué te has decidido a hacer el TFM sobre eso y qué importancia
-% puede tener en su contexto: IA en juegos, por ejemplo.
+Prueba terminada~\ref{fig:prueba}
 
 
 \chapter{Objetivos} 
@@ -262,41 +273,32 @@ pdfproducer = {pdflatex}
 
 \chapter{Desarrollo}
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{list.files}\hlstd{(}\hlstr{"../scripts"}\hlstd{)}
-\end{alltt}
-\begin{verbatim}
-## [1] "05_Desarrollo.R" "prueba.R"
-\end{verbatim}
-\begin{alltt}
-\hlkwd{read_chunk}\hlstd{(}\hlstr{"../scripts/05_Desarrollo.R"}\hlstd{)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+
 Introducción
 
 \section{Matemáticas}
+\label{sec:matematicas}
 Aquí Mates
 
 \section{Ingeniería Informática}
+\label{sec:informatica}
 Una vez se dispone de todas las herramientas matemáticas necesarias,
 se puede comenzar con el desarrollo de la parte de Ingeniería Informática que
 se aborda en el trabajo.
 
 \subsection{Comprensión del problema y de los datos}
+\label{subsec:comprension}
 
 En primer lugar en cualquier problema de Ciencia de Datos, el primer
 paso es \emph{comprender el problema y los datos que se disponen}.
 
 El problema a abordar es el siguiente: a partir de un conjunto de
-partidas antiguas de StarCraft \cite{dataset2014}, se busca predecir
+partidas antiguas de StarCraft~\cite{dataset2014}, se busca predecir
 el momento en el que la partida está decidida con una confianza
 determinada. Para ello, partimos de 6 bases de datos relacionales
 (SQL) con gran cantidad de partidas almacenadas, cada una con muchas
 características a observar. Cada una de ellas posee las
-características presentes en la figura \ref{dataset}.
+características presentes en la figura~\ref{dataset}.
 
 
 \begin{figure}
@@ -326,7 +328,7 @@ adelante), sus construcciones, y los valores estimados de batallones y
 contrucciones que tienen un jugador del otro. Además, también se tiene
 en cuenta los recursos restantes del mapa que cada jugador estima que
 quedan. Estas características quedan reflejadas en la figura
-\ref{datasetSeleccionado}.
+~\ref{datasetSeleccionado}.
 
 \begin{figure}
     \centering
@@ -379,72 +381,24 @@ Estas características son, según cada tabla:
 Una vez se ha decidido qué vamos a usar, hay que pasar al cómo. Esta fase es el \emph{preprocesamiento de los datos}, que es la fase donde se organizan los datos, se corrigen si hubiera datos perdidos o ruido... para poder abordar el problema a resolver.
 
 \subsection{Preprocesamiento de datos}
+\label{subsec:preprocesamiento}
 
 \subsubsection{Análisis exploratorio de datos}
+\label{subsubsec:exploratorio}
 
 Lectura de datos
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{print}\hlstd{(}\hlkwd{getwd}\hlstd{())}
-\end{alltt}
-\begin{verbatim}
-## [1] "/home/antonio/Git/TFG/Memoria/capitulos"
-\end{verbatim}
-\begin{alltt}
-\hlstd{data} \hlkwb{<-} \hlkwd{read.csv}\hlstd{(}\hlstr{"../datos/data_pvp.csv"}\hlstd{)}
-\hlstd{metadata} \hlkwb{<-} \hlkwd{unique}\hlstd{(data[,} \hlkwd{colnames}\hlstd{(data)} \hlopt{%in%} \hlkwd{c}\hlstd{(}\hlstr{"ReplayID"}\hlstd{,}\hlstr{"Duration"}\hlstd{)])}
-\hlcom{# clean_data <- data[,!(colnames(data) %in% c("ReplayID","Duration"))]}
-\hlcom{# data_replay <- data[data$ReplayID==114, ]}
-\hlcom{# data_replay <- data_replay[, !(colnames(data_replay) %in% c("ReplayID","Duration"))]}
-\hlcom{# winner <- data_replay[1,"Winner"]}
-\hlcom{# loser <- if(winner=='A') 'B' else 'A'}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+% <<readData>>=
+% @
 
 Histograma
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{ggplot}\hlstd{(}\hlkwc{data}\hlstd{=metadata)} \hlopt{+}
-\hlkwd{geom_bar}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=ReplayID,}\hlkwc{y}\hlstd{=Duration,}\hlkwc{fill}\hlstd{=Duration),} \hlkwc{stat}\hlstd{=}\hlstr{"identity"}\hlstd{)} \hlopt{+}
-\hlkwd{geom_hline}\hlstd{(}\hlkwc{yintercept} \hlstd{=} \hlkwd{mean}\hlstd{(metadata}\hlopt{$}\hlstd{Duration))}
-\end{alltt}
-\end{kframe}
-\includegraphics[width=\maxwidth]{figure/histograma-1} 
-\begin{kframe}\begin{alltt}
-\hlkwd{print}\hlstd{(}\hlkwd{mean}\hlstd{(metadata}\hlopt{$}\hlstd{Duration))}
-\end{alltt}
-\begin{verbatim}
-## [1] 32036.08
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
-
-Quitar partida ``ruido''
-
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{clean_data} \hlkwb{<-} \hlstd{data[data}\hlopt{$}\hlstd{ReplayID} \hlopt{!=} \hlnum{271}\hlstd{,]}
-\hlstd{clean_metadata} \hlkwb{<-} \hlkwd{unique}\hlstd{(clean_data[,} \hlkwd{colnames}\hlstd{(data)} \hlopt{%in%} \hlkwd{c}\hlstd{(}\hlstr{"ReplayID"}\hlstd{,}\hlstr{"Duration"}\hlstd{)])}
-\hlkwd{ggplot}\hlstd{(}\hlkwc{data}\hlstd{=clean_metadata)} \hlopt{+}
-\hlkwd{geom_bar}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=ReplayID,}\hlkwc{y}\hlstd{=Duration,}\hlkwc{fill}\hlstd{=Duration),} \hlkwc{stat}\hlstd{=}\hlstr{"identity"}\hlstd{)} \hlopt{+}
-\hlkwd{geom_hline}\hlstd{(}\hlkwc{yintercept} \hlstd{=} \hlkwd{mean}\hlstd{(clean_metadata}\hlopt{$}\hlstd{Duration))}
-\end{alltt}
-\end{kframe}
-\includegraphics[width=\maxwidth]{figure/ruido-1} 
-\begin{kframe}\begin{alltt}
-\hlkwd{print}\hlstd{(}\hlkwd{mean}\hlstd{(clean_metadata}\hlopt{$}\hlstd{Duration))}
-\end{alltt}
-\begin{verbatim}
-## [1] 31582.96
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
+% <<histograma>>=
+% ggplot(data=metadata) +
+% geom_bar(aes(x=ReplayID,y=Duration,fill=Duration), stat="identity") +
+% geom_hline(yintercept = mean(metadata$Duration))
+% print(mean(metadata$Duration))
+% @
 
 
 \chapter{Conclusiones} 

@@ -172,6 +172,7 @@ pdfproducer = {pdflatex}
 \makeatother
 
 \usepackage{pdfpages}
+\usepackage[T1]{fontenc}
 \begin{document}
 %\SweaveOpts{concordance=TRUE}
 %\input{portada/portada}
@@ -190,27 +191,15 @@ require(ggplot2)
 require(xgboost)
 require(Matrix)
 
-# knit_hooks$set(chunk = function(x, options) x)
-# knit_hooks$set(rgl = function(before, options, envir) {
-#   if (!before) {
-#     ## after a chunk has been evaluated
-#     # if (rgl.cur() == 0) return()  # no active device
-#     name = paste(options$fig.path, options$label, sep = '')
-#     # rgl.snapshot(paste(name, '.png', sep = ''), fmt = 'png')
-#     return(paste('\\includegraphics{', name, '}\n', sep = ''))
-#   }
-# })
-
 # opts_chunk$set(cache=TRUE, autodep=TRUE)
 read_chunk("scripts/prueba.R")
 @
 
-<<prueba, echo = FALSE, ,fig.align = "center", fig.cap="prueba">>=
-data <- data.frame(x = 1:500)
-ggplot(data, aes(x)) +
-  stat_function(fun=cos, n=nrow(data), geom="point")
+<<Resumen, child='capitulos/01_Resumen.Rnw'>>=
 @
 
+<<Abstract, child='capitulos/02_Abstract.Rnw'>>=
+@
 
 <<Introduccion, child='capitulos/03_Introduccion.Rnw'>>=
 @
