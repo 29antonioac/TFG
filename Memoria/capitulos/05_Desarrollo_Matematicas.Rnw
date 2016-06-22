@@ -93,9 +93,21 @@ un modelo adecuado? ¿Es factible aprender?
   \]
 \end{definicion}
 
+% Justificar que E_out es la esperanza de E_in
+
 \begin{teorema}[Desigualdad de Hoeffding]
-  Desigualdad
+  Si $X_1, X_2, \ldots, X_n$ son independientes y $a_i \leq X_i \leq b_i \; (i=1,2,\ldots,n)$,
+  entonces para $\epsilon>0$ se da:
+  \[
+    \mathbb{P}\left[ \bar{X} - \mathbb{E}[\bar{X}] \geq \epsilon \right] \leq
+    e^{\frac{-2 n^2 \epsilon^2}{\sum\limits_{i=1}^n(b_i-a_i)^2}}
+  \]
 \end{teorema}
+
+\begin{proof}
+  Demostración
+\end{proof}
+
 % Meter Hoeffding
 % Páginas 22-24 de LfD
 % Meter Hoeffding general, con g
