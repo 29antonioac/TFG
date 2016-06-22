@@ -2,7 +2,7 @@
 title: "Análisis exploratorio"
 author: "Antonio Álvarez Caballero"
 date: "11 de mayo de 2016"
-output: slidy_presentation
+output: beamer_presentation
 ---
 
 ```{r setup, include=FALSE}
@@ -28,17 +28,15 @@ draw <- function(replay, x = "Frame", y1, y2, title) {
 ## Columnas
 
 ```{r readData}
-data <- read.csv("../Datos/data.csv")
+data <- read.csv("../Datos/data_pvp.csv")
 clean_data <- data[,!(colnames(data) %in% c("ReplayID","Duration"))]
-data_replay <- data[data$ReplayID==114, ]
+data_replay <- data[data$ReplayID==113, ]
 data_replay <- data_replay[, !(colnames(data_replay) %in% c("ReplayID","Duration"))]
 winner <- data_replay[1,"Winner"]
 loser <- if(winner=='A') 'B' else 'A'
 print(colnames(data_replay))
 print(paste("El ganador es",winner))
 ```
-
-
 
 ## Minerales
 
@@ -50,6 +48,7 @@ gg
 ggplotly(gg)
 
 ```
+
 
 ## Minerales totales
 
@@ -109,7 +108,7 @@ ggplotly(gg)
 ## GroundUnit observada
 
 ```{r observedGroundUnitValue}
-gg <- draw(data_replay, y1 = "AObservedEnemyGroundUnitValue", y2 = "BObservedEnemyGroundUnitValue", title = "Observed Ground Unit Values")
+gg <- draw(data_replay, y1 = "ObservedEnemyGroundUnitValue", y2 = "EnemyObservedEnemyGroundUnitValue", title = "Observed Ground Unit Values")
 gg
 ggplotly(gg)
 ```
@@ -139,7 +138,7 @@ print(paste("Pendiente recta perdedor:",coefs[2,loser]))
 ## Buildings observadas
 
 ```{r observedBuildingValue}
-gg <- draw(data_replay, y1 = "AObservedEnemyBuildingValue", y2 = "BObservedEnemyBuildingValue", title = "Observed Building Values")
+gg <- draw(data_replay, y1 = "ObservedEnemyBuildingValue", y2 = "EnemyObservedEnemyBuildingValue", title = "Observed Building Values")
 
 gg
 ggplotly(gg)
@@ -158,7 +157,7 @@ ggplotly(gg)
 ## AirUnits observadas
 
 ```{r observedAirUnitValue}
-gg <- draw(data_replay, y1 = "AObservedEnemyAirUnitValue", y2 = "BObservedEnemyAirUnitValue", title = "Observed Air Unit Values")
+gg <- draw(data_replay, y1 = "ObservedEnemyAirUnitValue", y2 = "EnemyObservedEnemyAirUnitValue", title = "Observed Air Unit Values")
 
 gg
 ggplotly(gg)
@@ -167,7 +166,7 @@ ggplotly(gg)
 ## ResourceValue
 
 ```{r ResourceValue}
-gg <- draw(data_replay, y1 = "AObservedResourceValue", y2 = "BObservedResourceValue", title = "Observed Resource Values")
+gg <- draw(data_replay, y1 = "ObservedResourceValue", y2 = "EnemyObservedResourceValue", title = "Observed Resource Values")
 
 gg
 ggplotly(gg)
@@ -193,24 +192,25 @@ print(importance)
 plot(importance)
 ```
 
-```{r featureSelectionXGB, eval = T}
+```{r featureSelectionXGB, eval = F}
 sparse_matrix <- sparse.model.matrix(Winner ~ .-1, data = clean_data)
 output_vector = data[,"Winner"] == "A"
-
-bst <- xgboost(data = sparse_matrix, label = output_vector, max.depth = 48,
-               eta = 0.1, nthread = 8, nround = 100,objective = "binary:logistic")
-
-importance_matrix <- xgb.importance(colnames(clean_data), model = bst)
-xgb.plot.importance(importance_matrix)
 ```
 
 
-## Validación cruzada 5x2
+## Validación cruzada 10 particiones
 
-```{r CV, eval = T}
-cv.res <- xgb.cv(data = sparse_matrix, label = output_vector, max.depth = 48,
-               eta = 0.1, nthread = 8, nround = 100,objective = "binary:logistic", nfold = 5)
-cv.res
+Vamos a entrenar un modelo con validación cruzada
+
+```{r CV, eval = F}
+result_list <- sapply(seq(min(clean_data$Duration)/2,max(clean_data$Duration),1000),
+                      function(max_frame) {
+                        data_subset <- clean_data[clean_data$Frame < max_frame]
+                        sparse_matrix <- sparse.model.matrix(Winner ~ .-1, data = data_subset)
+                        output_vector = data_subset[,"Winner"] == "A"
+                        cv.res <- xgb.cv(data = sparse_matrix, label = output_vector, max.depth = 48, silent = 1,
+                                       eta = 0.1, nthread = 8, nround = 100,objective = "binary:logistic", nfold = 10)
+                        return(cv.res)
+                      })
+
 ```
-
-

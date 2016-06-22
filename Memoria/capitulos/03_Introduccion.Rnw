@@ -1,1 +1,12 @@
 \chapter{Introducción}
+% El primer paso es motivar el estudio del problema. Tienes que decir
+% por qué te has decidido a hacer el TFM sobre eso y qué importancia
+% puede tener en su contexto: IA en juegos, por ejemplo.
+
+
+Probando
+
+<<prueba, echo = FALSE, fig.align = "center", fig.cap="prueba">>=
+@
+
+Prueba terminada~\ref{fig:prueba}

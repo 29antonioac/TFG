@@ -45,6 +45,64 @@ BEGIN
 	DECLARE PlayerB INT;
 	DECLARE repDuration INT;
 
+  set @minerals = null;
+  set @gas = null;
+  set @supply = null;
+  set @enemyMinerals = null;
+  set @enemyGas = null;
+  set @enemySupply = null;
+  set @totMinerals = null;
+  set @totGas = null;
+  set @totSupply = null;
+  set @winnerA = null;
+  set @enemyTotMinerals = null;
+  set @enemyTotGas = null;
+  set @enemyTotSupply = null;
+  set @winnerB = null;
+  set @ground = null;
+  set @building = null;
+  set @air = null;
+  set @aObservedEnemyGround = null;
+  set @aObservedEnemyBuilding = null;
+  set @aObservedEnemyAir = null;
+  set @enemyGround = null;
+  set @enemyBuilding = null;
+  set @enemyAir = null;
+  set @bObservedEnemyGround = null;
+  set @bObservedEnemyBuilding = null;
+  set @bObservedEnemyAir = null;
+  set @resourcesA = null;
+  set @resourcesB = null;
+
+  set @minerals = 0;
+	set @gas = 0;
+	set @supply = 0;
+	set @enemyMinerals = 0;
+	set @enemyGas = 0;
+	set @enemySupply = 0;
+	set @totMinerals = 0;
+	set @totGas = 0;
+	set @totSupply = 0;
+	set @winnerA = 0;
+	set @enemyTotMinerals = 0;
+	set @enemyTotGas = 0;
+	set @enemyTotSupply = 0;
+	set @winnerB = 0;
+	set @ground = 0;
+	set @building = 0;
+	set @air = 0;
+	set @aObservedEnemyGround = 0;
+	set @aObservedEnemyBuilding = 0;
+	set @aObservedEnemyAir = 0;
+	set @enemyGround = 0;
+	set @enemyBuilding = 0;
+	set @enemyAir = 0;
+	set @bObservedEnemyGround = 0;
+	set @bObservedEnemyBuilding = 0;
+	set @bObservedEnemyAir = 0;
+	set @resourcesA = 0;
+	set @resourcesB = 0;
+
 	SELECT A.PlayerReplayID,
 		B.PlayerReplayID
 	INTO PlayerA,
@@ -104,7 +162,7 @@ BEGIN
 	SELECT IDReplay,
 		repDuration,
 		AB.Frame,
-        @minerals := IFNULL(Minerals, @minerals) AS Minerals,
+    @minerals := IFNULL(Minerals, @minerals) AS Minerals,
 		@gas := IFNULL(Gas, @gas) AS Gas,
 		@supply := IFNULL(Supply, @supply) AS Supply,
 		@totMinerals := IFNULL(TotalMinerals, @totMinerals) AS TotalMinerals,
@@ -130,7 +188,7 @@ BEGIN
 		@bObservedEnemyBuilding := IFNULL(BObservedEnemyBuildingValue, @bObservedEnemyBuilding) AS BObservedEnemyBuildingValue,
 		@bObservedEnemyAir := IFNULL(BObservedEnemyAirUnitValue, @bObservedEnemyAir) AS BObservedEnemyAirUnitValue,
 		@resourcesB := IFNULL(BObservedResourceValue, @resourcesB) AS BObservedResourceValue,
-        @winnerA := IFNULL(WinnerA, @winnerA) AS WinnerA
+    @winnerA := IFNULL(WinnerA, @winnerA) AS WinnerA
 	FROM (
 		SELECT IFNULL(A.Frame, B.Frame) AS Frame,
 			A.Minerals,
@@ -303,43 +361,13 @@ BEGIN
 		ORDER BY rc.Frame
 		) AS D
 		ON AB.Frame = D.Frame
-	CROSS JOIN (
-		SELECT @minerals := 0,
-			@gas := 0,
-			@supply := 0,
-			@enemyMinerals := 0,
-			@enemyGas := 0,
-			@enemySupply := 0,
-			@totMinerals := 0,
-			@totGas := 0,
-			@totSupply := 0,
-			@winnerA := 0,
-			@enemyTotMinerals := 0,
-			@enemyTotGas := 0,
-			@enemyTotSupply := 0,
-			@winnerB := 0,
-			@ground := 0,
-			@building := 0,
-			@air := 0,
-			@aObservedEnemyGround := 0,
-			@aObservedEnemyBuilding := 0,
-			@aObservedEnemyAir := 0,
-			@enemyGround := 0,
-			@enemyBuilding := 0,
-			@enemyAir := 0,
-			@bObservedEnemyGround := 0,
-			@bObservedEnemyBuilding := 0,
-			@bObservedEnemyAir := 0,
-			@resourcesA := 0,
-			@resourcesB := 0
-		) AS var_init
 	ORDER BY AB.Frame;
 END;
 //
 
 delete from result
 select * from result
-call extractReplay(266);
+call extractReplay(114);
 
 DROP PROCEDURE extractData;
 DELIMITER //
@@ -349,7 +377,7 @@ BEGIN
 	DECLARE n_replay INT;
 
 	DECLARE done INT DEFAULT FALSE;
-    DECLARE C_Replay CURSOR FOR SELECT ReplayID FROM replay;
+    DECLARE C_Replay CURSOR FOR SELECT ReplayID FROM replay LIMIT 5;
 
 	DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
 

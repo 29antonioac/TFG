@@ -1,0 +1,103 @@
+Se introducen las herramientas matemáticas necesarias para la consecución de este trabajo.
+
+<<setup05M, cache = FALSE, include = FALSE>>=
+set.seed(1254221004)
+read_chunk("../scripts/05_Desarrollo_Matematicas.R")
+@
+
+\subsection{Introducción al problema}
+
+Parafraseando a~\cite{Abu-Mostafa:2012:LD:2207825}, si a un niño pequeño se le pregunta si hay un árbol
+en una foto, lo más probable es que dé la respuesta correcta. Si a uno algo mayor
+se le pregunta ``¿Qué es un árbol'', posiblemente no sabrá contestar o su respuesta
+no sea muy útil. Los seres humanos no han aprendido qué es un árbol con una definición
+matemática, sino viendo árboles. Han aprendido desde los \emph{datos}.
+
+Este tipo de aprendizaje puede ser modelado matemáticamente para solucionar una gran
+cantidad de problemas en ciencia, ingeniería, economía, \ldots, etc. Esta rama de
+las matemáticas se llama \emph{Aprendizaje Estadístico}.
+
+Matemáticamente, el problema del aprendizaje es, dado un conjunto de puntos de entrada
+$\mathcal{X} \in \mathbb{R}^d$, un espacio de salida $\mathcal{Y}$, una función objetivo
+\textbf{desconocida}$f:\mathcal{X} \rightarrow \mathcal{Y}$ y $N$ muestras
+$\big((x_1,y_1),\ldots,(x_N,y_N) \big)$
+tal que $f(x_i) = y_i, \; i = 1,\ldots,N$,
+se desea conseguir una función de un determinado espacio de hipótesis,
+$g \in \mathcal{H}$ que se asemeje todo lo posible a la función objetivo
+$f$, $g \approx f$.
+
+% Tengo que explicar matemáticamente los tres problemas.
+% No sé si para ser algo matemático es la mejor introducción posible.
+
+En el aprendizaje se distinguen muchos problemas, siendo tres los más conocidos:
+\begin{itemize}
+  \item Regresión.
+  \item Clasificación.
+  \item Estimación de densidad.
+\end{itemize}
+
+Un ejemplo de clasificación sería el siguiente:
+sea $\mathcal{X} \subseteq [0,1] \times [0,1]$ e $\mathcal{Y} = \{+1,-1\}$ el espacio
+de salida, el cual se puede considerar sí/no, $f$ la función objetivo.
+Generando muestras aleatorias, un ejemplo sencillo sería el de la
+figura~\ref{fig:dataExample}. En lenguaje natural, tenemos dos características
+con las que se puede decidir si un correo electrónico entrante es spam, por ejemplo.
+Se necesita una función $g$ que cumpla que $\forall x \in \mathcal{X}$, $g(x) = f(x)$.
+Intuitivamente, en el caso de clasificación se busca una función que \emph{separe}
+los conjuntos de datos con distintas etiquetas. ¿Existe un separador para este conjunto?
+En este caso, \textbf{sí}, siendo además el más sencillo, un separador \emph{lineal}.
+Así se puede ver en la figura~\ref{fig:classificationExample}.
+
+<<randomLine, include = FALSE>>=
+@
+
+<<signOfPoint, include = FALSE>>=
+@
+
+<<dataExample, echo = FALSE, fig.cap="Datos de ejemplo">>=
+@
+
+<<classificationExample, echo = FALSE, fig.cap="Primer clasificador">>=
+@
+
+En este sencillo caso se puede deducir lo siguiente: en un lado de la recta obtenida
+se tienen todos los datos con etiquetas $1$ y en el otro los que tienen etiquetas $-1$.
+A los conjuntos de datos que cumplen esto los llamaremos \emph{linealmente separables}.
+Este hecho no es lo usual en un problema de aprendizaje real. Ni siquiera se sabe
+a priori si, ante nuevos datos, esta recta los seguirá separando correctamente.
+Incluso, ante nuevos datos, el conjunto podría pasar a ser no linealmente separable.
+
+\subsection{Factibilidad del aprendizaje}
+
+El aprendizaje estadístico busca \emph{obtener información desde los datos},
+utilizando para ello técnicas estadísticas. Se empezará estudiando una cuestión
+que se ha planteado antes por encima: ante la llegada de nuevos datos, ¿se tiene
+un modelo adecuado? ¿Es factible aprender?
+
+\begin{definicion}
+  Error dentro de la muestra ($E_{in}$). Es la fracción de $\mathcal{D}$ donde la función escogida $h$ y la objetivo $f$ difieren.
+
+  \[
+    E_{in}(h) = \frac{1}{N} \sum\limits_{n=1}^N \chi(h(x_n) \neq f(x_n))
+  \]
+\end{definicion}
+
+\begin{definicion}
+  Error fuera de la muestra ($E_{out}$). Es la probabilidad, basada en la distribución
+  de $\mathcal{X}$, de que la función escogida $h$ y la objetivo $f$ difieren.
+
+  \[
+    E_{out}(h) = \mathbb{P}[h(\textbf{x}) \neq f(\textbf{x})]
+  \]
+\end{definicion}
+
+% Meter Hoeffding
+% Páginas 22-24 de LfD
+% Meter Hoeffding general, con g
+% Concluir con la factibilidad con H finito, pag 25-26.
+
+\subsection{Generalización: Teoría de Vapnik-Chervonenkis}
+
+\subsection{Sobreajuste}
+
+\subsection{Modelos de árboles: Boosting}

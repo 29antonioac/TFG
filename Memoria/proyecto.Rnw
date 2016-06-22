@@ -23,8 +23,9 @@
 \usepackage{fancyhdr}
 \usepackage{graphicx}
 \usepackage{afterpage}
-
+\usepackage{amsfonts}
 \usepackage{longtable}
+\usepackage{amsthm}
 
 \usepackage[pdfborder={000}]{hyperref} %referencia
 
@@ -88,7 +89,10 @@ pdfproducer = {pdflatex}
 \newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
 %Definimos los tipos teorema, ejemplo y definición podremos usar estos tipos
 %simplemente poniendo \begin{teorema} \end{teorema} ...
+\theoremstyle{plain}
 \newtheorem{teorema}{Teorema}[chapter]
+\newtheorem{corolario}{Corolario}[chapter]
+\theoremstyle{definition}
 \newtheorem{ejemplo}{Ejemplo}[chapter]
 \newtheorem{definicion}{Definición}[chapter]
 
@@ -172,6 +176,7 @@ pdfproducer = {pdflatex}
 \makeatother
 
 \usepackage{pdfpages}
+\usepackage[T1]{fontenc}
 \begin{document}
 %\SweaveOpts{concordance=TRUE}
 %\input{portada/portada}
@@ -189,10 +194,16 @@ require(knitr)
 require(ggplot2)
 require(xgboost)
 require(Matrix)
-opts_chunk$set(cache=TRUE, autodep=TRUE)
+
+# opts_chunk$set(cache=TRUE, autodep=TRUE)
 read_chunk("scripts/prueba.R")
 @
 
+<<Resumen, child='capitulos/01_Resumen.Rnw'>>=
+@
+
+<<Abstract, child='capitulos/02_Abstract.Rnw'>>=
+@
 
 <<Introduccion, child='capitulos/03_Introduccion.Rnw'>>=
 @
