@@ -278,13 +278,6 @@ Prueba terminada~\ref{fig:prueba}
 \chapter{Desarrollo}
 
 
-<<<<<<< HEAD
-Introducción
-
-\section{Matemáticas}
-\label{sec:matematicas}
-Aquí Mates
-=======
 
 Este trabajo ha sido desarrollando utilizando las siguientes herramientas:
 
@@ -381,7 +374,6 @@ Así se puede ver en la figura~\ref{fig:classificationExample}.
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}
 \includegraphics[width=\maxwidth]{figure/classificationExample-1} \caption[Primer clasificador]{Primer clasificador}\label{fig:classificationExample}
 \end{figure}
->>>>>>> a474c25bc7b3769ca7725febacc05d8e9f351080
 
 
 \end{knitrout}
@@ -427,6 +419,7 @@ un modelo adecuado? ¿Es factible aprender?
 \subsection{Sobreajuste}
 
 \subsection{Modelos de árboles: Boosting}
+
 
 \newpage
 \section{Ingeniería Informática}
@@ -538,14 +531,18 @@ Una vez se ha decidido qué vamos a usar, hay que pasar al cómo. Esta fase es e
 \subsection{Preprocesamiento de datos}
 \label{subsec:preprocesamiento}
 
+% Aquí metemos toda la jerga que he tenido que liar para
+% sacar los datos de la base de datos. Sin código.
+
 Aquí meter toda la lógica que se ha usado para extraer los datos. Qué y cómo se ha hecho.
 
 \subsubsection{Análisis exploratorio de datos}
 \label{subsubsec:exploratorio}
 
+% Aquí todo lo referente al análisis exploratorio de datos
+
 Lectura de datos
 
-<<<<<<< HEAD
 % <<readData>>=
 % @
 
@@ -557,124 +554,6 @@ Histograma
 % geom_hline(yintercept = mean(metadata$Duration))
 % print(mean(metadata$Duration))
 % @
-=======
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{print}\hlstd{(}\hlkwd{getwd}\hlstd{())}
-\end{alltt}
-\begin{verbatim}
-## [1] "/home/antonio/Git/TFG/Memoria/capitulos"
-\end{verbatim}
-\begin{alltt}
-\hlstd{data.pvp} \hlkwb{<-} \hlkwd{read.csv}\hlstd{(}\hlstr{"../datos/data_pvp.csv"}\hlstd{)}
-\end{alltt}
-
-
-{\ttfamily\noindent\color{warningcolor}{\#\# Warning in file(file, "{}rt"{}): no fue posible abrir el archivo '../datos/data\_pvp.csv': No existe el fichero o el directorio}}
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in file(file, "{}rt"{}): no se puede abrir la conexión}}\begin{alltt}
-\hlstd{data.pvt} \hlkwb{<-} \hlkwd{read.csv}\hlstd{(}\hlstr{"../datos/data_pvt.csv"}\hlstd{)}
-\end{alltt}
-
-
-{\ttfamily\noindent\color{warningcolor}{\#\# Warning in file(file, "{}rt"{}): no fue posible abrir el archivo '../datos/data\_pvt.csv': No existe el fichero o el directorio}}
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in file(file, "{}rt"{}): no se puede abrir la conexión}}\begin{alltt}
-\hlstd{data.pvz} \hlkwb{<-} \hlkwd{read.csv}\hlstd{(}\hlstr{"../datos/data_pvz.csv"}\hlstd{)}
-\end{alltt}
-
-
-{\ttfamily\noindent\color{warningcolor}{\#\# Warning in file(file, "{}rt"{}): no fue posible abrir el archivo '../datos/data\_pvz.csv': No existe el fichero o el directorio}}
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in file(file, "{}rt"{}): no se puede abrir la conexión}}\begin{alltt}
-\hlstd{data.tvt} \hlkwb{<-} \hlkwd{read.csv}\hlstd{(}\hlstr{"../datos/data_tvt.csv"}\hlstd{)}
-\end{alltt}
-
-
-{\ttfamily\noindent\color{warningcolor}{\#\# Warning in file(file, "{}rt"{}): no fue posible abrir el archivo '../datos/data\_tvt.csv': No existe el fichero o el directorio}}
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in file(file, "{}rt"{}): no se puede abrir la conexión}}\begin{alltt}
-\hlstd{data.tvz} \hlkwb{<-} \hlkwd{read.csv}\hlstd{(}\hlstr{"../datos/data_tvz.csv"}\hlstd{)}
-\end{alltt}
-
-
-{\ttfamily\noindent\color{warningcolor}{\#\# Warning in file(file, "{}rt"{}): no fue posible abrir el archivo '../datos/data\_tvz.csv': No existe el fichero o el directorio}}
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in file(file, "{}rt"{}): no se puede abrir la conexión}}\begin{alltt}
-\hlstd{data.zvz} \hlkwb{<-} \hlkwd{read.csv}\hlstd{(}\hlstr{"../datos/data_zvz.csv"}\hlstd{)}
-\end{alltt}
-
-
-{\ttfamily\noindent\color{warningcolor}{\#\# Warning in file(file, "{}rt"{}): no fue posible abrir el archivo '../datos/data\_zvz.csv': No existe el fichero o el directorio}}
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in file(file, "{}rt"{}): no se puede abrir la conexión}}\begin{alltt}
-\hlstd{data.full} \hlkwb{<-} \hlkwd{rbind}\hlstd{(}\hlkwd{cbind}\hlstd{(data.pvp,} \hlkwc{Races} \hlstd{=} \hlstr{"PvP"}\hlstd{),} \hlkwd{cbind}\hlstd{(data.pvt,} \hlkwc{Races} \hlstd{=} \hlstr{"PvT"}\hlstd{),}
-                   \hlkwd{cbind}\hlstd{(data.pvz,} \hlkwc{Races} \hlstd{=} \hlstr{"PvZ"}\hlstd{),} \hlkwd{cbind}\hlstd{(data.tvt,} \hlkwc{Races} \hlstd{=} \hlstr{"TvT"}\hlstd{),}
-                   \hlkwd{cbind}\hlstd{(data.tvz,} \hlkwc{Races} \hlstd{=} \hlstr{"TvZ"}\hlstd{),} \hlkwd{cbind}\hlstd{(data.zvz,} \hlkwc{Races} \hlstd{=} \hlstr{"ZvZ"}\hlstd{))}
-\end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in cbind(data.pvp, Races = "{}PvP"{}): objeto 'data.pvp' no encontrado}}\begin{alltt}
-\hlstd{data.full}\hlopt{$}\hlstd{ReplayID}  \hlkwb{<-} \hlkwd{as.factor}\hlstd{(}\hlkwd{paste}\hlstd{(data.full}\hlopt{$}\hlstd{Races,data.full}\hlopt{$}\hlstd{ReplayID,}\hlkwc{sep} \hlstd{=} \hlstr{"_"}\hlstd{))}
-\end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in paste(data.full\$Races, data.full\$ReplayID, sep = "{}\_"{}): objeto 'data.full' no encontrado}}\begin{alltt}
-\hlstd{metadata} \hlkwb{<-} \hlstd{data.full[,} \hlkwd{colnames}\hlstd{(data.full)} \hlopt{%in%} \hlkwd{c}\hlstd{(}\hlstr{"ReplayID"}\hlstd{,}\hlstr{"Duration"}\hlstd{,} \hlstr{"Races"}\hlstd{)]}
-\end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in eval(expr, envir, enclos): objeto 'data.full' no encontrado}}\begin{alltt}
-\hlstd{metadata} \hlkwb{<-} \hlkwd{unique}\hlstd{(metadata[}\hlkwd{order}\hlstd{(}\hlopt{-}\hlstd{metadata}\hlopt{$}\hlstd{Duration),])}
-\end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in unique(metadata[order(-metadata\$Duration), ]): objeto 'metadata' no encontrado}}\begin{alltt}
-\hlstd{metadata} \hlkwb{<-} \hlkwd{transform}\hlstd{(metadata,} \hlkwc{ReplayID}\hlstd{=}\hlkwd{reorder}\hlstd{(ReplayID,} \hlopt{-}\hlstd{Duration) )}
-\end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in transform(metadata, ReplayID = reorder(ReplayID, -Duration)): objeto 'metadata' no encontrado}}\begin{alltt}
-\hlcom{# Change all ReplayIDs because there are duplicates}
-\hlcom{# metadata$ReplayID <- 1:nrow(metadata)}
-\hlcom{# data.full$ReplayID <- metadata$ReplayID}
-
-\hlcom{# clean_data <- data.full[,!(colnames(data) %in% c("ReplayID"))]}
-\hlkwd{system.time}\hlstd{(data.full.transformed} \hlkwb{<-} \hlkwd{transformData}\hlstd{(data.full))}
-\end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in system.time(data.full.transformed <- transformData(data.full)): no se pudo encontrar la función "{}transformData"{}}}\begin{verbatim}
-## Timing stopped at: 0 0 0
-\end{verbatim}
-\begin{alltt}
-\hlstd{data.full.transformed.auc} \hlkwb{<-} \hlkwd{transformData}\hlstd{(data.full,} \hlkwc{auc} \hlstd{= T)}
-\end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in eval(expr, envir, enclos): no se pudo encontrar la función "{}transformData"{}}}\end{kframe}
-\end{knitrout}
-
-Histograma
-
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{ggplot}\hlstd{(}\hlkwc{data}\hlstd{=metadata)} \hlopt{+}
-\hlkwd{geom_bar}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=ReplayID,}\hlkwc{y}\hlstd{=Duration,}\hlkwc{fill}\hlstd{=Duration),} \hlkwc{stat}\hlstd{=}\hlstr{"identity"}\hlstd{)} \hlopt{+}
-\hlkwd{geom_hline}\hlstd{(}\hlkwc{yintercept} \hlstd{=} \hlkwd{mean}\hlstd{(metadata}\hlopt{$}\hlstd{Duration))}
-\end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in ggplot(data = metadata): objeto 'metadata' no encontrado}}\begin{alltt}
-\hlkwd{print}\hlstd{(}\hlkwd{mean}\hlstd{(metadata}\hlopt{$}\hlstd{Duration))}
-\end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in mean(metadata\$Duration): objeto 'metadata' no encontrado}}\end{kframe}
-\end{knitrout}
->>>>>>> a474c25bc7b3769ca7725febacc05d8e9f351080
 
 
 \chapter{Conclusiones} 
