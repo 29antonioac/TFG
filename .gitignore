@@ -214,3 +214,6 @@ TSWLatexianTemp*
 # KBibTeX
 *~[0-9]*
 .Rproj.user
+
+# PDF
+*.pdf
