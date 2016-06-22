@@ -215,9 +215,13 @@ TSWLatexianTemp*
 *~[0-9]*
 .Rproj.user
 
+# PDF
+*.pdf
+
 ### Datos antiguos
 Datos/
 
 # Temporalmente, datos
 *.csv
 *.RData
+

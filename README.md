@@ -10,9 +10,9 @@ anteriores.
 Para compilarlo se necesitan las siguientes dependencias:
 
 * R
-..* knitr
-..* xgboost
-..* ggplot2
+  * knitr
+  * xgboost
+  * ggplot2
 
 Sólo hay que ejecutar
 
