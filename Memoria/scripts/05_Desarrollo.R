@@ -83,9 +83,10 @@ data.full <- rbind(cbind(data.pvp, Races = "PvP"), cbind(data.pvt, Races = "PvT"
                    cbind(data.tvz, Races = "TvZ"), cbind(data.zvz, Races = "ZvZ"))
 
 data.full$ReplayID  <- as.factor(paste(data.full$Races,data.full$ReplayID,sep = "_"))
-setDT(data.full)
+# setDT(data.full)
 
-metadata <- data.full[, colnames(data.full) %in% c("ReplayID","Duration", "Races")]
+metadata <- data.full[, colnames(data.full) %in% c("ReplayID", "Duration", "Races")]
+# metadata <- data.full[,c("ReplayID","Duration", "Races"), with=F] 
 metadata <- unique(metadata[order(-metadata$Duration),])
 metadata <- transform(metadata, ReplayID=reorder(ReplayID, -Duration) ) 
 
@@ -205,7 +206,7 @@ data.full.clean <- data.full[,!c("Winner", "ReplayID", "Races"), with=F]
 xgb.data <- xgb.DMatrix(data = data.matrix(sapply(data.full.clean,as.numeric )), 
                         label = as.numeric(data.full.clean[,Winner] == "A"))
 bst <- xgboost(data = xgb.data, max.depth = 10,
-               eta = 0.1, nthread = 8, nround = 10,objective = "binary:logistic")
+               eta = 0.1, nthread = 6, nround = 10,objective = "binary:logistic")
 
 importance_matrix <- xgb.importance(colnames(data.full[,!c("Winner", "ReplayID"), with=F] ), model = bst)
 xgb.plot.importance(importance_matrix)
