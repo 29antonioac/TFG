@@ -225,3 +225,5 @@ Datos/
 *.csv
 *.RData
 
+# Tex intermedio
+Memoria/proyecto.tex
