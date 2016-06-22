@@ -255,9 +255,19 @@ Una vez se dispone de todas las herramientas matemáticas necesarias, se puede c
 
 \subsection{Comprensión del problema y de los datos}
 
-En primer lugar en cualquier problema de Ciencia de Datos, el primer paso es \emph{comprender el problema y los datos que se disponen}.
+En primer lugar en cualquier problema de Ciencia de Datos, el primer
+paso es \emph{comprender el problema y los datos que se disponen}. 
+% El primer paso es motivar el estudio del problema. Tienes que decir
+% por qué te has decidido a hacer el TFM sobre eso y qué importancia
+% puede tener en su contexto: IA en juegos, por ejemplo. 
 
-El problema a abordar es el siguiente: a partir de un conjunto de partidas antiguas de StarCraft \cite{dataset2014}, se busca predecir el momento en el que la partida está decidida con una confianza determinada. Para ello, partimos de 6 bases de datos relacionales (SQL) con gran cantidad de partidas almacenadas, cada una con muchas características a observar. Cada una de ellas posee las características presentes en la figura \ref{dataset}.
+El problema a abordar es el siguiente: a partir de un conjunto de
+partidas antiguas de StarCraft \cite{dataset2014}, se busca predecir
+el momento en el que la partida está decidida con una confianza
+determinada. Para ello, partimos de 6 bases de datos relacionales
+(SQL) con gran cantidad de partidas almacenadas, cada una con muchas
+características a observar. Cada una de ellas posee las
+características presentes en la figura \ref{dataset}. 
 
 
 \begin{figure}
@@ -269,11 +279,25 @@ El problema a abordar es el siguiente: a partir de un conjunto de partidas antig
 
 
 
-Una vez se tiene conocimiento del problema y un conjunto de datos, se debe decidir qué datos y características van a ser usados y de qué forma. El principal problema de este paso es conocer el conjunto de datos del que se dispone, ya que usualmente no es extraído por los investigadores.
+Una vez se tiene conocimiento del problema y un conjunto de datos, se
+debe decidir qué datos y características van a ser usados y de qué
+forma. El principal problema de este paso es conocer el conjunto de
+datos del que se dispone, ya que usualmente no es extraído por los
+investigadores. 
 
-Las características están sacadas casi en su totalidad directamente de valores que proporciona la API que permite interactuar con StarCraft, \emph{BWAPI}. Otros son datos derivados, como la distancia de un jugador a la base más cercana, por ejemplo.
+Las características están sacadas casi en su totalidad directamente de
+valores que proporciona la API que permite interactuar con StarCraft,
+\emph{BWAPI}. Otros son datos derivados, como la distancia de un
+jugador a la base más cercana, por ejemplo. 
 
-Las características que van a ser usados en este trabajo son, principalmente, los recursos de cada jugador, sus batallones (que son medidos de una manera determinada que se explican con más detalle más adelante), sus construcciones, y los valores estimados de batallones y contrucciones que tienen un jugador del otro. Además, también se tiene en cuenta los recursos restantes del mapa que cada jugador estima que quedan. Estas características quedan reflejadas en la figura \ref{datasetSeleccionado}.
+Las características que van a ser usados en este trabajo son,
+principalmente, los recursos de cada jugador, sus batallones (que son
+medidos de una manera determinada que se explican con más detalle más
+adelante), sus construcciones, y los valores estimados de batallones y
+contrucciones que tienen un jugador del otro. Además, también se tiene
+en cuenta los recursos restantes del mapa que cada jugador estima que
+quedan. Estas características quedan reflejadas en la figura
+\ref{datasetSeleccionado}. 
 
 \begin{figure}
     \centering
