@@ -75,7 +75,9 @@ que se ha planteado antes por encima: ante la llegada de nuevos datos, ¿se tien
 un modelo adecuado? ¿Es factible aprender?
 
 \begin{definicion}
-  Error dentro de la muestra ($E_{in}$). Es la fracción de $\mathcal{D}$ donde la función escogida $h$ y la objetivo $f$ difieren.
+  Error dentro de la muestra ($E_{in}$). Es la fracción de $\mathcal{D}$ donde
+  la función escogida $h$ y la objetivo $f$ difieren. $\chi(condicion)$ es la
+  función indicadora: vale 1 si la condición es cierta y 0 si no lo es.
 
   \[
     E_{in}(h) = \frac{1}{N} \sum\limits_{n=1}^N \chi(h(x_n) \neq f(x_n))
@@ -91,6 +93,9 @@ un modelo adecuado? ¿Es factible aprender?
   \]
 \end{definicion}
 
+\begin{teorema}[Desigualdad de Hoeffding]
+  Desigualdad
+\end{teorema}
 % Meter Hoeffding
 % Páginas 22-24 de LfD
 % Meter Hoeffding general, con g
