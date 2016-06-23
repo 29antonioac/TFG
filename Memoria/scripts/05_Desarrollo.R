@@ -87,8 +87,8 @@ data.full$ReplayID  <- as.factor(paste(data.full$Races,data.full$ReplayID,sep = 
 
 metadata <- data.full[, colnames(data.full) %in% c("ReplayID", "Duration", "Races")]
 # metadata <- data.full[,c("ReplayID","Duration", "Races"), with=F] 
-metadata <- unique(metadata[order(-metadata$Duration),])
-metadata <- transform(metadata, ReplayID=reorder(ReplayID, -Duration) ) 
+metadata <- unique(metadata)
+# metadata <- transform(metadata, ReplayID=reorder(ReplayID, -Duration) ) 
 
 system.time(data.full.transformed <- transformData(data.full))
 system.time(data.full.transformed.auc <- transformData(data.full, auc = T))
@@ -107,12 +107,6 @@ gg <- ggplot(data=metadata) +
   theme(panel.grid.major.x = element_blank(),
         panel.grid.minor.x = element_blank())
 gg
-gg <- ggplot(data=metadata) +
-  geom_bar(aes(x=levels(ReplayID),y=Duration,fill=Races), stat="identity", width = 0.75) +
-  geom_hline(yintercept = mean(metadata$Duration), color = "red",linetype="dashed") +
-  theme(panel.grid.major.x = element_blank(),
-        panel.grid.minor.x = element_blank())
-gg
 
 ## ---- replayRaceHistogram
 gg.facet <- ggplot(data=metadata) +
@@ -122,13 +116,20 @@ gg.facet <- ggplot(data=metadata) +
         panel.grid.minor.x = element_blank()) +
   facet_grid(Races ~ .)
 gg.facet
-gg.facet <- ggplot(data=metadata) +
-  geom_bar(aes(x=levels(ReplayID),y=Duration,fill=Races), stat="identity") +
-  geom_hline(yintercept = mean(metadata$Duration), color = "red",linetype="dashed", size=.1) +
+
+## --- cleanReplays ----
+frame.bound <- 75000
+data.full.clean <- data.full[data.full$Duration <= frame.bound,]
+data.clean.transformed <- data.full.transformed[data.full.transformed$Duration <= frame.bound,]
+data.clean.transformed.auc <- data.full.transformed.auc[data.full.transformed.auc$Duration <= frame.bound,]
+metadata.clean <- metadata[metadata$Duration <= frame.bound,]
+
+gg <- ggplot(data=metadata.clean) +
+  geom_bar(aes(x=ReplayID,y=Duration,fill=Races), stat="identity", width = 0.75) +
+  geom_hline(yintercept = mean(metadata$Duration), color = "red",linetype="dashed") +
   theme(panel.grid.major.x = element_blank(),
-        panel.grid.minor.x = element_blank()) +
-  facet_grid(Races ~ .)
-gg.facet
+        panel.grid.minor.x = element_blank())
+gg
 
 ## ---- CV ----
 result_list <- sapply(seq(min(data.full$Duration)/2,max(data.full$Duration),1000),
@@ -137,7 +138,7 @@ result_list <- sapply(seq(min(data.full$Duration)/2,max(data.full$Duration),1000
                         sparse_matrix <- sparse.model.matrix(Winner ~ .-1, data = data.subset)
                         output_vector = data.subset[,"Winner"] == "A"
                         cv.res <- xgb.cv(data = sparse_matrix, label = output_vector, max.depth = 5, silent = 1,
-                                       eta = 0.1, nthread = 6, nround = 10,objective = "binary:logistic", nfold = 10)
+                                       eta = 0.1, nthread = 4, nround = 10,objective = "binary:logistic", nfold = 10)
                         print(paste("Frame",max_frame,"/",max(data.full$Duration)))
                         return(cv.res)
                       })
@@ -150,7 +151,7 @@ result_list <- sapply(seq(max(data.full$Duration),max(data.full$Duration),1000),
                         sparse_matrix <- sparse.model.matrix(Winner ~ .-1, data = data.subset)
                         output_vector = data.subset[,"Winner"] == "A"
                         cv.res <- xgb.cv(data = sparse_matrix, label = output_vector, max.depth = 5, silent = 1,
-                                         eta = 0.1, nthread = 6, nround = 10,objective = "binary:logistic", nfold = 10)
+                                         eta = 0.1, nthread = 4, nround = 10,objective = "binary:logistic", nfold = 10)
 
                         return(cv.res)
                       })
@@ -160,53 +161,65 @@ result_list <- sapply(seq(min(data.full$Duration)/2,max(data.full$Duration),1000
                       function(max_frame) {
                         print(paste("Frame",max_frame,"/",max(data.full$Duration)))
                         print("Procesando...")
-                        data.full.transformed <- transformData(data.full, max.frame = max_frame)
-                        data.subset <- data.full.transformed[, !colnames(data.full) %in% c("ReplayID")]
-                        sparse_matrix <- sparse.model.matrix(Winner ~ .-1, data = data.subset)
-                        output_vector = data.subset[,"Winner"] == "A"
+                        data.subset.transformed <- transformData(data.full, max.frame = max_frame)
+                        xgb.data <- xgb.DMatrix(data = as.matrix(data.subset.transformed[,!c("Winner", "ReplayID", "Max.Frame", "Duration"), with=F] ), 
+                                    label = as.numeric(data.subset.transformed[,Winner] == "A"))
                         print("Entrenando...")
-                        cv.res <- xgb.cv(data = sparse_matrix, label = output_vector, max.depth = 5, silent = 1,
-                                         eta = 0.1, nthread = 6, nround = 10,objective = "binary:logistic", nfold = 10)
+                        cv.res <- xgb.cv(data = xgb.data, max.depth = 5, silent = 1,
+                                         eta = 0.1, nthread = 4, nround = 10,objective = "binary:logistic", nfold = 10)
 
                         return(cv.res)
                       })
 
 ## ---- CVTest ----
-sparse_matrix <- sparse.model.matrix(Winner ~ .-ReplayID, data = data.full.transformed)
-output_vector <- data.full.transformed$Winner == "A"
-cv.res <- xgb.cv(data = sparse_matrix, label = output_vector, max.depth = 10, silent = 1,
-                 eta = 0.1, nthread = 8, nround = 100,objective = "binary:logistic", nfold = 10)
+max_frame <- 75000
+positive.labels <- mean(as.numeric(data.subset.transformed[,Winner]=="A"))
+negative.labels <- mean(as.numeric(data.subset.transformed[,Winner]=="B"))
+
+data.subset.transformed <- transformData(data.full.clean, max.frame = max_frame)
+xgb.data.regression <- xgb.DMatrix(data = as.matrix(data.subset.transformed[,!c("Winner", "ReplayID", "Max.Frame", "Duration"), with=F] ), 
+                        label = as.numeric(data.subset.transformed[,Winner] == "A"))
+cv.res.regression <- xgb.cv(data = xgb.data.regression, 
+                            max.depth = 6, 
+                            scale_pos_weight = negative.labels / positive.labels,
+                            max_delta_step = 1,
+                            gamma = 0, 
+                            min_child_weight = 3,
+                            subsample = 0.5,
+                            colsample_bytree = 0.5,
+                            silent = 0,
+                            eta = 0.1, 
+                            nthread = 4, nround = 200,objective = "binary:logistic", nfold = 10)
 
 ## ---- CVAUC ----
-sparse_matrix <- sparse.model.matrix(Winner ~ .-ReplayID, data = data.full.transformed.auc)
-output_vector <- data.full.transformed.auc$Winner == "A"
-cv.res <- xgb.cv(data = sparse_matrix, label = output_vector, max.depth = 10, silent = 1,
-                 eta = 0.1, nthread = 8, nround = 100,objective = "binary:logistic", nfold = 10)
+max_frame <- 75000
+data.subset.transformed.auc <- transformData(data.full, max.frame = max_frame, auc = T)
+xgb.data.auc <- xgb.DMatrix(data = as.matrix(data.subset.transformed.auc[,!c("Winner", "ReplayID", "Max.Frame", "Duration"), with=F] ), 
+                        label = as.numeric(data.subset.transformed.auc[,Winner] == "A"))
+cv.res.auc <- xgb.cv(data = xgb.data.auc, max.depth = 24, silent = 1,
+                 eta = 0.1, nthread = 4, nround = 30,objective = "binary:logistic", nfold = 10)
 
 ## ---- ImportanceReg ----
-xgb.data <- xgb.DMatrix(data = as.matrix(data.full.transformed[,!c("Winner", "ReplayID", "Max.Frame", "Duration"), with=F] ), 
-                        label = as.numeric(data.full.transformed[,Winner] == "A"))
-bst <- xgboost(data = xgb.data, max.depth = 10,
-               eta = 0.1, nthread = 8, nround = 10,objective = "binary:logistic")
+xgb.model.regression <- xgboost(data = xgb.data, max.depth = 10,
+               eta = 0.1, nthread = 4, nround = 30,objective = "binary:logistic")
 
-importance_matrix <- xgb.importance(colnames(data.full.transformed[,!c("Winner", "ReplayID", "Max.Frame", "Duration"), with=F] ), model = bst)
-xgb.plot.importance(importance_matrix)
+importance.matrix.regression <- xgb.importance(colnames(data.full.transformed[,!c("Winner", "ReplayID", "Max.Frame", "Duration"), with=F] ), model = xgb.model.regression)
+xgb.plot.importance(importance.matrix.regression)
 
 ## ---- ImportanceAUC ----
-xgb.data <- xgb.DMatrix(data = as.matrix(data.full.transformed.auc[,!c("Winner", "ReplayID", "Max.Frame", "Duration"), with=F] ), 
-                        label = as.numeric(data.full.transformed.auc[,Winner] == "A"))
-bst <- xgboost(data = xgb.data, max.depth = 10,
-               eta = 0.1, nthread = 8, nround = 10,objective = "binary:logistic")
+xgb.model.auc <- xgboost(data = xgb.data.auc, max.depth = 10,
+               eta = 0.1, nthread = 4, nround = 30,objective = "binary:logistic")
 
-importance_matrix <- xgb.importance(colnames(data.full.transformed.auc[,!c("Winner", "ReplayID", "Max.Frame", "Duration"), with=F] ), model = bst)
-xgb.plot.importance(importance_matrix)
+importance.matrix.auc <- xgb.importance(colnames(data.full.transformed.auc[,!c("Winner", "ReplayID", "Max.Frame", "Duration"), with=F] ), model = xgb.model.auc)
+xgb.plot.importance(importance.matrix.auc)
 
 ## ---- ImportanceFull ----
-data.full.clean <- data.full[,!c("Winner", "ReplayID", "Races"), with=F] 
-xgb.data <- xgb.DMatrix(data = data.matrix(sapply(data.full.clean,as.numeric )), 
+# data.full.clean <- data.full[,!c("Winner", "ReplayID", "Races"), with=F] 
+data.full.clean <- data.full[, !colnames(data.full) %in% c("Winner","ReplayID","Races")]
+xgb.data.full <- xgb.DMatrix(data = data.matrix(sapply(data.full.clean, as.numeric)), 
                         label = as.numeric(data.full.clean[,Winner] == "A"))
 bst <- xgboost(data = xgb.data, max.depth = 10,
-               eta = 0.1, nthread = 6, nround = 10,objective = "binary:logistic")
+               eta = 0.1, nthread = 4, nround = 10,objective = "binary:logistic")
 
 importance_matrix <- xgb.importance(colnames(data.full[,!c("Winner", "ReplayID"), with=F] ), model = bst)
 xgb.plot.importance(importance_matrix)
