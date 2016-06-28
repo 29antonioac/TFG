@@ -180,15 +180,30 @@ la del corolario~\ref{cor:hoeffdingH}, sino que se precisa eliminar la hipótesi
                               \leq & \sum\limits_{m=1}^M \mathbb{P}[|E_{in}(h_M) - E_{out}(h_M)| \geq \epsilon]
   \end{align*}
   Aplicando la desigualdad de Hoeffding del corolario~\ref{cor:hoeffdingH} a cada uno de los
-  $M$ términos, se acota cada uno por $e^{2N \epsilon^2}$. Sumando todo queda
+  $M$ términos, se acota cada uno por $e^{-2N \epsilon^2}$. Sumando todo queda
   \[
   \mathbb{P}\left[ | E_{in}(g) - E_{out}(g) | \geq \epsilon \right] \leq
   2 M e^{-2 n \epsilon^2}
   \]
 \end{proof}
 
-% Meter Hoeffding general, con g
-% Concluir con la factibilidad con H finito, pag 25-26.
+Esta desigualdad tiene una gran importancia: si el conjunto de funciones hipótesis
+$\mathcal{H}$ es finito, se puede afirmar que, probabilísticamente,
+$E_{in}(g) \approx E_{out}(g)$, aunque sólo tiene sentido si el conjundo de
+hipótesis es finito. Además, la cota es peor cuanto más grande es este espacio
+de hipótesis.
+
+Para que el aprendizaje sea factible, se deben cumplir dos cosas:
+\begin{enumerate}
+  \item $E_{out}(g) \approx E_{in}(g)$ \checkmark
+  \item $E_{in}(g) \approx 0$
+\end{enumerate}
+
+Lo primero está probado para conjuntos de hipótesis finito. Lo segundo es un valor
+conocido: una vez un algoritmo de aprendizaje nos da una función $g$, podemos
+calcular su $E_{in}$ para evaluar su exactitud.
+
+\improvement{¿Meter aquí temas de complejidad de $f$ y $\mathcal{H}$?}
 
 \subsection{Generalización: Teoría de Vapnik-Chervonenkis}
 
