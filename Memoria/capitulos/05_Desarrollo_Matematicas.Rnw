@@ -28,6 +28,7 @@ $f$, $g \approx f$.
 
 % Tengo que explicar matemáticamente los tres problemas.
 % No sé si para ser algo matemático es la mejor introducción posible.
+\improvement{Repasar introducción}
 
 En el aprendizaje se distinguen muchos problemas, siendo tres los más conocidos:
 \begin{itemize}
@@ -35,6 +36,7 @@ En el aprendizaje se distinguen muchos problemas, siendo tres los más conocidos
   \item Clasificación.
   \item Estimación de densidad.
 \end{itemize}
+\change{Introducir los 3 problemas matemáticamente}
 
 Un ejemplo de clasificación sería el siguiente:
 sea $\mathcal{X} \subseteq [0,1] \times [0,1]$ e $\mathcal{Y} = \{+1,-1\}$ el espacio
@@ -93,6 +95,8 @@ un modelo adecuado? ¿Es factible aprender?
   \]
 \end{definicion}
 
+\unsure{Justificar que E\_out es la esperanza de E\_in}
+
 % Justificar que E_out es la esperanza de E_in
 
 \begin{teorema}[Desigualdad de Hoeffding]
@@ -108,8 +112,81 @@ un modelo adecuado? ¿Es factible aprender?
   Demostración
 \end{proof}
 
-% Meter Hoeffding
-% Páginas 22-24 de LfD
+\begin{corolario}
+  \label{cor:hoeffdingH}
+  Si $X_1, X_2, \ldots, X_n$ son independientes y $0 \leq X_i \leq 1 \; (i=1,2,\ldots,n)$,
+  entonces para $\epsilon>0$ y una función $h$ se da:
+  \[
+    \mathbb{P}\left[ | E_{in}(h) - E_{out}(h) | \geq \epsilon \right] \leq
+    2 e^{-2 n \epsilon^2}
+  \]
+\end{corolario}
+
+\begin{proof}
+  Demostración. $a_i = 0\; b_i = 1$. Deducir simetría.
+\end{proof}
+
+\info{No olvidar demostraciones!}
+
+Todo lo anterior tiene una gran limitación: se está fijando una función $h$ de
+antemano. Al fijarla previamente, esta probabilidad depende del conjunto
+de datos aleatorio $\mathcal{D}$.
+
+Consideremos un espacio $\mathcal{H}$ con un número finito de hipótesis.
+
+\[
+  \mathcal{H} = \{h_1, h_2, \ldots, h_M\}
+\]
+
+Cuando se aplica un algoritmo de aprendizaje sobre este conjunto $\mathcal{H}$,
+la hipótesis final $g \in \mathcal{H}$ está basada en el conjunto de datos
+$\mathcal{D}$, por lo que a la conclusión que se pretende llegar no es exactamente
+la del corolario~\ref{cor:hoeffdingH}, sino que se precisa eliminar la hipótesis
+\emph{para una función fija}.
+
+\begin{corolario}
+  \label{cor:hoeffdingG}
+  Si $X_1, X_2, \ldots, X_n$ son independientes y $0 \leq X_i \leq 1 \; (i=1,2,\ldots,n)$,
+  entonces para $\epsilon>0$ y una función $g \in \mathcal{H}$ con
+  $|\mathcal{H}| = M$ se da:
+  \[
+    \mathbb{P}\left[ | E_{in}(g) - E_{out}(g) | \geq \epsilon \right] \leq
+    2 M e^{-2 n \epsilon^2}
+  \]
+\end{corolario}
+
+\begin{proof}
+  Por como está definida $g$, se tiene que
+  \begin{align*}
+    |E_{in}(g) - E_{out}(g)| \geq \epsilon \Rightarrow & \; |E_{in}(h_1) - E_{out}(h_1)| \geq \epsilon \\
+                              & \vee |E_{in}(h_2) - E_{out}(h_2)| \geq \epsilon \\
+                              & \cdots \\
+                              & \vee |E_{in}(h_M) - E_{out}(h_M)| \geq \epsilon
+  \end{align*}
+  Ahora usaremos dos reglas básicas en probabilidad:
+  \begin{itemize}
+    \item Si $\mathcal{E}_1 \Rightarrow \mathcal{E}_2$ son eventos, entonces
+    $\mathbb{P}[\mathcal{E}_1] \leq \mathbb{P}[\mathcal{E}_2]$
+    \item Si tenemos $\mathcal{E}_1, \mathcal{E}_2, \ldots, \mathcal{E}_M$ eventos,
+    entonces $\mathbb{P}[\mathcal{E}_1 \vee \mathcal{E}_2 \vee \ldots \vee \mathcal{E}_M]
+    \leq \mathbb{P}[\mathcal{E}_1] + \mathbb{P}[\mathcal{E}_2] + \ldots + \mathbb{P}[\mathcal{E}_M]$
+  \end{itemize}
+  Utilizando estas dos reglas es claro que
+  \begin{align*}
+    \mathbb{P}[|E_{in}(g) - E_{out}(g)| \geq \epsilon] \Rightarrow & \; \mathbb{P}[|E_{in}(h_1) - E_{out}(h_1)| \geq \epsilon \\
+                              & \vee |E_{in}(h_2) - E_{out}(h_2)| \geq \epsilon \\
+                              & \cdots \\
+                              & \vee |E_{in}(h_M) - E_{out}(h_M)| \geq \epsilon ] \\
+                              \leq & \sum\limits_{m=1}^M \mathbb{P}[|E_{in}(h_M) - E_{out}(h_M)| \geq \epsilon]
+  \end{align*}
+  Aplicando la desigualdad de Hoeffding del corolario~\ref{cor:hoeffdingH} a cada uno de los
+  $M$ términos, se acota cada uno por $e^{2N \epsilon^2}$. Sumando todo queda
+  \[
+  \mathbb{P}\left[ | E_{in}(g) - E_{out}(g) | \geq \epsilon \right] \leq
+  2 M e^{-2 n \epsilon^2}
+  \]
+\end{proof}
+
 % Meter Hoeffding general, con g
 % Concluir con la factibilidad con H finito, pag 25-26.
 
