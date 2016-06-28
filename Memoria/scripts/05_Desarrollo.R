@@ -56,7 +56,7 @@ transformData <- function(data, max.frame = NA, auc = FALSE) {
   else
     data.subset <- data[data$Frame <= max.frame,]
 
-  cl <- makeCluster(getOption("cl.cores", 7))
+  cl <- makeCluster(getOption("cl.cores", 4))
   replays.list <- parLapply(cl,replays, transformReplay, dataset = data.subset, auc = auc)
   stopCluster(cl)
   
@@ -72,26 +72,32 @@ transformData <- function(data, max.frame = NA, auc = FALSE) {
 
 ## ---- readData ----
 print(getwd())
-data.pvp <- read.csv("../datos/data_pvp.csv")
-data.pvt <- read.csv("../datos/data_pvt.csv")
-data.pvz <- read.csv("../datos/data_pvz.csv")
-data.tvt <- read.csv("../datos/data_tvt.csv")
-data.tvz <- read.csv("../datos/data_tvz.csv")
-data.zvz <- read.csv("../datos/data_zvz.csv")
+data.pvp <- read.csv("../datos/data_pvp.csv", colClasses=c("integer",rep("numeric",28),"factor"))
+data.pvt <- read.csv("../datos/data_pvt.csv", colClasses=c("integer",rep("numeric",28),"factor"))
+data.pvz <- read.csv("../datos/data_pvz.csv", colClasses=c("integer",rep("numeric",28),"factor"))
+data.tvt <- read.csv("../datos/data_tvt.csv", colClasses=c("integer",rep("numeric",28),"factor"))
+data.tvz <- read.csv("../datos/data_tvz.csv", colClasses=c("integer",rep("numeric",28),"factor"))
+data.zvz <- read.csv("../datos/data_zvz.csv", colClasses=c("integer",rep("numeric",28),"factor"))
 data.full <- rbind(cbind(data.pvp, Races = "PvP"), cbind(data.pvt, Races = "PvT"),
                    cbind(data.pvz, Races = "PvZ"), cbind(data.tvt, Races = "TvT"),
                    cbind(data.tvz, Races = "TvZ"), cbind(data.zvz, Races = "ZvZ"))
 
 data.full$ReplayID  <- as.factor(paste(data.full$Races,data.full$ReplayID,sep = "_"))
-# setDT(data.full)
+data.full.bound <- data.full[data.full$Duration <= 75000,]
+output.label <- as.numeric(data.full.bound[,"Winner"] == "A")
+
+rm(data.pvp)
+rm(data.pvt)
+rm(data.pvz)
+rm(data.tvt)
+rm(data.tvz)
+rm(data.zvz)
 
 metadata <- data.full[, colnames(data.full) %in% c("ReplayID", "Duration", "Races")]
-# metadata <- data.full[,c("ReplayID","Duration", "Races"), with=F] 
 metadata <- unique(metadata)
-# metadata <- transform(metadata, ReplayID=reorder(ReplayID, -Duration) ) 
 
-system.time(data.full.transformed <- transformData(data.full))
-system.time(data.full.transformed.auc <- transformData(data.full, auc = T))
+# system.time(data.full.transformed <- transformData(data.full))
+# system.time(data.full.transformed.auc <- transformData(data.full, auc = T))
 
 ## ---- testgg ----
 set.seed(1234566)
@@ -180,16 +186,18 @@ data.subset.transformed <- transformData(data.full.clean, max.frame = max_frame)
 xgb.data.regression <- xgb.DMatrix(data = as.matrix(data.subset.transformed[,!c("Winner", "ReplayID", "Max.Frame", "Duration"), with=F] ), 
                         label = as.numeric(data.subset.transformed[,Winner] == "A"))
 cv.res.regression <- xgb.cv(data = xgb.data.regression, 
-                            max.depth = 6, 
+                            max.depth = 4, 
                             scale_pos_weight = negative.labels / positive.labels,
-                            max_delta_step = 1,
-                            gamma = 0, 
-                            min_child_weight = 3,
+                            # max_delta_step = 1,
+                            gamma = 1,
+                            # min_child_weight = 3,
                             subsample = 0.5,
                             colsample_bytree = 0.5,
                             silent = 0,
-                            eta = 0.1, 
-                            nthread = 4, nround = 200,objective = "binary:logistic", nfold = 10)
+                            # alpha = 0.01,
+                            lambda = 1.5,
+                            # eta = 0.001, 
+                            nthread = 4, nround = 1000, objective = "binary:logistic", nfold = 10)
 
 ## ---- CVAUC ----
 max_frame <- 75000
@@ -215,11 +223,29 @@ xgb.plot.importance(importance.matrix.auc)
 
 ## ---- ImportanceFull ----
 # data.full.clean <- data.full[,!c("Winner", "ReplayID", "Races"), with=F] 
-data.full.clean <- data.full[, !colnames(data.full) %in% c("Winner","ReplayID","Races")]
-xgb.data.full <- xgb.DMatrix(data = data.matrix(sapply(data.full.clean, as.numeric)), 
-                        label = as.numeric(data.full.clean[,Winner] == "A"))
-bst <- xgboost(data = xgb.data, max.depth = 10,
-               eta = 0.1, nthread = 4, nround = 10,objective = "binary:logistic")
+data.full.clean <- data.full.bound[, !colnames(data.full.bound) %in% c("Duration","Winner","ReplayID","Races")]
+xgb.data.full <- xgb.DMatrix(data = data.matrix(data.full.clean), 
+                        label = output.label)
+rm(data.full)
+rm(data.full.bound)
+cv.res.full <- xgb.cv(data = xgb.data.full, 
+                      max.depth = 6, 
+                      # scale_pos_weight = negative.labels / positive.labels,
+                      # max_delta_step = 1,
+                      # gamma = 1,
+                      # min_child_weight = 3,
+                      # subsample = 0.5,
+                      # colsample_bytree = 0.5,
+                      silent = 0,
+                      # alpha = 0.01,
+                      # lambda = 1.5,
+                      # eta = 0.001, 
+                      nthread = 4, nround = 5, objective = "binary:logistic", nfold = 5)
 
-importance_matrix <- xgb.importance(colnames(data.full[,!c("Winner", "ReplayID"), with=F] ), model = bst)
+model.full <- xgboost(data = xgb.data.full,
+                     max.depth = 24,
+                     silent = 0,
+                     nthread = 4, nround = 5, objective = "binary:logistic")
+
+importance_matrix <- xgb.importance(colnames(data.full[, !colnames(data.full) %in% c("Duration","Winner","ReplayID","Races")] ), model = model.full)
 xgb.plot.importance(importance_matrix)
