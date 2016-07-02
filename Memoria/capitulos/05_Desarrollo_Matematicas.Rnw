@@ -114,6 +114,130 @@ un modelo adecuado? ¿Es factible aprender?
 % Concluir con la factibilidad con H finito, pag 25-26.
 
 \subsection{Generalización: Teoría de Vapnik-Chervonenkis}
+El error fuera de la muestra $E_{out}$ mide la exactitud del modelo generado en
+puntos que desconocemos, al contrario que el error dentro de la muestra $E_{in}$,
+que se basa en el espacio de entrada $\mathcal{X}$. Expresa así el concepto de
+\emph{error de entrenamiento}, por lo que se usarán indistintamente.
+
+En esta sección se generalizará el análisis expuesto en el anterior capítulo.
+Se ha discutido que no siempre el valor de $E_{in}$ se generaliza a un valor similar
+de $E_{out}$.
+
+\begin{definicion}[Error de generalización]
+  Es la diferencia entre $E_{in}$ y $E_{out}$ en valor absoluto.
+\end{definicion}
+
+La desigualdad de Hoeffding proporciona una caracterización del error de
+generalización con una cota probabilística.
+
+\[
+  \mathbb{P}\left[ |E_{in}(g) - E_{out}(g)| > \epsilon \right] \leq
+  2 M e^{-2 n \epsilon^2}
+\]
+
+Se puede reescribir de esta manera, siendo cierta con una probabilidad de $1-\delta$
+
+\begin{equation}
+  \label{eq:generalization}
+  E_{out}(g) \leq E_{in}(g) + \sqrt{\frac{1}{2N} \ln \frac{2M}{\delta}} ,\; \delta \ \text{nivel de tolerancia.}
+\end{equation}
+
+\begin{proof}
+  La desigualdad de Hoeffding dice que con probabilidad al menos $1-2Me^{-2N\epsilon^2}$,
+  $|E_{out} - E_{in}| \leq \epsilon \Rightarrow E_{out} \leq E_{in} + \epsilon$.
+  Se toma $\delta = 2Me^{-2N\epsilon^2}$, por lo que $\epsilon = \sqrt{\frac{1}{2N} \ln \frac{2M}{\delta}}$
+\end{proof}
+
+La otra vuelta de la desigualdad $|E_{out} - E_{in}| \leq \epsilon$ ofrece otro
+dato importante, $E_{out}(h) \geq E_{in}(h) - \epsilon \ \forall h \in \mathcal{H}$.
+Quiere decir que no se puede realizar un ajuste mucho mejor con otra función del
+espacio de hipótesis con mayor $E_{in}$ que la que se ha escogido.
+
+Ahora se necesita trabajar con la ecuación~\ref{eq:generalization} de manera que
+el espacio de funciones de hipótesis pueda ser infinito. Si se trabaja tal cual
+está, la cota diverge y no ofrecería información alguna.
+
+Tal y como se calculó $M$ en el anterior capítulo, al utilizar las reglas de
+probabilidad de supuso que los eventos, como poco, serían disjuntos. Pero esto
+no pasa usualmente: los eventos suelen estar solapados, por lo que se debe caracterizar
+$M$ de manera distinta para que cuando se trabaje con un espacio infinito, se pueda
+obtener una cota finita usando~\ref{eq:generalization}. Supondremos funciones
+binarias, por lo que cada $h \in \mathcal{H}$ lleva elementos de $\mathcal{X}$
+a $\{-1,+1\}$.
+
+\begin{definicion}
+  Sea $x_1,\ldots,x_N \in \mathcal{X}$. Las dicotomías generadas por $\mathcal{H}$
+  en esos puntos están definidas por
+
+  \begin{equation}
+    \mathcal{H}(x_1,\ldots,x_N) = \{ h(x_1),\ldots,h(x_N) \mid h \in \mathcal{H}  \}
+  \end{equation}
+\end{definicion}
+
+\begin{definicion}
+  La función de crecimiento está definida para un conjunto de hipótesis $\mathcal{H}$
+  como
+  \begin{equation*}
+    m_{\mathcal{H}}(N) = \max_{x_1,\ldots,x_N \in \mathcal{X}} |\mathcal{H}(x_1,\ldots,x_N)|,\
+    \text{donde |·| es la cardinalidad del conjunto}
+  \end{equation*}
+\end{definicion}
+
+$m_{\mathcal{H}}(N)$ es el número máximo de dicotomías que puede generar $\mathcal{H}$
+para cualesquiera N puntos. El valor máximo que puede tomar es $|\{-1,+1\}^N|$,
+por lo que
+
+\begin{equation*}
+  m_{\mathcal{H}}(N) \leq 2^N
+\end{equation*}
+
+Si se da la igualdad, quiere decir que $\mathcal{H}$ puede generar todas las
+posibles dicotomías en $x_1,\ldots,x_N$, y se dirá que $\mathcal{H}$ puede
+\emph{separar} $x_1,\ldots,x_N$.
+
+%Meter algún ejemplo (sólo si da tiempo)
+
+Para cada conjunto de hipótesis que se use, no es fácil calcular de manera exacta
+$m_{\mathcal{H}}$, aunque realmente no hay que hacerlo. Como $m_{\mathcal{H}}$
+está pensado para sustituir a $M$ en~\ref{eq:generalization}, sólo hay que buscar
+una cota superior, así la desigualdad seguirá siendo cierta.
+
+\begin{definicion}
+  Si para un determinado dataset de tamaño $k$ $\mathcal{H}$ no puede
+  \emph{separarlo}, entonces $k$ es un punto de ruputura para $\mathcal{H}$.
+\end{definicion}
+
+Si $k$ es un punto de ruptura, entonces $m_{\mathcal{H}} < 2^k$. Es claro que
+para un separador lineal como el de~\ref{fig:classificationExample}, $k=4$.
+
+\begin{ejemplo}
+  Tomamos un separador lineal, y $k=3$.
+  <<breakExample, echo = FALSE, fig.pos = '!hbt', fig.width = 3, fig.height = 3, fig.cap = 'Ejemplo de punto de ruptura para un separador lineal'>>=
+  @
+
+  Como se puede apreciar en la figura~\ref{fig:breakExample}, cualquiera tres
+  puntos no alineados pueden ser \emph{separados} por un separador lineal.
+
+
+  <<anotherbreakExample, echo = FALSE, fig.pos = '!hbt', fig.width = 3, fig.height = 3, fig.cap = 'Ejemplo 2 de punto de ruptura para un separador lineal'>>=
+  @
+
+  En cambio, con $k=4$, es fácil ver que no se pueden obtener las $2^4=16$
+  dicotomías necesarias para que $k=4$ no sea punto de ruptura. Se puede ver
+  en la figura~\ref{fig:anotherbreakExample} que no se pueden clasificar
+  correctamente todas las dicotomías de este conjunto.
+\end{ejemplo}
+
+Entonces, utilizando este concepto, se va a acotar la función de crecimiento
+para cualquier valor de $N$, ya que el hecho de tener punto de ruptura $k$ ofrece
+restrucciones sobre el número de dicotomías que puede \emph{separar} $\mathcal{H}$
+para un $k' > k$.
+
+Lo más importante acerca de las funciones de crecimiento es que si la condición
+$m_{mathcal{H}}=2^N$ se cumple para cada punto, poemos acotar por un polinomio
+basado en el pnto de ruptura. 
+
+
 
 \subsection{Sobreajuste}
 

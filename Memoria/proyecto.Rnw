@@ -6,7 +6,7 @@
 \usepackage{float}
 
 % \usepackage[style=list, number=none]{glossary} %
-%\usepackage{titlesec}
+\usepackage{titlesec}
 %\usepackage{pailatino}
 
 \decimalpoint
@@ -26,6 +26,7 @@
 \usepackage{amsfonts}
 \usepackage{longtable}
 \usepackage{amsthm}
+\usepackage{amsmath}
 
 \usepackage[pdfborder={000}]{hyperref} %referencia
 
@@ -95,6 +96,9 @@ pdfproducer = {pdflatex}
 \theoremstyle{definition}
 \newtheorem{ejemplo}{Ejemplo}[chapter]
 \newtheorem{definicion}{Definición}[chapter]
+
+\newcommand{\Ein}{$E_{in}$}
+\newcommand{\Eout}{$E_{out}$}
 
 \definecolor{gray97}{gray}{.97}
 \definecolor{gray75}{gray}{.75}
@@ -175,10 +179,11 @@ pdfproducer = {pdflatex}
 }
 \makeatother
 
+\newcommand{\sectionbreak}{\clearpage}
+
 \usepackage{pdfpages}
 \usepackage[T1]{fontenc}
 \begin{document}
-%\SweaveOpts{concordance=TRUE}
 %\input{portada/portada}
 %\input{prefacios/prefacio}
 %\frontmatter
@@ -196,6 +201,7 @@ require(xgboost)
 require(Matrix)
 
 # opts_chunk$set(cache=TRUE, autodep=TRUE)
+opts_chunk$set(fig.width=4, fig.height=3,fig.pos = '!hbt')
 read_chunk("scripts/prueba.R")
 @
 

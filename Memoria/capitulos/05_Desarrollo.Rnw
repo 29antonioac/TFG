@@ -52,8 +52,9 @@ se aborda en el trabajo.
 En primer lugar en cualquier problema de Ciencia de Datos, el primer
 paso es \emph{comprender el problema y los datos que se disponen}.
 
+%meter cita
 El problema a abordar es el siguiente: a partir de un conjunto de
-partidas antiguas de StarCraft~\cite{dataset2014}, se busca predecir
+partidas antiguas de StarCraft, se busca predecir
 el momento en el que la partida está decidida con una confianza
 determinada. Para ello, partimos de 6 bases de datos relacionales
 (SQL) con gran cantidad de partidas almacenadas, cada una con muchas
