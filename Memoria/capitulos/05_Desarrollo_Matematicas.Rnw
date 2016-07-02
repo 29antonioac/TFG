@@ -114,6 +114,13 @@ un modelo adecuado? ¿Es factible aprender?
 % Concluir con la factibilidad con H finito, pag 25-26.
 
 \subsection{Generalización: Teoría de Vapnik-Chervonenkis}
+\label{subsec:generalizacion}
+En esta sección se desarrollará una teoría matemática que caracteriza la distinción
+entre entrenamiento y validación, además de discutir las implicaciones conceptuales
+y prácticas de ambos.
+
+\subsubsection{Teoría de Generalización}
+\label{subsubsec:generalizacion}
 El error fuera de la muestra $E_{out}$ mide la exactitud del modelo generado en
 puntos que desconocemos, al contrario que el error dentro de la muestra $E_{in}$,
 que se basa en el espacio de entrada $\mathcal{X}$. Expresa así el concepto de
@@ -161,7 +168,8 @@ Tal y como se calculó $M$ en el anterior capítulo, al utilizar las reglas de
 probabilidad de supuso que los eventos, como poco, serían disjuntos. Pero esto
 no pasa usualmente: los eventos suelen estar solapados, por lo que se debe caracterizar
 $M$ de manera distinta para que cuando se trabaje con un espacio infinito, se pueda
-obtener una cota finita usando~\ref{eq:generalization}. Supondremos funciones
+obtener una cota finita usando~\ref{eq:generalization}. A esta caracterización de $M$
+se la llamará \emph{número efectivo de hipótesis}. Supondremos funciones
 binarias, por lo que cada $h \in \mathcal{H}$ lleva elementos de $\mathcal{X}$
 a $\{-1,+1\}$.
 
@@ -212,14 +220,14 @@ para un separador lineal como el de~\ref{fig:classificationExample}, $k=4$.
 
 \begin{ejemplo}
   Tomamos un separador lineal, y $k=3$.
-  <<breakExample, echo = FALSE, fig.pos = '!hbt', fig.width = 3, fig.height = 3, fig.cap = 'Ejemplo de punto de ruptura para un separador lineal'>>=
+  <<breakExample, echo = FALSE, fig.pos = '!hbt', fig.width = 3, fig.height = 3, fig.cap = 'Ejemplo de dicotomías separables para un separador lineal'>>=
   @
 
-  Como se puede apreciar en la figura~\ref{fig:breakExample}, cualquiera tres
-  puntos no alineados pueden ser \emph{separados} por un separador lineal.
+  Como se puede apreciar en la figura~\ref{fig:breakExample}, cualquier dicotomía
+  sobre tres puntos no alineados pueden ser \emph{separados} por un separador lineal.
 
 
-  <<anotherbreakExample, echo = FALSE, fig.pos = '!hbt', fig.width = 3, fig.height = 3, fig.cap = 'Ejemplo 2 de punto de ruptura para un separador lineal'>>=
+  <<anotherbreakExample, echo = FALSE, fig.pos = '!hbt', fig.width = 3, fig.height = 3, fig.cap = 'Ejemplo de una dicotomía no separable para un separador lineal'>>=
   @
 
   En cambio, con $k=4$, es fácil ver que no se pueden obtener las $2^4=16$
@@ -233,11 +241,92 @@ para cualquier valor de $N$, ya que el hecho de tener punto de ruptura $k$ ofrec
 restrucciones sobre el número de dicotomías que puede \emph{separar} $\mathcal{H}$
 para un $k' > k$.
 
-Lo más importante acerca de las funciones de crecimiento es que si la condición
-$m_{mathcal{H}}=2^N$ se cumple para cada punto, poemos acotar por un polinomio
-basado en el pnto de ruptura. 
+Lo más importante acerca de las funciones de crecimiento es que si tienen puntos
+de ruptura, śe puede acotar por un polinomio basado en el punto de ruptura.
+
+% Explicar por qué es importante un polinomio.
+
+\begin{teorema}
+  \label{th:boundMH}
+  Si $m_{\mathcal{H}}(k) < 2^k$ para algún $k$, entonces
+  \begin{equation}
+    m_{\mathcal{H}}(N) \leq \sum_{i=0}^{k-1} \dbinom{N}{i} \ \forall N \in \mathbb{N}
+  \end{equation}
+  El miembro de la derecha es un polinomio en $N$ de grado $k-1$.
+\end{teorema}
+
+\begin{proof}
+  Meter sólo si hay tiempo (es algo técnica)
+\end{proof}
+
+La gran implicación de este teorema es que si $\mathcal{H}$ tiene algún punto
+de ruptura, se puede asegurar una buena generalización.
+
+\subsubsection{La dimensión de Vapkik-Chervonenkis}
+\label{subsubsec:VCdim}
+
+Se ha conseguido una cota de la función de crecimiento en términos de cualquier
+punto de ruptura. A más pequeño punto de ruptura, mejor es la cota. Ahora se
+define un concepto que caracteriza a esta función.
+
+\begin{definicion}
+  La dimensión de Vapnik-Chervonenkis de un conjunto de hipótesis $\mathcal{H}$,
+  denotada por $d_{VC}(\mathcal{H})$, o simplemente $d_{VC}$, es el mayor valor
+  de $N$ para el que $m_{\mathcal{H}}(N) = 2^N$. Si ocurre para todo $N$,
+  entonces $d_{VC}(\mathcal{H})=\infty$
+\end{definicion}
+
+\begin{corolario}
+  Se puede acotar la función de crecimiento de $\mathcal{H}$ como sigue:
+  \begin{equation}
+    m_{\mathcal{H}}(N) \leq \sum_{i=0}^{d_{VC}} \dbinom{N}{i} \ \forall N \in \mathbb{N}
+  \end{equation}
+\end{corolario}
+
+\begin{proof}
+  Es claro que si $d_{VC}$ es la dimensión de VC de $\mathcal{H}$, entonces
+  $k=d_{VC}+1$ es un punto de ruptura para $m_{\mathcal{H}}$, por definición.
+\end{proof}
+
+Utilizando este punto de ruptura, se puede reescribir el teorema~\ref{th:boundMH}
+como sigue:
+Así, la dimensión VC es el orden del polinomio que acota la función de crecimiento.
+También es lo mejor que se puede hacer con este razonamiento, ya que no hay puntos
+de ruptura menores a $d_{VC}+1$. Se reescribe la cota para que sea de más fácil
+manejo.
+
+\begin{corolario}
+  La función de crecimiento $m_{\mathcal{H}}(N)$ se puede acotar de manera más
+  simple como
+
+  \begin{equation}
+    m_{\mathcal{H}}(N) \leq N^{d_{VC}} + 1
+  \end{equation}
+\end{corolario}
+
+\begin{proof}
+  revisar la inducción
+\end{proof}
+
+El último paso para llegar a la cota de generalización apropiada es sustituir
+el número efectivo de hipótesis por el número de hipótesis. Aunque para eso
+se debe ajustar un poco la cota.
+
+\begin{teorema}[Cota de generalización de Vapnik-Chervonenkis]
+  \label{th:VCBound}
+  Para una función binaria \textbf{f}, un conjunto de hipótesis $\mathcal{H}$,
+  cualquier algoritmo de aprendizaje $\mathcal{A}$ y cualquier distribución
+  de probabilidad P, se da:
+
+  \begin{equation}
+    \label{eq:VCBound}
+    E_{out}(g) \leq E_{in}(g) + \sqrt{\frac{8}{N} \ln \frac{4m_{\mathcal{H}}(2N)}{\delta}} ,\; \delta \ \text{nivel de tolerancia.}
+  \end{equation}
+  con probabilidad $1-\delta$.
+\end{teorema}
 
 
+\subsubsection{Equilibrio Aproximación y Generalización}
 
 \subsection{Sobreajuste}
 
