@@ -423,12 +423,32 @@ cota más fina que con~\ref{eq:VCBound}.
 Un aspecto importante del conjunto de test es que no está sesgado. El conjunto
 de entrenamiento tiene un sesgo ya que para elegir una hipótesis, un algoritmo
 de aprendizaje buscará una hipótesis que se comporte bien dentro.
-La cota~\ref{eq:VCBound} tiene este sesgo en cuenta implícitamente lo que
+La cota~\ref{eq:VCBound} tiene este sesgo en cuenta implícitamente, lo que
 lleva a un gran error. Además, tener un conjunto de test implica reducir el
 número de muestras de entrenamiento, por lo que el $E_{in}$ será mayor.
 
-\subsubsection{Equilibrio Aproximación y Generalización}
+\subsubsection{Equilibrio entre Aproximación y Generalización}
 \label{subsubsec:equilibrio}
+
+Con el análisis VC se ha mostrado que debe existir un equilibrio entre una buena
+aproximación de $f$ en la muestra usando un modelo demasiado complejo, o una buena
+generalización usando un modelo más simple. Se puede analizar este equilibrio
+de otra manera, la cual es muy apropiada para medidas de error cuadráticas,
+al contrario que el error binario usado en el análisis VC. En vez de acotar
+$E_{out}$ por $E_{in}$ y un término de penalización $\Omega$, se descompone
+$E_{out}$ en dos términos distintos: \emph{sesgo} y \emph{varianza}.
+
+Para un conjunto de datos $\mathcal{D}$, el $E_{out}$ utilizando el error
+cuadrático medio es, siendo $\mathbb{E}_{x}$ la esperanza con respecto a x
+(basada en la distribución de probabilidad del espacio de entrada $\mathcal{X}$),
+
+\begin{equation}
+  \label{eq:EoutMSE}
+  E_{out}(g^{(D)}(x)) = \mathbb{E}_{x}[(g^{(D)}(x) - f(x))^2]
+\end{equation}
+
+Es importante para el análisis que se haga énfasis en que la función escogida
+$g$ depende del conjunto de datos $\mathcal{D}$.
 
 \subsection{Sobreajuste}
 \label{subsec:sobreajuste}
