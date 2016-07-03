@@ -405,6 +405,28 @@ conjunto de hipótesis $\mathcal{H}$, mayor cuando más confianza queramos
 La conclusión es que se debe establecer un equilibrio, ya que un modelo complejo
 reducirá el $E_{in}$ pero hará más grande $\Omega(N,\mathcal{H},\delta)$.
 
+\subsubsection{El conjunto de test}
+\label{subsubsec:testSet}
+Cuando se pretende estimar con más precisión el $E_{out}$ se suele utilizar
+un \emph{conjunto de test}. Es un subconjunto de $\mathcal{X}$ que no se utiliza
+para entrenamiento. La hipótesis final $g$ se evalúa con dicho conjunto y
+producirá un error $E_{test}$, que servirá como estimación de $E_{out}$.
+Se puede estudiar lo bien que generaliza $E_{test}$ sobre $E_{out}$ con lo estudiado
+previamente.
+
+El número efectivo de hipótesis que importan en el comportamiento de
+generalización de $E_{test}$ es 1, ya que sólo hay una hipótesis elegida además
+de no cambiar ésta según el conjunto de test. Esto implica que se puede
+utilizar la desigualdad de Hoeffding con una sola hipótesis. Así se tiene una
+cota más fina que con~\ref{eq:VCBound}.
+
+Un aspecto importante del conjunto de test es que no está sesgado. El conjunto
+de entrenamiento tiene un sesgo ya que para elegir una hipótesis, un algoritmo
+de aprendizaje buscará una hipótesis que se comporte bien dentro.
+La cota~\ref{eq:VCBound} tiene este sesgo en cuenta implícitamente lo que
+lleva a un gran error. Además, tener un conjunto de test implica reducir el
+número de muestras de entrenamiento, por lo que el $E_{in}$ será mayor.
+
 \subsubsection{Equilibrio Aproximación y Generalización}
 \label{subsubsec:equilibrio}
 
