@@ -262,7 +262,7 @@ de ruptura, śe puede acotar por un polinomio basado en el punto de ruptura.
 La gran implicación de este teorema es que si $\mathcal{H}$ tiene algún punto
 de ruptura, se puede asegurar una buena generalización.
 
-\subsubsection{La dimensión de Vapkik-Chervonenkis}
+\subsubsection{La dimensión de Vapnik-Chervonenkis}
 \label{subsubsec:VCdim}
 
 Se ha conseguido una cota de la función de crecimiento en términos de cualquier
@@ -273,8 +273,11 @@ define un concepto que caracteriza a esta función.
   La dimensión de Vapnik-Chervonenkis de un conjunto de hipótesis $\mathcal{H}$,
   denotada por $d_{VC}(\mathcal{H})$, o simplemente $d_{VC}$, es el mayor valor
   de $N$ para el que $m_{\mathcal{H}}(N) = 2^N$. Si ocurre para todo $N$,
-  entonces $d_{VC}(\mathcal{H})=\infty$
+  entonces $d_{VC}(\mathcal{H})=\infty$.
 \end{definicion}
+
+Utilizando este punto de ruptura, se puede reescribir el teorema~\ref{th:boundMH}
+como sigue:
 
 \begin{corolario}
   Se puede acotar la función de crecimiento de $\mathcal{H}$ como sigue:
@@ -283,13 +286,12 @@ define un concepto que caracteriza a esta función.
   \end{equation}
 \end{corolario}
 
+
 \begin{proof}
   Es claro que si $d_{VC}$ es la dimensión de VC de $\mathcal{H}$, entonces
   $k=d_{VC}+1$ es un punto de ruptura para $m_{\mathcal{H}}$, por definición.
 \end{proof}
 
-Utilizando este punto de ruptura, se puede reescribir el teorema~\ref{th:boundMH}
-como sigue:
 Así, la dimensión VC es el orden del polinomio que acota la función de crecimiento.
 También es lo mejor que se puede hacer con este razonamiento, ya que no hay puntos
 de ruptura menores a $d_{VC}+1$. Se reescribe la cota para que sea de más fácil
@@ -300,6 +302,7 @@ manejo.
   simple como
 
   \begin{equation}
+    \label{eq:polBound}
     m_{\mathcal{H}}(N) \leq N^{d_{VC}} + 1
   \end{equation}
 \end{corolario}
@@ -325,9 +328,88 @@ se debe ajustar un poco la cota.
   con probabilidad $1-\delta$.
 \end{teorema}
 
+La demostración de este teorema es sumamente técnica, y se presenta en
+\cite[apéndice A]{Abu-Mostafa:2012:LD:2207825}
+
+Este teorema es el más importante en la teoría del aprendizaje.
+Con datos suficientes, para cada hipótesis en un espacio infinito con
+$d_{VC}$ finita, generalizará bien desde $E_{in}$ hasta $E_{out}$, donde el
+error convergerá a 0.
+
+Así, se establece la factibilidad del aprendizaje con infinitos conjuntos de
+hipótesis. Esto lleva a preguntarse si un resultado tan general actúa bien
+sobre casos muy particulares.
+
+La cota de VC tiene algunos problemas, principalmente tres:
+
+\begin{enumerate}
+  \item La desigualdad de Hoeffding básica que se ha usado no es muy fuerte.
+  Nos ofrece la misma cota tanto si $E_{out}$ es cercano a 0 o a 0.5, siendo
+  la varianza de $E_{in}$ muy diferente en ambos casos. Utilizar una misma cota
+  con ambos casos puede ser un déficit.
+  \item Utilizar la función de crecimiento con $N$ puntos sin importarnos cuáles
+  son nos da una estimación del peor caso, lo que hace que la cota no dependa
+  de la distribución de los datos, siendo una cota menos fuerte.
+  \item Acotar la función de crecimiento con un polinomio de orden $d_{VC}$ como
+  se ha hecho en~\ref{eq:polBound} es también una debilidad de la cota.
+\end{enumerate}
+
+Por estas razones se suele usar esta cota como una guía para la generalización,
+nada inamovible. Este análisis establece la factibilidad del aprendizaje para
+conjuntos de hipótesis infinitos, que es lo que se suele dar en la práctica.
+Además, también se usa para comparar el rendimiento de varios modelos, aunque
+esto está fuera del ámbito matemático y es algo más empírico.
+
+\subsubsection{Complejidad de la muestra}
+\label{subsubsec:complejidadMuestra}
+La complejidad de la muestra denota cuántos ejemplos de entrenamiento $N$ son
+necesarios para conseguir un determinado rendimiento en generalización. El
+rendimiento está especificado con dos parámetros, $\epsilon$ y $\delta$.
+$\epsilon$ determina el error de generalización permitido y $\delta$ determina
+la tolerancia, la confianza de este error.
+
+Podemos usar~\ref{eq:VCBound} para estimar la complejidad de la muestra para un
+modelo de aprendizaje. Fijamos $\delta > 0$, y se quiere conseguir un error de
+como mucho $\epsilon$.
+
+\begin{displaymath}
+  \sqrt{\frac{8}{N} \ln{\frac{4 m_{\mathcal{H}}(2N)}{\delta}}} \leq \epsilon
+  \Leftrightarrow N \geq \frac{8}{\epsilon^2} \ln{\frac{4 m_{\mathcal{H}}(2N)}{\delta}}
+  \overset{\ref{eq:polBound}}{\Rightarrow} N \geq \frac{8}{\epsilon^2} \ln{\frac{4 ((2N)^{d_{VC}}+1)}{\delta}}
+\end{displaymath}
+
+Con esta desigualdad se puede calcular $N$ con cualquier método numérico iterativo.
+Lo más sencillo es tomar una primera aproximación $N$ en el miembro de la derecha,
+realizar los cálculos y tomar dicho resultado como $N$ nuevamente. Después de
+un par de pasos converge.
+
+\subsubsection{Complejidad del modelo}
+A veces, se tiene un conjunto de datos $\mathcal{D}$ fijo, por lo que $N$
+también lo está. Entonces la pregunta relevante es cuánto rendimiento se puede
+esperar con dicho $N$. Utilizando la cota~\ref{eq:VCBound}:
+
+\begin{displaymath}
+  E_{out}(g) \leq E_{in}(g) + \sqrt{\frac{8}{N} \ln \frac{4m_{\mathcal{H}}(2N)}{\delta}}
+  \overset{\ref{eq:polBound}}{\Rightarrow} E_{out}(g) \leq E_{in}(g) + \sqrt{\frac{8}{N} \ln{\frac{4 ((2N)^{d_{VC}}+1)}{\delta}}}
+\end{displaymath}
+
+Con esta expresión se puede acotar el $E_{out}$ según $E_{in}$ y \emph{algo}
+que se puede calcular fácilmente.
+
+Se puede ver dicho \emph{algo} como $\Omega(N,\mathcal{H},\delta)$, un término
+que aumenta cuando la $d_{VC}(\mathcal{H})$ aumenta. Esta es la penalización
+por la complejidad del modelo: $E_{out}$ es mayor cuanto más complejo es el
+conjunto de hipótesis $\mathcal{H}$, mayor cuando más confianza queramos
+($\delta$ bajo), y más bajo cuantos más ejemplos existan.
+
+La conclusión es que se debe establecer un equilibrio, ya que un modelo complejo
+reducirá el $E_{in}$ pero hará más grande $\Omega(N,\mathcal{H},\delta)$.
 
 \subsubsection{Equilibrio Aproximación y Generalización}
+\label{subsubsec:equilibrio}
 
 \subsection{Sobreajuste}
+\label{subsec:sobreajuste}
 
 \subsection{Modelos de árboles: Boosting}
+\label{subsec:boosting}
