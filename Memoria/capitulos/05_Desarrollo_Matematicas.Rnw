@@ -189,7 +189,7 @@ la del corolario~\ref{cor:hoeffdingH}, sino que se precisa eliminar la hipótesi
 
 Esta desigualdad tiene una gran importancia: si el conjunto de funciones hipótesis
 $\mathcal{H}$ es finito, se puede afirmar que, probabilísticamente,
-$E_{in}(g) \approx E_{out}(g)$, aunque sólo tiene sentido si el conjundo de
+$E_{in}(g) \approx E_{out}(g)$, aunque sólo tiene sentido si el conjunto de
 hipótesis es finito. Además, la cota es peor cuanto más grande es este espacio
 de hipótesis.
 
@@ -304,7 +304,7 @@ una cota superior, así la desigualdad seguirá siendo cierta.
 
 \begin{definicion}
   Si para un determinado dataset de tamaño $k$ $\mathcal{H}$ no puede
-  \emph{separarlo}, entonces $k$ es un punto de ruputura para $\mathcal{H}$.
+  \emph{separarlo}, entonces $k$ es un punto de ruptura para $\mathcal{H}$.
 \end{definicion}
 
 Si $k$ es un punto de ruptura, entonces $m_{\mathcal{H}} < 2^k$. Es claro que
@@ -330,13 +330,13 @@ para un separador lineal como el de~\ref{fig:classificationExample}, $k=4$.
 
 Entonces, utilizando este concepto, se va a acotar la función de crecimiento
 para cualquier valor de $N$, ya que el hecho de tener punto de ruptura $k$ ofrece
-restrucciones sobre el número de dicotomías que puede \emph{separar} $\mathcal{H}$
+restricciones sobre el número de dicotomías que puede \emph{separar} $\mathcal{H}$
 para un $k' > k$.
 
 Lo más importante acerca de las funciones de crecimiento es que si tienen puntos
 de ruptura, śe puede acotar por un polinomio basado en el punto de ruptura.
 
-\change{Explicar por qué es importante un polinomio}
+\change{Explicar por qué es importante un polinomio murciégalo }
 
 \begin{teorema}
   \label{th:boundMH}

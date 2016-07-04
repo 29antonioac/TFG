@@ -62,7 +62,7 @@ Telecomunicación\xspace}
 \newcommand{\myUni}{\protect{Universidad de Granada}\xspace}
 \newcommand{\myLocation}{Granada\xspace}
 \newcommand{\myTime}{\today\xspace}
-\newcommand{\myVersion}{Version 0.1\xspace}
+\newcommand{\myVersion}{Versión 0.1\xspace}
 
 
 \hypersetup{
