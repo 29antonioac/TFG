@@ -71,7 +71,6 @@ transformData <- function(data, max.frame = NA, auc = FALSE) {
 
 
 ## ---- readData ----
-print(getwd())
 data.pvp <- read.csv("../datos/data_pvp.csv", colClasses=c("integer",rep("numeric",28),"factor"))
 data.pvt <- read.csv("../datos/data_pvt.csv", colClasses=c("integer",rep("numeric",28),"factor"))
 data.pvz <- read.csv("../datos/data_pvz.csv", colClasses=c("integer",rep("numeric",28),"factor"))
@@ -83,8 +82,6 @@ data.full <- rbind(cbind(data.pvp, Races = "PvP"), cbind(data.pvt, Races = "PvT"
                    cbind(data.tvz, Races = "TvZ"), cbind(data.zvz, Races = "ZvZ"))
 
 data.full$ReplayID  <- as.factor(paste(data.full$Races,data.full$ReplayID,sep = "_"))
-data.full.bound <- data.full[data.full$Duration <= 75000,]
-output.label <- as.numeric(data.full.bound[,"Winner"] == "A")
 
 rm(data.pvp)
 rm(data.pvt)
@@ -98,13 +95,6 @@ metadata <- unique(metadata)
 
 # system.time(data.full.transformed <- transformData(data.full))
 # system.time(data.full.transformed.auc <- transformData(data.full, auc = T))
-
-## ---- testgg ----
-set.seed(1234566)
-ggplot(data.frame(x = runif(100), y= runif(100)), aes(x,y)) + geom_point() +
-  theme(panel.grid.major = element_line(color = "gray60", size = 0.8),
-        panel.grid.major.x = element_blank(),
-        panel.grid.minor.x = element_blank())
 
 ## ---- replaysHistogram ----
 gg <- ggplot(data=metadata) +
@@ -126,56 +116,17 @@ gg.facet
 ## --- cleanReplays ----
 frame.bound <- 75000
 data.full.clean <- data.full[data.full$Duration <= frame.bound,]
-data.clean.transformed <- data.full.transformed[data.full.transformed$Duration <= frame.bound,]
-data.clean.transformed.auc <- data.full.transformed.auc[data.full.transformed.auc$Duration <= frame.bound,]
+output.label <- as.numeric(data.full.bound[,"Winner"] == "A")
+# data.clean.transformed <- data.full.transformed[data.full.transformed$Duration <= frame.bound,]
+# data.clean.transformed.auc <- data.full.transformed.auc[data.full.transformed.auc$Duration <= frame.bound,]
 metadata.clean <- metadata[metadata$Duration <= frame.bound,]
 
 gg <- ggplot(data=metadata.clean) +
   geom_bar(aes(x=ReplayID,y=Duration,fill=Races), stat="identity", width = 0.75) +
-  geom_hline(yintercept = mean(metadata$Duration), color = "red",linetype="dashed") +
+  geom_hline(yintercept = mean(metadata.clean$Duration), color = "red",linetype="dashed") +
   theme(panel.grid.major.x = element_blank(),
         panel.grid.minor.x = element_blank())
 gg
-
-## ---- CV ----
-result_list <- sapply(seq(min(data.full$Duration)/2,max(data.full$Duration),1000),
-                      function(max_frame) {
-                        data.subset <- data.full[data.full$Frame < max_frame, !colnames(data.full) %in% c("ReplayID")]
-                        sparse_matrix <- sparse.model.matrix(Winner ~ .-1, data = data.subset)
-                        output_vector = data.subset[,"Winner"] == "A"
-                        cv.res <- xgb.cv(data = sparse_matrix, label = output_vector, max.depth = 5, silent = 1,
-                                       eta = 0.1, nthread = 4, nround = 10,objective = "binary:logistic", nfold = 10)
-                        print(paste("Frame",max_frame,"/",max(data.full$Duration)))
-                        return(cv.res)
-                      })
-
-## ---- CVMax ----
-result_list <- sapply(seq(max(data.full$Duration),max(data.full$Duration),1000),
-                      function(max_frame) {
-                        print(paste("Frame",max_frame,"/",max(data.full$Duration)))
-                        data.subset <- data.full[data.full$Frame < max_frame, !colnames(data.full) %in% c("ReplayID")]
-                        sparse_matrix <- sparse.model.matrix(Winner ~ .-1, data = data.subset)
-                        output_vector = data.subset[,"Winner"] == "A"
-                        cv.res <- xgb.cv(data = sparse_matrix, label = output_vector, max.depth = 5, silent = 1,
-                                         eta = 0.1, nthread = 4, nround = 10,objective = "binary:logistic", nfold = 10)
-
-                        return(cv.res)
-                      })
-
-## ---- CVtransformed ----
-result_list <- sapply(seq(min(data.full$Duration)/2,max(data.full$Duration),1000),
-                      function(max_frame) {
-                        print(paste("Frame",max_frame,"/",max(data.full$Duration)))
-                        print("Procesando...")
-                        data.subset.transformed <- transformData(data.full, max.frame = max_frame)
-                        xgb.data <- xgb.DMatrix(data = as.matrix(data.subset.transformed[,!c("Winner", "ReplayID", "Max.Frame", "Duration"), with=F] ), 
-                                    label = as.numeric(data.subset.transformed[,Winner] == "A"))
-                        print("Entrenando...")
-                        cv.res <- xgb.cv(data = xgb.data, max.depth = 5, silent = 1,
-                                         eta = 0.1, nthread = 4, nround = 10,objective = "binary:logistic", nfold = 10)
-
-                        return(cv.res)
-                      })
 
 ## ---- CVTest ----
 max_frame <- 75000
@@ -280,95 +231,52 @@ model.mean <- xgboost(data = xgb.data.mean,
 importance_matrix <- xgb.importance(model = model.mean)
 xgb.plot.importance(importance_matrix)
 
-## ---- Importance50Mean ----
-data.50mean <- data.mean.clean[data.mean.clean$Frame <= 0.5*mean(metadata$Duration),]
-output.label.50mean <- output.label.mean[data.mean.clean$Frame <= 0.5*mean(metadata$Duration)]
-data.50mean.clean <- data.50mean[, !colnames(data.50mean) %in% c("Duration","Winner","ReplayID","Races")]
-xgb.data.50mean <- xgb.DMatrix(data = data.matrix(data.50mean.clean), 
-                               label = output.label.50mean)
-# rm(data.full)
-# rm(data.full.bound)
-cv.res.50mean <- xgb.cv(data = xgb.data.50mean, 
-                        max.depth = 32, 
-                        # scale_pos_weight = negative.labels / positive.labels,
-                        # max_delta_step = 1,
-                        # gamma = 1,
-                        # min_child_weight = 3,
-                        # subsample = 0.5,
-                        # colsample_bytree = 0.5,
-                        silent = 0,
-                        # alpha = 0.01,
-                        # lambda = 1.5,
-                        # eta = 0.001, 
-                        nthread = 4, nround = 10, objective = "binary:logistic", nfold = 5)
 
-model.50mean <- xgboost(data = xgb.data.50mean,
-                        max.depth = 32,
-                        silent = 0,
-                        nthread = 4, nround = 10, objective = "binary:logistic")
+## ---- PrepareDMatrixFiles ----
+mean.duration <- mean(metadata.clean$Duration)
+data.mean <- data.full.bound[data.full.bound$Frame <= mean(metadata.clean$Duration),]
+data.mean.clean <- data.mean[, !colnames(data.mean) %in% c("Duration","Winner","ReplayID","Races")]
+output.label.mean <- output.label[data.full.bound$Frame <= mean(metadata.clean$Duration)]
+sapply(c(100,75,50,25,20,10), function(fraction){
+                                filename <- paste0("../datos/xgb.data.",fraction,".mean.data")
+                                if (!file.exists(filename)){
+                                  print(paste("No existe",filename))
+                                  data.bound <- data.mean.clean[data.mean.clean$Frame <= fraction / 100 * mean.duration,]
+                                  output.label.bound <- output.label.mean[data.mean.clean$Frame <= fraction / 100 * mean.duration]
+                                  xgb.data <- xgb.DMatrix(data = data.matrix(data.bound[,!colnames(data.bound) %in% c("Duration","Winner","ReplayID","Races")]),
+                                                          label = output.label.bound )
+                                  xgb.DMatrix.save(xgb.data, filename)
+                                }
+})
 
-importance_matrix <- xgb.importance(feature_names = colnames(data.50mean.clean), model = model.50mean)
-xgb.plot.importance(importance_matrix)
+## ---- ProcessDMatrix ----
+xgb.params <- list(max.depth = 32,
+               silent = 0,
+               nthread = 4,
+               objective = "binary:logistic")
 
-## ---- Importance25Mean ----
-data.25mean <- data.mean.clean[data.mean.clean$Frame <= 0.25*mean(metadata$Duration),]
-output.label.25mean <- output.label.mean[data.mean.clean$Frame <= 0.25*mean(metadata$Duration)]
-data.25mean.clean <- data.25mean[, !colnames(data.25mean) %in% c("Duration","Winner","ReplayID","Races")]
-xgb.data.25mean <- xgb.DMatrix(data = data.matrix(data.25mean.clean), 
-                               label = output.label.25mean)
-# rm(data.full)
-# rm(data.full.bound)
-cv.res.25mean <- xgb.cv(data = xgb.data.25mean, 
-                        max.depth = 32, 
-                        # scale_pos_weight = negative.labels / positive.labels,
-                        # max_delta_step = 1,
-                        # gamma = 1,
-                        # min_child_weight = 3,
-                        # subsample = 0.5,
-                        # colsample_bytree = 0.5,
-                        silent = 0,
-                        # alpha = 0.01,
-                        # lambda = 1.5,
-                        # eta = 0.001, 
-                        nthread = 4, nround = 10, objective = "binary:logistic", nfold = 5)
+filenames <- list.files(path = "../datos", pattern = "xgb.data.*", full.names = TRUE)
+xgb.models <- sapply(filenames, function(filename){
+                    xgb.data <- xgb.DMatrix(filename)
+                    cv.res <- xgb.cv(data = xgb.data,
+                                     params = xgb.params,
+                                     nround = 10,
+                                     nfold = 5)
+                    write.csv(cv.res, paste0(filename,".csv"))
+                    xgb.model <- xgboost(data = xgb.data,
+                                         params = xgb.params,
+                                         nround = 10)
+                    xgb.model
+})
 
-model.25mean <- xgboost(data = xgb.data.25mean,
-                        max.depth = 32,
-                        silent = 0,
-                        nthread = 4, nround = 10, objective = "binary:logistic")
+xgb.importance.matrix <- sapply(models, function(model){
+                                          xgb.importance(feature_names = colnames(data.mean.clean),
+                                                         model = model)
+})
 
-importance_matrix <- xgb.importance(feature_names = colnames(data.25mean.clean), model = model.25mean)
-xgb.plot.importance(importance_matrix)
-
-## ---- Importance10Mean ----
-data.10mean <- data.mean.clean[data.mean.clean$Frame <= 0.10*mean(metadata$Duration),]
-output.label.10mean <- output.label.mean[data.mean.clean$Frame <= 0.10*mean(metadata$Duration)]
-data.10mean.clean <- data.10mean[, !colnames(data.10mean) %in% c("Duration","Winner","ReplayID","Races")]
-xgb.data.10mean <- xgb.DMatrix(data = data.matrix(data.10mean.clean), 
-                               label = output.label.10mean)
-# rm(data.full)
-# rm(data.full.bound)
-cv.res.10mean <- xgb.cv(data = xgb.data.10mean, 
-                        max.depth = 32, 
-                        # scale_pos_weight = negative.labels / positive.labels,
-                        # max_delta_step = 1,
-                        # gamma = 1,
-                        # min_child_weight = 3,
-                        # subsample = 0.5,
-                        # colsample_bytree = 0.5,
-                        silent = 0,
-                        # alpha = 0.01,
-                        # lambda = 1.5,
-                        # eta = 0.001, 
-                        nthread = 4, nround = 10, objective = "binary:logistic", nfold = 5)
-
-model.10mean <- xgboost(data = xgb.data.10mean,
-                        max.depth = 32,
-                        silent = 0,
-                        nthread = 4, nround = 10, objective = "binary:logistic")
-
-importance_matrix <- xgb.importance(feature_names = colnames(data.10mean.clean), model = model.10mean)
-xgb.plot.importance(importance_matrix)
+cv.res.mean <- xgb.cv(data = xgb.data.mean, 
+                      params = params,
+                      nfold = 5)
 
 ## ---- PlotError ----
 df.example <- read.csv("cv.res.mean.csv")
