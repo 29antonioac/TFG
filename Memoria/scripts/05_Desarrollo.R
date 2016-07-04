@@ -285,27 +285,101 @@ data.50mean <- data.mean.clean[data.mean.clean$Frame <= 0.5*mean(metadata$Durati
 output.label.50mean <- output.label.mean[data.mean.clean$Frame <= 0.5*mean(metadata$Duration)]
 data.50mean.clean <- data.50mean[, !colnames(data.50mean) %in% c("Duration","Winner","ReplayID","Races")]
 xgb.data.50mean <- xgb.DMatrix(data = data.matrix(data.50mean.clean), 
-                             label = output.label.50mean)
+                               label = output.label.50mean)
 # rm(data.full)
 # rm(data.full.bound)
 cv.res.50mean <- xgb.cv(data = xgb.data.50mean, 
-                      max.depth = 32, 
-                      # scale_pos_weight = negative.labels / positive.labels,
-                      # max_delta_step = 1,
-                      # gamma = 1,
-                      # min_child_weight = 3,
-                      # subsample = 0.5,
-                      # colsample_bytree = 0.5,
-                      silent = 0,
-                      # alpha = 0.01,
-                      # lambda = 1.5,
-                      # eta = 0.001, 
-                      nthread = 4, nround = 10, objective = "binary:logistic", nfold = 5)
+                        max.depth = 32, 
+                        # scale_pos_weight = negative.labels / positive.labels,
+                        # max_delta_step = 1,
+                        # gamma = 1,
+                        # min_child_weight = 3,
+                        # subsample = 0.5,
+                        # colsample_bytree = 0.5,
+                        silent = 0,
+                        # alpha = 0.01,
+                        # lambda = 1.5,
+                        # eta = 0.001, 
+                        nthread = 4, nround = 10, objective = "binary:logistic", nfold = 5)
 
-model.mean <- xgboost(data = xgb.data.mean,
-                      max.depth = 32,
-                      silent = 0,
-                      nthread = 4, nround = 10, objective = "binary:logistic")
+model.50mean <- xgboost(data = xgb.data.50mean,
+                        max.depth = 32,
+                        silent = 0,
+                        nthread = 4, nround = 10, objective = "binary:logistic")
 
-importance_matrix <- xgb.importance(model = model.mean)
+importance_matrix <- xgb.importance(feature_names = colnames(data.50mean.clean), model = model.50mean)
 xgb.plot.importance(importance_matrix)
+
+## ---- Importance25Mean ----
+data.25mean <- data.mean.clean[data.mean.clean$Frame <= 0.25*mean(metadata$Duration),]
+output.label.25mean <- output.label.mean[data.mean.clean$Frame <= 0.25*mean(metadata$Duration)]
+data.25mean.clean <- data.25mean[, !colnames(data.25mean) %in% c("Duration","Winner","ReplayID","Races")]
+xgb.data.25mean <- xgb.DMatrix(data = data.matrix(data.25mean.clean), 
+                               label = output.label.25mean)
+# rm(data.full)
+# rm(data.full.bound)
+cv.res.25mean <- xgb.cv(data = xgb.data.25mean, 
+                        max.depth = 32, 
+                        # scale_pos_weight = negative.labels / positive.labels,
+                        # max_delta_step = 1,
+                        # gamma = 1,
+                        # min_child_weight = 3,
+                        # subsample = 0.5,
+                        # colsample_bytree = 0.5,
+                        silent = 0,
+                        # alpha = 0.01,
+                        # lambda = 1.5,
+                        # eta = 0.001, 
+                        nthread = 4, nround = 10, objective = "binary:logistic", nfold = 5)
+
+model.25mean <- xgboost(data = xgb.data.25mean,
+                        max.depth = 32,
+                        silent = 0,
+                        nthread = 4, nround = 10, objective = "binary:logistic")
+
+importance_matrix <- xgb.importance(feature_names = colnames(data.25mean.clean), model = model.25mean)
+xgb.plot.importance(importance_matrix)
+
+## ---- Importance10Mean ----
+data.10mean <- data.mean.clean[data.mean.clean$Frame <= 0.10*mean(metadata$Duration),]
+output.label.10mean <- output.label.mean[data.mean.clean$Frame <= 0.10*mean(metadata$Duration)]
+data.10mean.clean <- data.10mean[, !colnames(data.10mean) %in% c("Duration","Winner","ReplayID","Races")]
+xgb.data.10mean <- xgb.DMatrix(data = data.matrix(data.10mean.clean), 
+                               label = output.label.10mean)
+# rm(data.full)
+# rm(data.full.bound)
+cv.res.10mean <- xgb.cv(data = xgb.data.10mean, 
+                        max.depth = 32, 
+                        # scale_pos_weight = negative.labels / positive.labels,
+                        # max_delta_step = 1,
+                        # gamma = 1,
+                        # min_child_weight = 3,
+                        # subsample = 0.5,
+                        # colsample_bytree = 0.5,
+                        silent = 0,
+                        # alpha = 0.01,
+                        # lambda = 1.5,
+                        # eta = 0.001, 
+                        nthread = 4, nround = 10, objective = "binary:logistic", nfold = 5)
+
+model.10mean <- xgboost(data = xgb.data.10mean,
+                        max.depth = 32,
+                        silent = 0,
+                        nthread = 4, nround = 10, objective = "binary:logistic")
+
+importance_matrix <- xgb.importance(feature_names = colnames(data.10mean.clean), model = model.10mean)
+xgb.plot.importance(importance_matrix)
+
+## ---- PlotError ----
+df.example <- read.csv("cv.res.mean.csv")
+df.train <- df[,c(1,2)]
+df.test <- df[,-c(1,2)] 
+colnames(df.test) <- c("Mean","Std","Set") 
+colnames(df.train) <- c("Mean","Std","Set")
+df.full <- rbind(df.train,df.test)
+df.full$Round <- rep(1:10,2)
+
+
+gg <- ggplot(data=df.full, aes(x=as.factor(Round), y = Mean, fill = Set))
+gg <- gg + geom_bar(stat='identity', position=position_dodge())
+gg + geom_errorbar(aes(ymin=Mean-Std, ymax = Mean+Std), width = 0.2, position = position_dodge(width=0.9))
