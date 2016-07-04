@@ -206,7 +206,344 @@ calcular su $E_{in}$ para evaluar su exactitud.
 \improvement{¿Meter aquí temas de complejidad de $f$ y $\mathcal{H}$?}
 
 \subsection{Generalización: Teoría de Vapnik-Chervonenkis}
+\label{subsec:generalizacion}
+En esta sección se desarrollará una teoría matemática que caracteriza la distinción
+entre entrenamiento y validación, además de discutir las implicaciones conceptuales
+y prácticas de ambos.
+
+\subsubsection{Teoría de Generalización}
+\label{subsubsec:generalizacion}
+El error fuera de la muestra $E_{out}$ mide la exactitud del modelo generado en
+puntos que desconocemos, al contrario que el error dentro de la muestra $E_{in}$,
+que se basa en el espacio de entrada $\mathcal{X}$. Expresa así el concepto de
+\emph{error de entrenamiento}, por lo que se usarán indistintamente.
+
+En esta sección se generalizará el análisis expuesto en el anterior capítulo.
+Se ha discutido que no siempre el valor de $E_{in}$ se generaliza a un valor similar
+de $E_{out}$.
+
+\begin{definicion}[Error de generalización]
+  Es la diferencia entre $E_{in}$ y $E_{out}$ en valor absoluto.
+\end{definicion}
+
+La desigualdad de Hoeffding proporciona una caracterización del error de
+generalización con una cota probabilística.
+
+\[
+  \mathbb{P}\left[ |E_{in}(g) - E_{out}(g)| > \epsilon \right] \leq
+  2 M e^{-2 n \epsilon^2}
+\]
+
+Se puede reescribir de esta manera, siendo cierta con una probabilidad de $1-\delta$
+
+\begin{equation}
+  \label{eq:generalization}
+  E_{out}(g) \leq E_{in}(g) + \sqrt{\frac{1}{2N} \ln \frac{2M}{\delta}} ,\; \delta \ \text{nivel de tolerancia.}
+\end{equation}
+
+\begin{proof}
+  La desigualdad de Hoeffding dice que con probabilidad al menos $1-2Me^{-2N\epsilon^2}$,
+  $|E_{out} - E_{in}| \leq \epsilon \Rightarrow E_{out} \leq E_{in} + \epsilon$.
+  Se toma $\delta = 2Me^{-2N\epsilon^2}$, por lo que $\epsilon = \sqrt{\frac{1}{2N} \ln \frac{2M}{\delta}}$
+\end{proof}
+
+La otra vuelta de la desigualdad $|E_{out} - E_{in}| \leq \epsilon$ ofrece otro
+dato importante, $E_{out}(h) \geq E_{in}(h) - \epsilon \ \forall h \in \mathcal{H}$.
+Quiere decir que no se puede realizar un ajuste mucho mejor con otra función del
+espacio de hipótesis con mayor $E_{in}$ que la que se ha escogido.
+
+Ahora se necesita trabajar con la ecuación~\ref{eq:generalization} de manera que
+el espacio de funciones de hipótesis pueda ser infinito. Si se trabaja tal cual
+está, la cota diverge y no ofrecería información alguna.
+
+Tal y como se calculó $M$ en el anterior capítulo, al utilizar las reglas de
+probabilidad de supuso que los eventos, como poco, serían disjuntos. Pero esto
+no pasa usualmente: los eventos suelen estar solapados, por lo que se debe caracterizar
+$M$ de manera distinta para que cuando se trabaje con un espacio infinito, se pueda
+obtener una cota finita usando~\ref{eq:generalization}. A esta caracterización de $M$
+se la llamará \emph{número efectivo de hipótesis}. Supondremos funciones
+binarias, por lo que cada $h \in \mathcal{H}$ lleva elementos de $\mathcal{X}$
+a $\{-1,+1\}$.
+
+\begin{definicion}
+  Sea $x_1,\ldots,x_N \in \mathcal{X}$. Las dicotomías generadas por $\mathcal{H}$
+  en esos puntos están definidas por
+
+  \begin{equation}
+    \mathcal{H}(x_1,\ldots,x_N) = \{ h(x_1),\ldots,h(x_N) \mid h \in \mathcal{H}  \}
+  \end{equation}
+\end{definicion}
+
+\begin{definicion}
+  La función de crecimiento está definida para un conjunto de hipótesis $\mathcal{H}$
+  como
+  \begin{equation*}
+    m_{\mathcal{H}}(N) = \max_{x_1,\ldots,x_N \in \mathcal{X}} |\mathcal{H}(x_1,\ldots,x_N)|,\
+    \text{donde |·| es la cardinalidad del conjunto}
+  \end{equation*}
+\end{definicion}
+
+$m_{\mathcal{H}}(N)$ es el número máximo de dicotomías que puede generar $\mathcal{H}$
+para cualesquiera N puntos. El valor máximo que puede tomar es $|\{-1,+1\}^N|$,
+por lo que
+
+\begin{equation*}
+  m_{\mathcal{H}}(N) \leq 2^N
+\end{equation*}
+
+Si se da la igualdad, quiere decir que $\mathcal{H}$ puede generar todas las
+posibles dicotomías en $x_1,\ldots,x_N$, y se dirá que $\mathcal{H}$ puede
+\emph{separar} $x_1,\ldots,x_N$.
+
+%Meter algún ejemplo (sólo si da tiempo)
+
+Para cada conjunto de hipótesis que se use, no es fácil calcular de manera exacta
+$m_{\mathcal{H}}$, aunque realmente no hay que hacerlo. Como $m_{\mathcal{H}}$
+está pensado para sustituir a $M$ en~\ref{eq:generalization}, sólo hay que buscar
+una cota superior, así la desigualdad seguirá siendo cierta.
+
+\begin{definicion}
+  Si para un determinado dataset de tamaño $k$ $\mathcal{H}$ no puede
+  \emph{separarlo}, entonces $k$ es un punto de ruputura para $\mathcal{H}$.
+\end{definicion}
+
+Si $k$ es un punto de ruptura, entonces $m_{\mathcal{H}} < 2^k$. Es claro que
+para un separador lineal como el de~\ref{fig:classificationExample}, $k=4$.
+
+\begin{ejemplo}
+  Tomamos un separador lineal, y $k=3$.
+  <<breakExample, echo = FALSE, fig.pos = '!hbt', fig.width = 3, fig.height = 3, fig.cap = 'Ejemplo de dicotomías separables para un separador lineal'>>=
+  @
+
+  Como se puede apreciar en la figura~\ref{fig:breakExample}, cualquier dicotomía
+  sobre tres puntos no alineados pueden ser \emph{separados} por un separador lineal.
+
+
+  <<anotherbreakExample, echo = FALSE, fig.pos = '!hbt', fig.width = 3, fig.height = 3, fig.cap = 'Ejemplo de una dicotomía no separable para un separador lineal'>>=
+  @
+
+  En cambio, con $k=4$, es fácil ver que no se pueden obtener las $2^4=16$
+  dicotomías necesarias para que $k=4$ no sea punto de ruptura. Se puede ver
+  en la figura~\ref{fig:anotherbreakExample} que no se pueden clasificar
+  correctamente todas las dicotomías de este conjunto.
+\end{ejemplo}
+
+Entonces, utilizando este concepto, se va a acotar la función de crecimiento
+para cualquier valor de $N$, ya que el hecho de tener punto de ruptura $k$ ofrece
+restrucciones sobre el número de dicotomías que puede \emph{separar} $\mathcal{H}$
+para un $k' > k$.
+
+Lo más importante acerca de las funciones de crecimiento es que si tienen puntos
+de ruptura, śe puede acotar por un polinomio basado en el punto de ruptura.
+
+% Explicar por qué es importante un polinomio.
+
+\begin{teorema}
+  \label{th:boundMH}
+  Si $m_{\mathcal{H}}(k) < 2^k$ para algún $k$, entonces
+  \begin{equation}
+    m_{\mathcal{H}}(N) \leq \sum_{i=0}^{k-1} \dbinom{N}{i} \ \forall N \in \mathbb{N}
+  \end{equation}
+  El miembro de la derecha es un polinomio en $N$ de grado $k-1$.
+\end{teorema}
+
+\begin{proof}
+  Meter sólo si hay tiempo (es algo técnica)
+\end{proof}
+
+La gran implicación de este teorema es que si $\mathcal{H}$ tiene algún punto
+de ruptura, se puede asegurar una buena generalización.
+
+\subsubsection{La dimensión de Vapnik-Chervonenkis}
+\label{subsubsec:VCdim}
+
+Se ha conseguido una cota de la función de crecimiento en términos de cualquier
+punto de ruptura. A más pequeño punto de ruptura, mejor es la cota. Ahora se
+define un concepto que caracteriza a esta función.
+
+\begin{definicion}
+  La dimensión de Vapnik-Chervonenkis de un conjunto de hipótesis $\mathcal{H}$,
+  denotada por $d_{VC}(\mathcal{H})$, o simplemente $d_{VC}$, es el mayor valor
+  de $N$ para el que $m_{\mathcal{H}}(N) = 2^N$. Si ocurre para todo $N$,
+  entonces $d_{VC}(\mathcal{H})=\infty$.
+\end{definicion}
+
+Utilizando este punto de ruptura, se puede reescribir el teorema~\ref{th:boundMH}
+como sigue:
+
+\begin{corolario}
+  Se puede acotar la función de crecimiento de $\mathcal{H}$ como sigue:
+  \begin{equation}
+    m_{\mathcal{H}}(N) \leq \sum_{i=0}^{d_{VC}} \dbinom{N}{i} \ \forall N \in \mathbb{N}
+  \end{equation}
+\end{corolario}
+
+
+\begin{proof}
+  Es claro que si $d_{VC}$ es la dimensión de VC de $\mathcal{H}$, entonces
+  $k=d_{VC}+1$ es un punto de ruptura para $m_{\mathcal{H}}$, por definición.
+\end{proof}
+
+Así, la dimensión VC es el orden del polinomio que acota la función de crecimiento.
+También es lo mejor que se puede hacer con este razonamiento, ya que no hay puntos
+de ruptura menores a $d_{VC}+1$. Se reescribe la cota para que sea de más fácil
+manejo.
+
+\begin{corolario}
+  La función de crecimiento $m_{\mathcal{H}}(N)$ se puede acotar de manera más
+  simple como
+
+  \begin{equation}
+    \label{eq:polBound}
+    m_{\mathcal{H}}(N) \leq N^{d_{VC}} + 1
+  \end{equation}
+\end{corolario}
+
+\begin{proof}
+  revisar la inducción
+\end{proof}
+
+El último paso para llegar a la cota de generalización apropiada es sustituir
+el número efectivo de hipótesis por el número de hipótesis. Aunque para eso
+se debe ajustar un poco la cota.
+
+\begin{teorema}[Cota de generalización de Vapnik-Chervonenkis]
+  \label{th:VCBound}
+  Para una función binaria \textbf{f}, un conjunto de hipótesis $\mathcal{H}$,
+  cualquier algoritmo de aprendizaje $\mathcal{A}$ y cualquier distribución
+  de probabilidad P, se da:
+
+  \begin{equation}
+    \label{eq:VCBound}
+    E_{out}(g) \leq E_{in}(g) + \sqrt{\frac{8}{N} \ln \frac{4m_{\mathcal{H}}(2N)}{\delta}} ,\; \delta \ \text{nivel de tolerancia.}
+  \end{equation}
+  con probabilidad $1-\delta$.
+\end{teorema}
+
+La demostración de este teorema es sumamente técnica, y se presenta en
+\cite[apéndice A]{Abu-Mostafa:2012:LD:2207825}
+
+Este teorema es el más importante en la teoría del aprendizaje.
+Con datos suficientes, para cada hipótesis en un espacio infinito con
+$d_{VC}$ finita, generalizará bien desde $E_{in}$ hasta $E_{out}$, donde el
+error convergerá a 0.
+
+Así, se establece la factibilidad del aprendizaje con infinitos conjuntos de
+hipótesis. Esto lleva a preguntarse si un resultado tan general actúa bien
+sobre casos muy particulares.
+
+La cota de VC tiene algunos problemas, principalmente tres:
+
+\begin{enumerate}
+  \item La desigualdad de Hoeffding básica que se ha usado no es muy fuerte.
+  Nos ofrece la misma cota tanto si $E_{out}$ es cercano a 0 o a 0.5, siendo
+  la varianza de $E_{in}$ muy diferente en ambos casos. Utilizar una misma cota
+  con ambos casos puede ser un déficit.
+  \item Utilizar la función de crecimiento con $N$ puntos sin importarnos cuáles
+  son nos da una estimación del peor caso, lo que hace que la cota no dependa
+  de la distribución de los datos, siendo una cota menos fuerte.
+  \item Acotar la función de crecimiento con un polinomio de orden $d_{VC}$ como
+  se ha hecho en~\ref{eq:polBound} es también una debilidad de la cota.
+\end{enumerate}
+
+Por estas razones se suele usar esta cota como una guía para la generalización,
+nada inamovible. Este análisis establece la factibilidad del aprendizaje para
+conjuntos de hipótesis infinitos, que es lo que se suele dar en la práctica.
+Además, también se usa para comparar el rendimiento de varios modelos, aunque
+esto está fuera del ámbito matemático y es algo más empírico.
+
+\subsubsection{Complejidad de la muestra}
+\label{subsubsec:complejidadMuestra}
+La complejidad de la muestra denota cuántos ejemplos de entrenamiento $N$ son
+necesarios para conseguir un determinado rendimiento en generalización. El
+rendimiento está especificado con dos parámetros, $\epsilon$ y $\delta$.
+$\epsilon$ determina el error de generalización permitido y $\delta$ determina
+la tolerancia, la confianza de este error.
+
+Podemos usar~\ref{eq:VCBound} para estimar la complejidad de la muestra para un
+modelo de aprendizaje. Fijamos $\delta > 0$, y se quiere conseguir un error de
+como mucho $\epsilon$.
+
+\begin{displaymath}
+  \sqrt{\frac{8}{N} \ln{\frac{4 m_{\mathcal{H}}(2N)}{\delta}}} \leq \epsilon
+  \Leftrightarrow N \geq \frac{8}{\epsilon^2} \ln{\frac{4 m_{\mathcal{H}}(2N)}{\delta}}
+  \overset{\ref{eq:polBound}}{\Rightarrow} N \geq \frac{8}{\epsilon^2} \ln{\frac{4 ((2N)^{d_{VC}}+1)}{\delta}}
+\end{displaymath}
+
+Con esta desigualdad se puede calcular $N$ con cualquier método numérico iterativo.
+Lo más sencillo es tomar una primera aproximación $N$ en el miembro de la derecha,
+realizar los cálculos y tomar dicho resultado como $N$ nuevamente. Después de
+un par de pasos converge.
+
+\subsubsection{Complejidad del modelo}
+A veces, se tiene un conjunto de datos $\mathcal{D}$ fijo, por lo que $N$
+también lo está. Entonces la pregunta relevante es cuánto rendimiento se puede
+esperar con dicho $N$. Utilizando la cota~\ref{eq:VCBound}:
+
+\begin{displaymath}
+  E_{out}(g) \leq E_{in}(g) + \sqrt{\frac{8}{N} \ln \frac{4m_{\mathcal{H}}(2N)}{\delta}}
+  \overset{\ref{eq:polBound}}{\Rightarrow} E_{out}(g) \leq E_{in}(g) + \sqrt{\frac{8}{N} \ln{\frac{4 ((2N)^{d_{VC}}+1)}{\delta}}}
+\end{displaymath}
+
+Con esta expresión se puede acotar el $E_{out}$ según $E_{in}$ y \emph{algo}
+que se puede calcular fácilmente.
+
+Se puede ver dicho \emph{algo} como $\Omega(N,\mathcal{H},\delta)$, un término
+que aumenta cuando la $d_{VC}(\mathcal{H})$ aumenta. Esta es la penalización
+por la complejidad del modelo: $E_{out}$ es mayor cuanto más complejo es el
+conjunto de hipótesis $\mathcal{H}$, mayor cuando más confianza queramos
+($\delta$ bajo), y más bajo cuantos más ejemplos existan.
+
+La conclusión es que se debe establecer un equilibrio, ya que un modelo complejo
+reducirá el $E_{in}$ pero hará más grande $\Omega(N,\mathcal{H},\delta)$.
+
+\subsubsection{El conjunto de test}
+\label{subsubsec:testSet}
+Cuando se pretende estimar con más precisión el $E_{out}$ se suele utilizar
+un \emph{conjunto de test}. Es un subconjunto de $\mathcal{X}$ que no se utiliza
+para entrenamiento. La hipótesis final $g$ se evalúa con dicho conjunto y
+producirá un error $E_{test}$, que servirá como estimación de $E_{out}$.
+Se puede estudiar lo bien que generaliza $E_{test}$ sobre $E_{out}$ con lo estudiado
+previamente.
+
+El número efectivo de hipótesis que importan en el comportamiento de
+generalización de $E_{test}$ es 1, ya que sólo hay una hipótesis elegida además
+de no cambiar ésta según el conjunto de test. Esto implica que se puede
+utilizar la desigualdad de Hoeffding con una sola hipótesis. Así se tiene una
+cota más fina que con~\ref{eq:VCBound}.
+
+Un aspecto importante del conjunto de test es que no está sesgado. El conjunto
+de entrenamiento tiene un sesgo ya que para elegir una hipótesis, un algoritmo
+de aprendizaje buscará una hipótesis que se comporte bien dentro.
+La cota~\ref{eq:VCBound} tiene este sesgo en cuenta implícitamente, lo que
+lleva a un gran error. Además, tener un conjunto de test implica reducir el
+número de muestras de entrenamiento, por lo que el $E_{in}$ será mayor.
+
+\subsubsection{Equilibrio entre Aproximación y Generalización}
+\label{subsubsec:equilibrio}
+
+Con el análisis VC se ha mostrado que debe existir un equilibrio entre una buena
+aproximación de $f$ en la muestra usando un modelo demasiado complejo, o una buena
+generalización usando un modelo más simple. Se puede analizar este equilibrio
+de otra manera, la cual es muy apropiada para medidas de error cuadráticas,
+al contrario que el error binario usado en el análisis VC. En vez de acotar
+$E_{out}$ por $E_{in}$ y un término de penalización $\Omega$, se descompone
+$E_{out}$ en dos términos distintos: \emph{sesgo} y \emph{varianza}.
+
+Para un conjunto de datos $\mathcal{D}$, el $E_{out}$ utilizando el error
+cuadrático medio es, siendo $\mathbb{E}_{x}$ la esperanza con respecto a x
+(basada en la distribución de probabilidad del espacio de entrada $\mathcal{X}$),
+
+\begin{equation}
+  \label{eq:EoutMSE}
+  E_{out}(g^{(D)}(x)) = \mathbb{E}_{x}[(g^{(D)}(x) - f(x))^2]
+\end{equation}
+
+Es importante para el análisis que se haga énfasis en que la función escogida
+$g$ depende del conjunto de datos $\mathcal{D}$.
 
 \subsection{Sobreajuste}
+\label{subsec:sobreajuste}
 
 \subsection{Modelos de árboles: Boosting}
+\label{subsec:boosting}

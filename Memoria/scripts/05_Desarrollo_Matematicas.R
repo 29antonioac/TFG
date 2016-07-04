@@ -31,3 +31,13 @@ g
 ## ---- classificationExample ----
 g <- g + geom_abline(intercept = line.random[1], slope = line.random[2])
 g
+
+## ---- breakExample ----
+ggplot(data.frame(X1 = runif(3),
+                  X2 = runif(3)), aes(X1,X2)) + geom_point(size = 4)
+
+## ---- anotherbreakExample ----
+ggplot(data.frame(X1 = runif(4),
+                  X2 = runif(4),
+                  label = as.factor(c(-1,1,-1,1))), aes(X1,X2, col = label)) +
+                  geom_point(size = 4) + guides(col="none")
