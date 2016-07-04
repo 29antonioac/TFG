@@ -225,11 +225,11 @@ xgb.plot.importance(importance.matrix.auc)
 # data.full.clean <- data.full[,!c("Winner", "ReplayID", "Races"), with=F] 
 data.full.clean <- data.full.bound[, !colnames(data.full.bound) %in% c("Duration","Winner","ReplayID","Races")]
 xgb.data.full <- xgb.DMatrix(data = data.matrix(data.full.clean), 
-                        label = output.label)
-rm(data.full)
-rm(data.full.bound)
+                             label = output.label)
+# rm(data.full)
+# rm(data.full.bound)
 cv.res.full <- xgb.cv(data = xgb.data.full, 
-                      max.depth = 6, 
+                      max.depth = 32, 
                       # scale_pos_weight = negative.labels / positive.labels,
                       # max_delta_step = 1,
                       # gamma = 1,
@@ -240,12 +240,72 @@ cv.res.full <- xgb.cv(data = xgb.data.full,
                       # alpha = 0.01,
                       # lambda = 1.5,
                       # eta = 0.001, 
-                      nthread = 4, nround = 5, objective = "binary:logistic", nfold = 5)
+                      nthread = 4, nround = 10, objective = "binary:logistic", nfold = 5)
 
 model.full <- xgboost(data = xgb.data.full,
-                     max.depth = 24,
-                     silent = 0,
-                     nthread = 4, nround = 5, objective = "binary:logistic")
+                      max.depth = 24,
+                      silent = 0,
+                      nthread = 4, nround = 5, objective = "binary:logistic")
 
 importance_matrix <- xgb.importance(colnames(data.full[, !colnames(data.full) %in% c("Duration","Winner","ReplayID","Races")] ), model = model.full)
+xgb.plot.importance(importance_matrix)
+
+## ---- ImportanceMean ----
+data.mean <- data.full.bound[data.full.bound$Frame <= mean(metadata$Duration),]
+output.label.mean <- as.numeric(data.mean[,"Winner"] == "A")
+data.mean.clean <- data.mean[, !colnames(data.full.bound) %in% c("Duration","Winner","ReplayID","Races")]
+xgb.data.mean <- xgb.DMatrix(data = data.matrix(data.mean.clean), 
+                             label = output.label.mean)
+# rm(data.full)
+# rm(data.full.bound)
+cv.res.mean <- xgb.cv(data = xgb.data.mean, 
+                      max.depth = 32, 
+                      # scale_pos_weight = negative.labels / positive.labels,
+                      # max_delta_step = 1,
+                      # gamma = 1,
+                      # min_child_weight = 3,
+                      # subsample = 0.5,
+                      # colsample_bytree = 0.5,
+                      silent = 0,
+                      # alpha = 0.01,
+                      # lambda = 1.5,
+                      # eta = 0.001, 
+                      nthread = 4, nround = 10, objective = "binary:logistic", nfold = 5)
+
+model.mean <- xgboost(data = xgb.data.mean,
+                      max.depth = 32,
+                      silent = 0,
+                      nthread = 4, nround = 10, objective = "binary:logistic")
+
+importance_matrix <- xgb.importance(model = model.mean)
+xgb.plot.importance(importance_matrix)
+
+## ---- Importance50Mean ----
+data.50mean <- data.mean.clean[data.mean.clean$Frame <= 0.5*mean(metadata$Duration),]
+output.label.50mean <- output.label.mean[data.mean.clean$Frame <= 0.5*mean(metadata$Duration)]
+data.50mean.clean <- data.50mean[, !colnames(data.50mean) %in% c("Duration","Winner","ReplayID","Races")]
+xgb.data.50mean <- xgb.DMatrix(data = data.matrix(data.50mean.clean), 
+                             label = output.label.50mean)
+# rm(data.full)
+# rm(data.full.bound)
+cv.res.50mean <- xgb.cv(data = xgb.data.50mean, 
+                      max.depth = 32, 
+                      # scale_pos_weight = negative.labels / positive.labels,
+                      # max_delta_step = 1,
+                      # gamma = 1,
+                      # min_child_weight = 3,
+                      # subsample = 0.5,
+                      # colsample_bytree = 0.5,
+                      silent = 0,
+                      # alpha = 0.01,
+                      # lambda = 1.5,
+                      # eta = 0.001, 
+                      nthread = 4, nround = 10, objective = "binary:logistic", nfold = 5)
+
+model.mean <- xgboost(data = xgb.data.mean,
+                      max.depth = 32,
+                      silent = 0,
+                      nthread = 4, nround = 10, objective = "binary:logistic")
+
+importance_matrix <- xgb.importance(model = model.mean)
 xgb.plot.importance(importance_matrix)
