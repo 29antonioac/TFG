@@ -295,7 +295,7 @@ Si se da la igualdad, quiere decir que $\mathcal{H}$ puede generar todas las
 posibles dicotomías en $x_1,\ldots,x_N$, y se dirá que $\mathcal{H}$ puede
 \emph{separar} $x_1,\ldots,x_N$.
 
-%Meter algún ejemplo (sólo si da tiempo)
+\improvement{Meter algún ejemplo (sólo si da tiempo)}
 
 Para cada conjunto de hipótesis que se use, no es fácil calcular de manera exacta
 $m_{\mathcal{H}}$, aunque realmente no hay que hacerlo. Como $m_{\mathcal{H}}$
@@ -336,7 +336,7 @@ para un $k' > k$.
 Lo más importante acerca de las funciones de crecimiento es que si tienen puntos
 de ruptura, śe puede acotar por un polinomio basado en el punto de ruptura.
 
-% Explicar por qué es importante un polinomio.
+\change{Explicar por qué es importante un polinomio}
 
 \begin{teorema}
   \label{th:boundMH}

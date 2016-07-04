@@ -52,7 +52,7 @@ se aborda en el trabajo.
 En primer lugar en cualquier problema de Ciencia de Datos, el primer
 paso es \emph{comprender el problema y los datos que se disponen}.
 
-%meter cita
+\change{Meter cita!}
 El problema a abordar es el siguiente: a partir de un conjunto de
 partidas antiguas de StarCraft, se busca predecir
 el momento en el que la partida está decidida con una confianza
