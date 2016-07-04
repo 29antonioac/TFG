@@ -6,6 +6,52 @@ require(xgboost)
 require(knitr)
 require(parallel)
 
+# Multiple plot function
+#
+# ggplot objects can be passed in ..., or to plotlist (as a list of ggplot objects)
+# - cols:   Number of columns in layout
+# - layout: A matrix specifying the layout. If present, 'cols' is ignored.
+#
+# If the layout is something like matrix(c(1,2,3,3), nrow=2, byrow=TRUE),
+# then plot 1 will go in the upper left, 2 will go in the upper right, and
+# 3 will go all the way across the bottom.
+#
+multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+  library(grid)
+  
+  # Make a list from the ... arguments and plotlist
+  plots <- c(list(...), plotlist)
+  
+  numPlots = length(plots)
+  
+  # If layout is NULL, then use 'cols' to determine layout
+  if (is.null(layout)) {
+    # Make the panel
+    # ncol: Number of columns of plots
+    # nrow: Number of rows needed, calculated from # of cols
+    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                     ncol = cols, nrow = ceiling(numPlots/cols))
+  }
+  
+  if (numPlots==1) {
+    print(plots[[1]])
+    
+  } else {
+    # Set up the page
+    grid.newpage()
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+    
+    # Make each plot, in the correct location
+    for (i in 1:numPlots) {
+      # Get the i,j matrix positions of the regions that contain this subplot
+      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+      
+      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                      layout.pos.col = matchidx$col))
+    }
+  }
+}
+
 
 
 ## ---- transformReplay ----
@@ -115,15 +161,15 @@ gg.facet
 
 ## --- cleanReplays ----
 frame.bound <- 75000
-data.full.clean <- data.full[data.full$Duration <= frame.bound,]
+data.full.bound <- data.full[data.full$Duration <= frame.bound,]
 output.label <- as.numeric(data.full.bound[,"Winner"] == "A")
 # data.clean.transformed <- data.full.transformed[data.full.transformed$Duration <= frame.bound,]
 # data.clean.transformed.auc <- data.full.transformed.auc[data.full.transformed.auc$Duration <= frame.bound,]
-metadata.clean <- metadata[metadata$Duration <= frame.bound,]
+metadata.bound <- metadata[metadata$Duration <= frame.bound,]
 
-gg <- ggplot(data=metadata.clean) +
+gg <- ggplot(data=metadata.bound) +
   geom_bar(aes(x=ReplayID,y=Duration,fill=Races), stat="identity", width = 0.75) +
-  geom_hline(yintercept = mean(metadata.clean$Duration), color = "red",linetype="dashed") +
+  geom_hline(yintercept = mean(metadata.bound$Duration), color = "red",linetype="dashed") +
   theme(panel.grid.major.x = element_blank(),
         panel.grid.minor.x = element_blank())
 gg
@@ -233,19 +279,30 @@ xgb.plot.importance(importance_matrix)
 
 
 ## ---- PrepareDMatrixFiles ----
-mean.duration <- mean(metadata.clean$Duration)
-data.mean <- data.full.bound[data.full.bound$Frame <= mean(metadata.clean$Duration),]
+mean.duration <- mean(metadata.bound$Duration)
+data.mean <- data.full.bound[data.full.bound$Frame <= mean.duration,]
 data.mean.clean <- data.mean[, !colnames(data.mean) %in% c("Duration","Winner","ReplayID","Races")]
-output.label.mean <- output.label[data.full.bound$Frame <= mean(metadata.clean$Duration)]
+output.label.mean <- output.label[data.full.bound$Frame <= mean.duration]
+feature.names <- colnames(data.mean.clean)
+saveRDS(feature.names, file = "../datos/features.rds")
 sapply(c(100,75,50,25,20,10), function(fraction){
                                 filename <- paste0("../datos/xgb.data.",fraction,".mean.data")
-                                if (!file.exists(filename)){
+                                if (!file.exists(paste0(filename,".train"))){
                                   print(paste("No existe",filename))
                                   data.bound <- data.mean.clean[data.mean.clean$Frame <= fraction / 100 * mean.duration,]
                                   output.label.bound <- output.label.mean[data.mean.clean$Frame <= fraction / 100 * mean.duration]
-                                  xgb.data <- xgb.DMatrix(data = data.matrix(data.bound[,!colnames(data.bound) %in% c("Duration","Winner","ReplayID","Races")]),
-                                                          label = output.label.bound )
-                                  xgb.DMatrix.save(xgb.data, filename)
+                                  index <- sample(1:nrow(data.bound), 0.8*nrow(data.bound))
+                                  data.train <- data.bound[index,]
+                                  data.test <- data.bound[-index,]
+                                  output.train <- output.label.bound[index]
+                                  output.test <- output.label.bound[-index]
+                                  xgb.data.train <- xgb.DMatrix(data = data.matrix(data.train[,!colnames(data.train) %in% c("Duration","Winner","ReplayID","Races")]),
+                                                          label = output.train )
+                                  xgb.DMatrix.save(xgb.data.train, paste0(filename,".train"))
+                                  
+                                  xgb.data.test <- xgb.DMatrix(data = data.matrix(data.test[,!colnames(data.test) %in% c("Duration","Winner","ReplayID","Races")]),
+                                                               label = output.test)
+                                  xgb.DMatrix.save(xgb.data.test, paste0(filename,".test"))
                                 }
 })
 
@@ -255,28 +312,40 @@ xgb.params <- list(max.depth = 32,
                nthread = 4,
                objective = "binary:logistic")
 
-filenames <- list.files(path = "../datos", pattern = "xgb.data.*", full.names = TRUE)
-xgb.models <- sapply(filenames, function(filename){
-                    xgb.data <- xgb.DMatrix(filename)
-                    cv.res <- xgb.cv(data = xgb.data,
+filenames.train <- list.files(path = "../datos", pattern = "xgb.data.*.mean.data.train", full.names = TRUE)
+filenames.test <- list.files(path = "../datos", pattern = "xgb.data.*.mean.data.test", full.names = TRUE)
+# filenames.train <- c("../datos/xgb.data.20.mean.data.train","../datos/xgb.data.10.mean.data.train")
+# filenames.test <- c("../datos/xgb.data.20.mean.data.test","../datos/xgb.data.10.mean.data.test")
+xgb.models <- lapply(filenames.train, function(filename){
+                    xgb.data.train <- xgb.DMatrix(filename)
+                    cv.res <- xgb.cv(data = xgb.data.train,
                                      params = xgb.params,
                                      nround = 10,
                                      nfold = 5)
                     write.csv(cv.res, paste0(filename,".csv"))
-                    xgb.model <- xgboost(data = xgb.data,
+                    xgb.model <- xgboost(data = xgb.data.train,
                                          params = xgb.params,
                                          nround = 10)
                     xgb.model
 })
 
-xgb.importance.matrix <- sapply(models, function(model){
-                                          xgb.importance(feature_names = colnames(data.mean.clean),
-                                                         model = model)
+xgb.test.error <- NULL
+for (i in 1:length(filenames.test)){
+  filename <- filenames.test[i]
+  model <- xgb.models[[i]]
+  xgb.data.test <- xgb.DMatrix(filename)
+  pred <- predict(model, xgb.data.test)
+  err <- mean(as.numeric(pred > 0.5) != getinfo(xgb.data.test,"label"))
+  xgb.test.error <- c(xgb.test.error, err)
+}
+
+feature.names <- loadRDS("../datos/features.rds")
+xgb.importance.plots <- lapply(xgb.models, function(model){
+                                          xgb.plot.importance(xgb.importance(feature_names = feature.names,
+                                                         model = model))
 })
 
-cv.res.mean <- xgb.cv(data = xgb.data.mean, 
-                      params = params,
-                      nfold = 5)
+
 
 ## ---- PlotError ----
 df.example <- read.csv("cv.res.mean.csv")
