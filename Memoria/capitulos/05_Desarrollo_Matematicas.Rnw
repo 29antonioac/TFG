@@ -1,3 +1,5 @@
+%!TEX spellcheck = es_ES
+
 Se introducen las herramientas matemáticas necesarias para la consecución de este trabajo.
 
 <<setup05M, cache = FALSE, include = FALSE>>=
@@ -336,7 +338,7 @@ para un $k' > k$.
 Lo más importante acerca de las funciones de crecimiento es que si tienen puntos
 de ruptura, śe puede acotar por un polinomio basado en el punto de ruptura.
 
-\change{Explicar por qué es importante un polinomio murciégalo }
+\change{Explicar por qué es importante un polinomio}
 
 \begin{teorema}
   \label{th:boundMH}
