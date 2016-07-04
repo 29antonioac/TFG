@@ -322,7 +322,7 @@ xgb.models <- lapply(filenames.train, function(filename){
                                      params = xgb.params,
                                      nround = 10,
                                      nfold = 5)
-                    write.csv(cv.res, paste0(filename,".csv"))
+                    write.csv(cv.res, paste0(filename,".csv"), row.names = FALSE)
                     xgb.model <- xgboost(data = xgb.data.train,
                                          params = xgb.params,
                                          nround = 10)
@@ -350,13 +350,30 @@ xgb.importance.plots <- lapply(xgb.models, function(model){
 ## ---- PlotError ----
 df.example <- read.csv("cv.res.mean.csv")
 df.train <- df[,c(1,2)]
-df.test <- df[,-c(1,2)] 
-colnames(df.test) <- c("Mean","Std","Set") 
+df.test <- df[,-c(1,2)]
+colnames(df.test) <- c("Mean","Std","Set")
 colnames(df.train) <- c("Mean","Std","Set")
 df.full <- rbind(df.train,df.test)
 df.full$Round <- rep(1:10,2)
 
 
-gg <- ggplot(data=df.full, aes(x=as.factor(Round), y = Mean, fill = Set))
-gg <- gg + geom_bar(stat='identity', position=position_dodge())
-gg + geom_errorbar(aes(ymin=Mean-Std, ymax = Mean+Std), width = 0.2, position = position_dodge(width=0.9))
+error.filenames <- list.files(path = "../datos", pattern = "xgb.data.*.mean.data.train.csv", full.names = TRUE)
+error.plots <- lapply(error.filenames, function(filename){
+                                        fraction <- unique(na.omit(as.numeric(unlist(strsplit(unlist(filename), "[^0-9]+")))))
+                                        df <- read.csv(filename)
+                                        df.train <- df[,c(1,2)]
+                                        df.train$Set <- "Train"
+                                        df.test <- df[,-c(1,2)]
+                                        df.test$Set <- "Test"
+                                        colnames(df.test) <- c("Mean","Std","Set") 
+                                        colnames(df.train) <- c("Mean","Std","Set")
+                                        df.full <- rbind(df.train,df.test)
+                                        df.full$Round <- as.factor(rep(1:10,2))
+                                        gg <- ggplot(data=df.full, aes(x=Round, y = Mean, fill = Set))
+                                        gg <- gg + geom_bar(stat='identity', position=position_dodge())
+                                        gg <- gg + geom_errorbar(aes(ymin=Mean-Std, ymax = Mean+Std), width = 0.2, position = position_dodge(width=0.9))
+                                        gg <- gg + ggtitle(paste0(fraction,"% of the mean of the duration"))
+                                        gg <- gg + ylim(0, 0.4) + ylab("CV Error")
+})
+
+do.call("multiplot", error.plots)
