@@ -173,3 +173,37 @@ Histograma
 % geom_hline(yintercept = mean(metadata$Duration))
 % print(mean(metadata$Duration))
 % @
+
+\subsection{Extracción de información}
+\label{subsec:extraccion}
+
+\subsection{Interpretación y Evaluación}
+\label{subsec:evaluacion}
+
+<<loadPlots, include = FALSE>>=
+plots <- readRDS("../resultados/errorplots.rds")
+@
+
+<<plot100, echo = FALSE, fig.width = 7, fig.height = 7, fig.cap = "Error e importancia del clasificador con límite la media">>=
+do.call("multiplot", plots[1,])
+@
+
+<<plot75, echo = FALSE, fig.width = 7, fig.height = 7, fig.cap = "Error e importancia del clasificador con límite el 75 de la media">>=
+do.call("multiplot", plots[6,])
+@
+
+<<plot50, echo = FALSE, fig.width = 7, fig.height = 7, fig.cap = "Error e importancia del clasificador con límite el 50 de la media">>=
+do.call("multiplot", plots[5,])
+@
+
+<<plot25, echo = FALSE, fig.width = 7, fig.height = 7, fig.cap = "Error e importancia del clasificador con límite el 25 de la media">>=
+do.call("multiplot", plots[4,])
+@
+
+<<plot20, echo = FALSE, fig.width = 7, fig.height = 7, fig.cap = "Error e importancia del clasificador con límite el 20 de la media">>=
+do.call("multiplot", plots[3,])
+@
+
+<<plot10, echo = FALSE, fig.width = 7, fig.height = 7, fig.cap = "Error e importancia del clasificador con límite el 10 de la media">>=
+do.call("multiplot", plots[2,])
+@

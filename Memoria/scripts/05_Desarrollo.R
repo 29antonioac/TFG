@@ -326,6 +326,7 @@ xgb.models <- lapply(filenames.train, function(filename){
                     xgb.model <- xgboost(data = xgb.data.train,
                                          params = xgb.params,
                                          nround = 10)
+                    xgb.save(xgb.model, paste0(filename,".model"))
                     xgb.model
 })
 
@@ -347,16 +348,7 @@ xgb.importance.plots <- lapply(xgb.models, function(model){
 
 
 
-## ---- PlotError ----
-df.example <- read.csv("cv.res.mean.csv")
-df.train <- df[,c(1,2)]
-df.test <- df[,-c(1,2)]
-colnames(df.test) <- c("Mean","Std","Set")
-colnames(df.train) <- c("Mean","Std","Set")
-df.full <- rbind(df.train,df.test)
-df.full$Round <- rep(1:10,2)
-
-
+## ---- preparePlots ----
 error.filenames <- list.files(path = "../datos", pattern = "xgb.data.*.mean.data.train.csv", full.names = TRUE)
 error.plots <- lapply(error.filenames, function(filename){
                                         fraction <- unique(na.omit(as.numeric(unlist(strsplit(unlist(filename), "[^0-9]+")))))
@@ -372,8 +364,16 @@ error.plots <- lapply(error.filenames, function(filename){
                                         gg <- ggplot(data=df.full, aes(x=Round, y = Mean, fill = Set))
                                         gg <- gg + geom_bar(stat='identity', position=position_dodge())
                                         gg <- gg + geom_errorbar(aes(ymin=Mean-Std, ymax = Mean+Std), width = 0.2, position = position_dodge(width=0.9))
-                                        gg <- gg + ggtitle(paste0(fraction,"% of the mean of the duration"))
-                                        gg <- gg + ylim(0, 0.4) + ylab("CV Error")
+                                        gg <- gg + ggtitle(paste0(fraction,"% of the mean duration"))
+                                        gg <- gg + ylim(0, 0.3) + ylab("CV Error")
 })
 
-do.call("multiplot", error.plots)
+for (i in 1:length(error.plots)){
+  error.plots[[i]] <- error.plots[[i]] + annotate("text", x = 8, y = 0.3, label = paste("Test error:",sprintf("%.3f",xgb.test.error[i])))
+}
+
+plots <- cbind(error.plots, xgb.importance.plots)
+
+saveRDS(plots, "../resultados/errorplots.rds")
+do.call("multiplot", c(error.plots, cols = 3))
+do.call("multiplot", c(xgb.importance.plots, cols = 3))
