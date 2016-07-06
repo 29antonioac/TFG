@@ -138,11 +138,20 @@ rm(data.zvz)
 
 metadata <- data.full[, colnames(data.full) %in% c("ReplayID", "Duration", "Races")]
 metadata <- unique(metadata)
+write.csv(metadata, "../datos/metadata.csv", row.names = FALSE)
 
 # system.time(data.full.transformed <- transformData(data.full))
 # system.time(data.full.transformed.auc <- transformData(data.full, auc = T))
 
+## ---- replaysMelt ----
+replays.plot <- data.full[data.full$ReplayID %in% sample(unique(data.full$ReplayID),3), 
+                          colnames(data.full) %in% c("ReplayID","Frame","Minerals","Gas","Supply")]
+replays.melt  <- melt(replays.plot, id.vars = c("Frame","ReplayID"), measure.vars = c("Minerals","Gas","Supply"))
+gg <- ggplot(replays.melt, aes(x = Frame, y = value)) + facet_grid(ReplayID ~ variable) + geom_line()
+gg
+
 ## ---- replaysHistogram ----
+metadata <- read.csv("../datos/metadata.csv")
 gg <- ggplot(data=metadata) +
   geom_bar(aes(x=ReplayID,y=Duration,fill=Races), stat="identity", width = 0.75) +
   geom_hline(yintercept = mean(metadata$Duration), color = "red",linetype="dashed") +
@@ -150,7 +159,7 @@ gg <- ggplot(data=metadata) +
         panel.grid.minor.x = element_blank())
 gg
 
-## ---- replayRaceHistogram
+## ---- replaysRacesHistogram ----
 gg.facet <- ggplot(data=metadata) +
   geom_bar(aes(x=ReplayID,y=Duration,fill=Races), stat="identity") +
   geom_hline(yintercept = mean(metadata$Duration), color = "red",linetype="dashed", size=.1) +
@@ -159,14 +168,17 @@ gg.facet <- ggplot(data=metadata) +
   facet_grid(Races ~ .)
 gg.facet
 
-## --- cleanReplays ----
+## ---- cleanReplays ----
 frame.bound <- 75000
 data.full.bound <- data.full[data.full$Duration <= frame.bound,]
 output.label <- as.numeric(data.full.bound[,"Winner"] == "A")
 # data.clean.transformed <- data.full.transformed[data.full.transformed$Duration <= frame.bound,]
 # data.clean.transformed.auc <- data.full.transformed.auc[data.full.transformed.auc$Duration <= frame.bound,]
 metadata.bound <- metadata[metadata$Duration <= frame.bound,]
+write.csv(metadata.bound, "../datos/metadata.bound.csv", row.names = FALSE)
 
+## ---- replaysBoundHistogram ----
+metadata.bound <- read.csv("../datos/metadata.bound.csv")
 gg <- ggplot(data=metadata.bound) +
   geom_bar(aes(x=ReplayID,y=Duration,fill=Races), stat="identity", width = 0.75) +
   geom_hline(yintercept = mean(metadata.bound$Duration), color = "red",linetype="dashed") +
@@ -314,8 +326,6 @@ xgb.params <- list(max.depth = 32,
 
 filenames.train <- list.files(path = "../datos", pattern = "xgb.data.*.mean.data.train", full.names = TRUE)
 filenames.test <- list.files(path = "../datos", pattern = "xgb.data.*.mean.data.test", full.names = TRUE)
-# filenames.train <- c("../datos/xgb.data.20.mean.data.train","../datos/xgb.data.10.mean.data.train")
-# filenames.test <- c("../datos/xgb.data.20.mean.data.test","../datos/xgb.data.10.mean.data.test")
 xgb.models <- lapply(filenames.train, function(filename){
                     xgb.data.train <- xgb.DMatrix(filename)
                     cv.res <- xgb.cv(data = xgb.data.train,
