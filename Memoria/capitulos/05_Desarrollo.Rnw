@@ -227,7 +227,50 @@ base de datos de manera correcta. Para ello hay que estudiar bien el diagrama
 mostrado antes, presente en la figura~\ref{datasetSeleccionado}, además de
 examinar la base de datos de manera interactiva.
 
+Después de un análisis exhaustivo, se llegan a las siguientes conclusiones:
+\begin{itemize}
+  \item Para cada partida (ReplayID) existen tres jugadores (PlayerReplayID):
+  los dos que toman batalla y el juegador neutro (recursos totales del mapa,
+  elementos destruibles del mapa, etc). Este último no se tiene en cuenta.
+  \item La tabla \texttt{resourcechange} tiene los recursos de un jugador
+  para cada momento de la partida en el que hay un cambio en éstos.
+  \item La tabla \texttt{regionvaluechange} tiene los \emph{valores} de
+  distintas fuerzas de un jugador en una de las regiones del mapa y en
+  los momentos en los que hay un cambio en éstos. Los \emph{valores}
+  están definidos como la suma del coste de minerales y gas de cada una de las
+  unidades o edificios. Además, las características que comienzan por
+  \texttt{Enemy} son valores del enemigo \textbf{observados} por el jugador.
+  Los valores reales sólo lo conoce cada jugador de sí mismo, a no ser que
+  ambos jugadores coincidan en una región y ``se vean''.
+\end{itemize}
 
+Por estas razones, se deben tomar una serie de decisiones que afectará al
+conjunto de datos con el que se trabaja. El objetivo es conseguir, de cada
+base de datos, un dataset donde cada tupla la forme un instante de la partida,
+una ``foto'' del estado actual.
+
+La primera decisión a tomar es en qué instantes
+de la partida hay que fijarse. Como se explica arriba existen instantes de
+partida según los cambios en los valores de batallones de los jugadores y según
+cambios en los recursos de éstos. Como sin recursos un jugador no puede hacer
+nada en ningún juego de estrategia, se tomarán como referencia los instantes de
+tiempo en los que hay un cambio de recursos, ya que por la razón indicada son
+mucho más numerosos que los cambios en unidades de un jugador.
+
+Otra decisión, menos importante, es qué jugador se toma como ``jugador A''.
+Simplemente se toma el jugador cuyo PlayerReplayID es más bajo. Esta decisión
+sólo influye para interpretar la característica Winner.
+
+Con estas decisiones, y teniendo siempre en cuenta el importante detalle de que
+\texttt{regionvaluechange} es sólo en una región del mapa, por lo que hay que
+sumar todos los valores de unidades de cada jugador en todas las regiones del
+mapa; se ha resuelto este problema utilizando SQL. Se han conseguido seis dataset
+con la estructura de la tabla~\ref{}
+
+% <<features, echo = FALSE>>=
+% features <- readRDS("../datos/features.rds")
+% kable(features, format = "latex", caption = "Tabla con características seleccionadas y con su orden")
+% @
 
 
 \subsubsection{Análisis exploratorio de datos}
@@ -237,51 +280,81 @@ examinar la base de datos de manera interactiva.
               Meter gráficas chulas.}
 
 
-Histograma
+Lo primero que se realiza es un gráfico de barras en el que se pueda distinguir
+el tiempo de cada una de las partidas, además de su raza. Se muestra con una
+línea discontinua la duración media de las partidas.
 
 <<replaysHistogram, echo = FALSE, fig.cap = "Duración de las partidas de la base de datos">>=
 @
 
-Histograma por razas
+Se separa por razas para ver con más claridad
 
 <<replaysRacesHistogram, echo = FALSE, fig.cap = "Duración de las partidas según la raza">>=
 @
 
-Histograma con partidas más cortas
+\unsure{No se si dejarla o quitarla}
+
+Viendo esta distribución de partidas, se puede observar que algunas tienen
+una duración muy superior a las demás, superando con creces la media. Por esta
+razón se ha decidido acotar: se eliminarán del conjunto de datos aquellas
+partidas que duren más de $75000$ frames.
 
 <<replaysBoundHistogram, echo = FALSE, fig.cap = "Duración de las partidas menores a 75000 frames">>=
 @
 
-Cargar facets
+Así se tomará el
+\Sexpr{nrow(metadata.bound) / nrow(metadata) * 100}\% de los datos, y el resto
+se tratará como ruido y no se tendrán en cuenta. Esto facilitará el modelado
+y la predicción será más fiable al evitar casos tan extremos.
+
+\newpage
+Ahora, se toman tres partidas cualesquiera y se visualizan sus componentes:
+se conseguirá una visión general de las partidas, por lo que se podrá tomar
+una decisión para atacar el problema.
+
+
 <<loadReplayMelt, include = FALSE>>=
 replays.melt.plots <- readRDS("../datos/replays.melt.plots.rds")
 @
 
-Recursos básicos
+Los recursos básicos son un apartado importante en una partida, puesto que
+sin ellos, un jugador no puede conseguir unidades o edificios nuevos.
 
 <<replaysMelt1, echo = FALSE, fig.cap = "1">>=
 replays.melt.plots[[1]]
 @
 
-Total de recursos
+\newpage
+En los juegos de estrategia siempre se muestra esta estadística, la del total
+de recursos recogidos. Es una medida puramente acumulativa, donde se ve qué
+jugador es capaz de recoger más recursos en una partida.
 
 <<replaysMelt2, echo = FALSE, fig.cap = "2">>=
 replays.melt.plots[[2]]
 @
 
-Unidades
+\newpage
+Las unidades de cada jugador, en este caso formuladas como se ha comentado como
+\emph{valores}. Con estas gráficas se puede ver cómo evoluciona el número y la
+calidad de las unidades de cada jugador.
 
 <<replaysMelt3, echo = FALSE, fig.cap = "3">>=
 replays.melt.plots[[3]]
 @
 
-Unidades observadas
+\newpage
+Estos son los valores observados de cada tipo de unidad por un jugador del
+enemigo. A priori, este dato puede ser muy interesante, ya que en los juegos
+de estrategia tiene muchas de ganar el jugador que más sabe del contrincante.
 
 <<replaysMelt4, echo = FALSE, fig.cap = "4">>=
 replays.melt.plots[[4]]
 @
 
-Recursos observados
+\newpage
+Por último, los recursos estimados del mapa. También es importante puesto que
+modela el comportamiento del jugador al respecto de la observación: si cree
+que quedan menos recursos, es porque se ha preocupado más por observar el mapa.
 
 <<replaysMelt5, echo = FALSE, fig.cap = "5">>=
 replays.melt.plots[[5]]
