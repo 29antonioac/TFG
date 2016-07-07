@@ -18,6 +18,8 @@ Este trabajo ha sido desarrollando utilizando las siguientes herramientas:
 Estas decisiones se han tomado, principalmente, por ser las mejores herramientas
 en cada uno de sus ámbitos, con la grandísima ventaja de ser software libre.
 
+\improvement{¿Por qué son las mejores?}
+
 Además, la plataforma donde se ha realizado la computación, es la siguiente:
 \begin{itemize}
   \item Sistema operativo GNU/Linux - Archlinux x86\_64
@@ -89,7 +91,12 @@ adelante), sus construcciones, y los valores estimados de batallones y
 construcciones que tienen un jugador del otro. Además, también se tiene
 en cuenta los recursos restantes del mapa que cada jugador estima que
 quedan. Estas características quedan reflejadas en la figura
-~\ref{datasetSeleccionado}.
+~\ref{datasetSeleccionado}. Estas características han sido escogidas ya que se
+pretende realizar un análisis utilizando el estado actual del entorno, no
+una cola de eventos producidos por los jugadores. Este enfoque se ha realizado
+en otros trabajos.
+
+\change{Meter cita aquí}
 
 \begin{figure}
     \centering
@@ -145,15 +152,83 @@ Estas características son, según cada tabla:
   \end{itemize}
 \end{itemize}
 
-Una vez se ha decidido qué vamos a usar, hay que pasar al cómo. Esta fase es el \emph{preprocesamiento de los datos}, que es la fase donde se organizan los datos, se corrigen si hubiera datos perdidos o ruido... para poder abordar el problema a resolver.
+Una vez se ha decidido qué vamos a usar, hay que pasar al cómo.
+Esta fase es el \emph{preprocesamiento de los datos}, que es la fase donde se
+organizan los datos, se corrigen si hubiera datos perdidos o ruido...
+para poder abordar el problema a resolver.
 
 \subsection{Preprocesamiento de datos}
 \label{subsec:preprocesamiento}
 
-% Aquí metemos toda la jerga que he tenido que liar para
-% sacar los datos de la base de datos. Sin código.
-
+En esta sección se expone el trabajo de preprocesado que se ha tenido que aplicar
+a los datos para poder obtener información.
 \todo[inline]{Aquí meter toda la lógica que se ha usado para extraer los datos. Qué y cómo se ha hecho.}
+
+\subsubsection{Preparación del sistema para almacenar los datos}
+\label{subsubsec:preparacion}
+
+En primer lugar, se tiene que ver qué formato tienen los datos para saber cómo
+manejarse con ellos. Los datos vienen estructurados en sendos scripts de bases
+de datos estructurales \emph{SQL}, por lo que el primer paso es montar un
+\emph{Sistema Gestor de Bases de Datos}. Como se ha expuesto al comienzo del
+capítulo, el elegido ha sido \emph{MariaDB}, que es la implementación totalmente
+libre del archiconocido \emph{MySQL}.
+
+Esto se ha realizado en el desarrollo del Grado, por lo que no se detallará.
+Lo único que se ha ampliado con respecto a los conocimientos adquiridos es el
+montaje del espacio reservado para las bases de datos en un lugar distinto
+al que viene por defecto. En este caso, se ha montado sobre una partición de
+300GiB en un RAID0 de HDD's que previamente se ha montado en el sistema,
+utilizando conocimientos adquiridos también en el Grado. Además, se ha
+redireccionado la ruta temporal de \emph{MariaDB} a RAM para que el
+procesamiento de las tablas esté íntegro en memoria y sea más rápido.
+
+La configuración extra se aplica al archivo \texttt{/etc/mysql/my.cnf},
+cambiando esta línea introduciendo la ruta donde se desea montar los archivos
+temporales.
+
+\begin{lstlisting}
+  tmpdir          = /var/lib/mysqltmp
+\end{lstlisting}
+
+Además, se debe montar en memoria utilizando el archivo \texttt{/etc/fstab},
+donde también se montará el directorio por defecto de \emph{MariaDB} en una
+partición alojada en el RAID0.
+
+\begin{lstlisting}
+
+  # MySQL
+  tmpfs   /var/lib/mysqltmp   tmpfs   rw,gid=89,uid=89,size=1G,mode=0750,noatime   0 0
+  UUID=0e20a9fc-69df-4196-9545-6ce884491219       /var/lib/mysql  ext4           rw,noatime       0 3
+\end{lstlisting}
+
+Donde \emph{UUID} es el \emph{universally unique identifier} de la partición
+donde se alojarán las bases de datos, y
+\emph{gid} y \emph{uid} los identificadores del usuario y grupo \emph{mysql}.
+
+Una vez se tiene funcionando un \emph{Sistema Gestor de Bases de Datos},
+se procede a introducir las bases de datos proporcionadas. Al estar en formato
+script \texttt{.sql} sólo hay que ejecutarlos con el intérprete.
+
+Las bases de datos constan de seis scripts, de los cuales tres están ejecutados
+con una versión antigua del extractor de datos, luego les falta una línea al
+principio del script para situar al \emph{Sistema Gestor de Bases de Datos} en
+la base de datos donde se introducen datos. Por ello, se ha utilizado el editor
+de text \texttt{joe} para introducir dicha línea. Este editor se ha comportado
+bien con archivos de gran tamaño (incluso de varios GiB), cosa que no se ha
+conseguido con ningún otro editor.
+
+\subsubsection{Preparación de un dataset limpio utilizando SQL}
+\label{subsubsec:SQL}
+
+Una vez se tienen las bases de datos importadas en el sistema, hay que fijarse
+bien cómo están estructurados los datos que se quieren extraer para atacar la
+base de datos de manera correcta. Para ello hay que estudiar bien el diagrama
+mostrado antes, presente en la figura~\ref{datasetSeleccionado}, además de
+examinar la base de datos de manera interactiva.
+
+
+
 
 \subsubsection{Análisis exploratorio de datos}
 \label{subsubsec:exploratorio}
@@ -226,25 +301,25 @@ plots <- readRDS("../resultados/errorplots.rds")
 @
 
 <<plot100, echo = FALSE, fig.width = 7, fig.height = 7, fig.cap = "Error e importancia del clasificador con límite la media">>=
-do.call("multiplot", plots[1,])
+multiplot(plotlist = plots[1,])
 @
 
 <<plot75, echo = FALSE, fig.width = 7, fig.height = 7, fig.cap = "Error e importancia del clasificador con límite el 75 de la media">>=
-do.call("multiplot", plots[6,])
+multiplot(plotlist = plots[6,])
 @
 
 <<plot50, echo = FALSE, fig.width = 7, fig.height = 7, fig.cap = "Error e importancia del clasificador con límite el 50 de la media">>=
-do.call("multiplot", plots[5,])
+multiplot(plotlist = plots[5,])
 @
 
 <<plot25, echo = FALSE, fig.width = 7, fig.height = 7, fig.cap = "Error e importancia del clasificador con límite el 25 de la media">>=
-do.call("multiplot", plots[4,])
+multiplot(plotlist = plots[4,])
 @
 
 <<plot20, echo = FALSE, fig.width = 7, fig.height = 7, fig.cap = "Error e importancia del clasificador con límite el 20 de la media">>=
-do.call("multiplot", plots[3,])
+multiplot(plotlist = plots[3,])
 @
 
 <<plot10, echo = FALSE, fig.width = 7, fig.height = 7, fig.cap = "Error e importancia del clasificador con límite el 10 de la media">>=
-do.call("multiplot", plots[2,])
+multiplot(plotlist = plots[2,])
 @
