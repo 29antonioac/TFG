@@ -272,27 +272,27 @@ con la estructura de la tabla~\ref{}
 % kable(features, format = "latex", caption = "Tabla con características seleccionadas y con su orden")
 % @
 
-
+\newpage
 \subsubsection{Análisis exploratorio de datos}
 \label{subsubsec:exploratorio}
 
-\todo[inline]{Aquí todo lo referente al análisis exploratorio de datos. \newline
-              Meter gráficas chulas.}
-
+Se realiza en primer lugar un análisis exploratorio de datos. Es una fase
+importante para obtener una primera visión de los datos, intentar conocer más
+sobre su distribución o su comportamiento.
 
 Lo primero que se realiza es un gráfico de barras en el que se pueda distinguir
-el tiempo de cada una de las partidas, además de su raza. Se muestra con una
-línea discontinua la duración media de las partidas.
+la distribución de la duración de las partidas, además de su raza.
+Se muestra con una línea discontinua la duración media de las partidas.
 
 <<replaysHistogram, echo = FALSE, fig.cap = "Duración de las partidas de la base de datos">>=
 @
 
-Se separa por razas para ver con más claridad
-
-<<replaysRacesHistogram, echo = FALSE, fig.cap = "Duración de las partidas según la raza">>=
-@
-
-\unsure{No se si dejarla o quitarla}
+% Se separa por razas para ver con más claridad
+%
+% <<replaysRacesHistogram, echo = FALSE, fig.cap = "Duración de las partidas según la raza">>=
+% @
+%
+% \unsure{No se si dejarla o quitarla}
 
 Viendo esta distribución de partidas, se puede observar que algunas tienen
 una duración muy superior a las demás, superando con creces la media. Por esta
@@ -320,7 +320,7 @@ replays.melt.plots <- readRDS("../datos/replays.melt.plots.rds")
 Los recursos básicos son un apartado importante en una partida, puesto que
 sin ellos, un jugador no puede conseguir unidades o edificios nuevos.
 
-<<replaysMelt1, echo = FALSE, fig.cap = "1">>=
+<<replaysMelt1, echo = FALSE, fig.cap = "Recursos básicos en tres partidas">>=
 replays.melt.plots[[1]]
 @
 
@@ -329,7 +329,7 @@ En los juegos de estrategia siempre se muestra esta estadística, la del total
 de recursos recogidos. Es una medida puramente acumulativa, donde se ve qué
 jugador es capaz de recoger más recursos en una partida.
 
-<<replaysMelt2, echo = FALSE, fig.cap = "2">>=
+<<replaysMelt2, echo = FALSE, fig.cap = "Recursos básicos totales en tres partidas">>=
 replays.melt.plots[[2]]
 @
 
@@ -338,7 +338,7 @@ Las unidades de cada jugador, en este caso formuladas como se ha comentado como
 \emph{valores}. Con estas gráficas se puede ver cómo evoluciona el número y la
 calidad de las unidades de cada jugador.
 
-<<replaysMelt3, echo = FALSE, fig.cap = "3">>=
+<<replaysMelt3, echo = FALSE, fig.cap = "Valores de unidades y edificios en tres partidas">>=
 replays.melt.plots[[3]]
 @
 
@@ -347,7 +347,7 @@ Estos son los valores observados de cada tipo de unidad por un jugador del
 enemigo. A priori, este dato puede ser muy interesante, ya que en los juegos
 de estrategia tiene muchas de ganar el jugador que más sabe del contrincante.
 
-<<replaysMelt4, echo = FALSE, fig.cap = "4">>=
+<<replaysMelt4, echo = FALSE, fig.cap = "Valores de unidades y edificios observados del enemigo en tres partidas">>=
 replays.melt.plots[[4]]
 @
 
@@ -356,12 +356,26 @@ Por último, los recursos estimados del mapa. También es importante puesto que
 modela el comportamiento del jugador al respecto de la observación: si cree
 que quedan menos recursos, es porque se ha preocupado más por observar el mapa.
 
-<<replaysMelt5, echo = FALSE, fig.cap = "5">>=
+<<replaysMelt5, echo = FALSE, fig.cap = "Recursos restantes del mapa en tres partidas">>=
 replays.melt.plots[[5]]
 @
 
+A la vista de estos datos, se pueden sacar algunas conclusiones que pueden
+ayudar a enfocar el modelado.
 
+\begin{itemize}
+  \item Algunas características, como el Supply, los valores de unidades o
+  edificios del jugador que pierde caen rápidamente en un determinado momento
+  de la partida.
+  \item En general, el jugador que gana tiene sus gráficas por encima de las
+  del jugador contrario.
+\end{itemize}
 
+Estas dos conclusiones, unido a la enorme cantidad de datos de las que se
+dispone, casi siete millones de filas, conducen a intentar reducir el problema
+utilizando dos sencillas ideas: calcular la pendiente de la recta de regresión
+de cada una de las nubes de puntos que forman cada gráfica para un jugador,
+y calcular el área bajo la curva de cada una de las gráficas.
 
 \subsection{Extracción de información}
 \label{subsec:extraccion}

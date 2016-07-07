@@ -140,18 +140,15 @@ metadata <- data.full[, colnames(data.full) %in% c("ReplayID", "Duration", "Race
 metadata <- unique(metadata)
 write.csv(metadata, "../datos/metadata.csv", row.names = FALSE)
 
-# system.time(data.full.transformed <- transformData(data.full))
-# system.time(data.full.transformed.auc <- transformData(data.full, auc = T))
+data.full.transformed <- transformData(data.full, max.frame = 75000)
+write.csv(data.full.transformed, "../datos/data.full.transformed.regression.csv", row.names = FALSE)
+data.full.transformed.auc <- transformData(data.full, max.frame = 75000, auc = T)
+write.csv(data.full.transformed.auc, "../datos/data.full.transformed.auc.csv", row.names = FALSE)
+data.full.bound <- data.full[data.full$Duration <= 75000,]
+write.csv(data.full.bound, "../datos/data.full.bound.csv", row.names = FALSE)
 
 ## ---- prepareReplaysMelt ----
 replays.plot <- data.full[data.full$ReplayID %in% sample(unique(data.full$ReplayID[grepl("PvP",data.full$ReplayID)]),3),]
-
-r1 <- melt(replays.plot, id.vars = c("Frame","ReplayID"), measure.vars = c("Minerals","Gas", "Supply"), variable_name = "Value")
-r2 <- melt(replays.plot, id.vars = c("Frame","ReplayID"), measure.vars = c("EnemyMinerals","EnemyGas", "EnemySupply"), variable_name = "Value")
-replays.melt <- merge(r1,r2, by = c("Frame","ReplayID"))
-replays.melt <- replays.melt[replays.melt$variable.y == paste0("Enemy",replays.melt$variable.x),
-                             !colnames(replays.melt) %in% "variable.y"]
-colnames(replays.melt) <- c("Frame","ReplayID","Variable","Value1","Value2")
 
 features.melt <- list(c("Minerals","Gas","Supply"),
                       c("TotalMinerals","TotalGas","TotalSupply"),
@@ -165,9 +162,9 @@ replays.melt.plots <- lapply(features.melt, function(features){
   replays.melt <- merge(r1,r2, by = c("Frame","ReplayID"))
   replays.melt <- replays.melt[replays.melt$variable.y == paste0("Enemy",replays.melt$variable.x),
                                !colnames(replays.melt) %in% "variable.y"]
-  colnames(replays.melt) <- c("Frame","ReplayID","Variable","Value1","Value2")
+  colnames(replays.melt) <- c("Frame","ReplayID","Variable","Value","Value2")
   
-  gg <- ggplot(replays.melt) + facet_grid(ReplayID ~ Variable) + geom_line(aes(x = Frame, y = Value1),  color = "red") + geom_line(aes(x = Frame, y = Value2), color = "blue")
+  gg <- ggplot(replays.melt) + facet_grid(ReplayID ~ Variable) + geom_line(aes(x = Frame, y = Value),  color = "red") + geom_line(aes(x = Frame, y = Value2), color = "blue")
   gg
 })
 
@@ -220,7 +217,7 @@ max_frame <- 75000
 positive.labels <- mean(as.numeric(data.subset.transformed[,Winner]=="A"))
 negative.labels <- mean(as.numeric(data.subset.transformed[,Winner]=="B"))
 
-data.subset.transformed <- transformData(data.full.clean, max.frame = max_frame)
+data.subset.transformed <- read.csv("../datos/data.full.transformed.regression.csv")
 xgb.data.regression <- xgb.DMatrix(data = as.matrix(data.subset.transformed[,!c("Winner", "ReplayID", "Max.Frame", "Duration"), with=F] ), 
                         label = as.numeric(data.subset.transformed[,Winner] == "A"))
 cv.res.regression <- xgb.cv(data = xgb.data.regression, 
