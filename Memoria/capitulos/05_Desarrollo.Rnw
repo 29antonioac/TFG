@@ -153,26 +153,67 @@ Una vez se ha decidido qué vamos a usar, hay que pasar al cómo. Esta fase es e
 % Aquí metemos toda la jerga que he tenido que liar para
 % sacar los datos de la base de datos. Sin código.
 
-Aquí meter toda la lógica que se ha usado para extraer los datos. Qué y cómo se ha hecho.
+\todo[inline]{Aquí meter toda la lógica que se ha usado para extraer los datos. Qué y cómo se ha hecho.}
 
 \subsubsection{Análisis exploratorio de datos}
 \label{subsubsec:exploratorio}
 
-% Aquí todo lo referente al análisis exploratorio de datos
+\todo[inline]{Aquí todo lo referente al análisis exploratorio de datos. \newline
+              Meter gráficas chulas.}
 
-Lectura de datos
-
-% <<readData>>=
-% @
 
 Histograma
 
-% <<histograma>>=
-% ggplot(data=metadata) +
-% geom_bar(aes(x=ReplayID,y=Duration,fill=Duration), stat="identity") +
-% geom_hline(yintercept = mean(metadata$Duration))
-% print(mean(metadata$Duration))
-% @
+<<replaysHistogram, echo = FALSE, fig.cap = "Duración de las partidas de la base de datos">>=
+@
+
+Histograma por razas
+
+<<replaysRacesHistogram, echo = FALSE, fig.cap = "Duración de las partidas según la raza">>=
+@
+
+Histograma con partidas más cortas
+
+<<replaysBoundHistogram, echo = FALSE, fig.cap = "Duración de las partidas menores a 75000 frames">>=
+@
+
+Cargar facets
+<<loadReplayMelt, include = FALSE>>=
+replays.melt.plots <- readRDS("../datos/replays.melt.plots.rds")
+@
+
+Recursos básicos
+
+<<replaysMelt1, echo = FALSE, fig.cap = "1">>=
+replays.melt.plots[[1]]
+@
+
+Total de recursos
+
+<<replaysMelt2, echo = FALSE, fig.cap = "2">>=
+replays.melt.plots[[2]]
+@
+
+Unidades
+
+<<replaysMelt3, echo = FALSE, fig.cap = "3">>=
+replays.melt.plots[[3]]
+@
+
+Unidades observadas
+
+<<replaysMelt4, echo = FALSE, fig.cap = "4">>=
+replays.melt.plots[[4]]
+@
+
+Recursos observados
+
+<<replaysMelt5, echo = FALSE, fig.cap = "5">>=
+replays.melt.plots[[5]]
+@
+
+
+
 
 \subsection{Extracción de información}
 \label{subsec:extraccion}

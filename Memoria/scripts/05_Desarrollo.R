@@ -144,7 +144,7 @@ write.csv(metadata, "../datos/metadata.csv", row.names = FALSE)
 # system.time(data.full.transformed.auc <- transformData(data.full, auc = T))
 
 ## ---- prepareReplaysMelt ----
-replays.plot <- data.full[data.full$ReplayID %in% sample(unique(data.full$ReplayID),3),]
+replays.plot <- data.full[data.full$ReplayID %in% sample(unique(data.full$ReplayID[grepl("PvP",data.full$ReplayID)]),3),]
 
 r1 <- melt(replays.plot, id.vars = c("Frame","ReplayID"), measure.vars = c("Minerals","Gas", "Supply"), variable_name = "Value")
 r2 <- melt(replays.plot, id.vars = c("Frame","ReplayID"), measure.vars = c("EnemyMinerals","EnemyGas", "EnemySupply"), variable_name = "Value")
@@ -173,13 +173,11 @@ replays.melt.plots <- lapply(features.melt, function(features){
 
 
 
-saveRDS(replays.melt, "../datos/replays.melt.rds")
+saveRDS(replays.melt.plots, "../datos/replays.melt.plots.rds")
 
 ## ---- replaysMelt ----
-replays.melt <- readRDS("../datos/replays.melt.rds")
-gg <- ggplot(replays.melt) + facet_grid(ReplayID ~ variable) + geom_line(aes(x = Frame, y = value.x),  color = "red") + geom_line(aes(x = Frame, y = value.y), color = "blue")
-gg
-gg + ylab("WO")
+replays.melt.plots <- readRDS("../datos/replays.melt.plots.rds")
+replays.melt.plots
 
 ## ---- replaysHistogram ----
 metadata <- read.csv("../datos/metadata.csv")
