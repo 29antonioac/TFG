@@ -143,12 +143,43 @@ write.csv(metadata, "../datos/metadata.csv", row.names = FALSE)
 # system.time(data.full.transformed <- transformData(data.full))
 # system.time(data.full.transformed.auc <- transformData(data.full, auc = T))
 
+## ---- prepareReplaysMelt ----
+replays.plot <- data.full[data.full$ReplayID %in% sample(unique(data.full$ReplayID),3),]
+
+r1 <- melt(replays.plot, id.vars = c("Frame","ReplayID"), measure.vars = c("Minerals","Gas", "Supply"), variable_name = "Value")
+r2 <- melt(replays.plot, id.vars = c("Frame","ReplayID"), measure.vars = c("EnemyMinerals","EnemyGas", "EnemySupply"), variable_name = "Value")
+replays.melt <- merge(r1,r2, by = c("Frame","ReplayID"))
+replays.melt <- replays.melt[replays.melt$variable.y == paste0("Enemy",replays.melt$variable.x),
+                             !colnames(replays.melt) %in% "variable.y"]
+colnames(replays.melt) <- c("Frame","ReplayID","Variable","Value1","Value2")
+
+features.melt <- list(c("Minerals","Gas","Supply"),
+                      c("TotalMinerals","TotalGas","TotalSupply"),
+                      c("GroundUnitValue","BuildingValue","AirUnitValue"),
+                      c("ObservedEnemyGroundUnitValue","ObservedEnemyBuildingValue","ObservedEnemyAirUnitValue"),
+                      c("ObservedResourceValue"))
+
+replays.melt.plots <- lapply(features.melt, function(features){
+  r1 <- melt(replays.plot, id.vars = c("Frame","ReplayID"), measure.vars = features, variable_name = "Value")
+  r2 <- melt(replays.plot, id.vars = c("Frame","ReplayID"), measure.vars = paste0("Enemy",features), variable_name = "Value")
+  replays.melt <- merge(r1,r2, by = c("Frame","ReplayID"))
+  replays.melt <- replays.melt[replays.melt$variable.y == paste0("Enemy",replays.melt$variable.x),
+                               !colnames(replays.melt) %in% "variable.y"]
+  colnames(replays.melt) <- c("Frame","ReplayID","Variable","Value1","Value2")
+  
+  gg <- ggplot(replays.melt) + facet_grid(ReplayID ~ Variable) + geom_line(aes(x = Frame, y = Value1),  color = "red") + geom_line(aes(x = Frame, y = Value2), color = "blue")
+  gg
+})
+
+
+
+saveRDS(replays.melt, "../datos/replays.melt.rds")
+
 ## ---- replaysMelt ----
-replays.plot <- data.full[data.full$ReplayID %in% sample(unique(data.full$ReplayID),3), 
-                          colnames(data.full) %in% c("ReplayID","Frame","Minerals","Gas","Supply")]
-replays.melt  <- melt(replays.plot, id.vars = c("Frame","ReplayID"), measure.vars = c("Minerals","Gas","Supply"))
-gg <- ggplot(replays.melt, aes(x = Frame, y = value)) + facet_grid(ReplayID ~ variable) + geom_line()
+replays.melt <- readRDS("../datos/replays.melt.rds")
+gg <- ggplot(replays.melt) + facet_grid(ReplayID ~ variable) + geom_line(aes(x = Frame, y = value.x),  color = "red") + geom_line(aes(x = Frame, y = value.y), color = "blue")
 gg
+gg + ylab("WO")
 
 ## ---- replaysHistogram ----
 metadata <- read.csv("../datos/metadata.csv")
