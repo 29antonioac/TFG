@@ -260,51 +260,69 @@ extra de la función de crecimiento $m_{\mathcal{H}}(2N)$.
 
 \section{Acotando la desviación entre errores dentro de la muestra}
 
-We now addres the purely combinatorial problem of bounding
+Ahora se presenta el problema puramente combinatorio de acotar
 
 \begin{displaymath}
     \sup_{\mathcal{S}} \sup_{h \in \mathcal{H}} \mathbb{P} \left[| E_{in}(h) - E'_{in}(h) | > \frac{\epsilon}{2} \Big\vert \mathcal{S} \right],
 \end{displaymath}
 
-which appears in Lemma A.3. We will prove the following lemma. Then, Theorem A.1 can be proved by combining Lemmas A.2, A.3 and A.4 taking $1 \ \ 2e^{- \frac{1}{2} \epsilon^2 N} \geq \frac{1}{2}$ (the only case we need to consider).
+que aparece en el lema~\ref{lema:A3}. Se probará el siguiente lema. Así, el
+Teorema~\ref{th:A1} se prueba combinando los lemas~\ref{lema:A2},~\ref{lema:A3}
+y~\ref{lema:A4} tomando $1 - 2e^{- \frac{1}{2} \epsilon^2 N} \geq \frac{1}{2}$,
+que es el único caso que se tiene que considerar.
 
 \begin{lema}
-  \label{lema:A4}
-  For any h and any S
+\label{lema:A4}
+  Para cada h y cada S,
    \begin{displaymath}
        \mathbb{P} \left[| E_{in}(h) - E'_{in}(h) | > \frac{\epsilon}{2} \Big\vert \mathcal{S} \right] \leq 2e^{- \frac{1}{8} \epsilon^2 N},
    \end{displaymath}
 
-   where the probability is over random partitions of $\mathcal{S}$ into two sets $\mathcal{D}$ and $\mathcal{D}'$.
+   donde la probabilidad es sobre particiones aleatorias de $\mathcal{S}$
+   en dos conjuntos $\mathcal{D}$ y $\mathcal{D}'$.
 
    \begin{proof}
-       To prove the result, we will use a result, wich is also due to Hoeffding, for sampling without replacement:
-       \begin{lema} [(Hoeffding, 1963)]
-         \label{lema:A5}
-          Let $\mathcal{A} = \{a_1,..., a_{2N}$\} be a set of values with $a_n \in [0,1]$, and let $\mu = \frac{1}{2N} \sum_{n=1}^{2N} a_n$ be their mean. Let $\mathcal{D} = \{z_1,..., z_N\}$ be a sample of size N, sampled from $\mathcal{A}$ without replacement. Then
+      Para probar este resultado se usará un resultado previo de Hoeffding, para
+      muestreos \emph{sin reemplazamiento}:
+      \begin{lema}[Hoeffding, 1963]
+      \label{lema:A5}
+        Sea $\mathcal{A} = \{a_1,\ldots, a_{2N}$\} un conjunto de valores con
+        $a_n \in [0,1]$, y sean $\mu = \frac{1}{2N} \sum_{n=1}^{2N} a_n$ su
+        media. Sea $\mathcal{D} = \{z_1,\ldots, z_N\}$ una muestra de tamaño
+        $N$, tomada desde $\mathcal{A}$ sin reemplazamiento. Entonces
 
-          \begin{displaymath}
-             \mathbb{P} \left[ \left| \frac{1}{N} \sum_{n=1}^N z_n - \mu \right| > \epsilon \right] \leq 2e^{-2 \epsilon^2 N}.
-          \end{displaymath}
+        \begin{displaymath}
+         \mathbb{P} \left[ \left| \frac{1}{N} \sum_{n=1}^N z_n - \mu \right| > \epsilon \right] \leq 2e^{-2 \epsilon^2 N}.
+        \end{displaymath}
+      \end{lema}
 
-          We apply Lemma A.5 as follows. For the 2N examples in $\mathcal{S}$, let $a_n = 1$ if $h(x_n) \neq y_n$ and $a_n = 0$ otherwise. The $\{a_n\}$ are the errors made by h on $\mathcal{S}$. Now randomly partition $\mathcal{S}$ into $\mathcal{D}$ and $\mathcal{D}'$, i.e., sample N examples from $\mathcal{S}$ without replacement to get $\mathcal{D}$, leaving the remaining N examples for $\mathcal{D}'$. This results in a sample of size N of the $\{a_n\}$ for $\mathcal{D}$, sampled uniformly without replacement. Note that
+      Se aplica el lema~\ref{lema:A5} de esta manera. Para los $2N$ ejemplos en
+      $\mathcal{S}$, sea $a_n = 1$ si $h(x_n) \neq y_n$ y $a_n = 0$ en otro caso.
+      Los $\{a_n\}$ son los errores de $h$ en $\mathcal{S}$. Ahora se particiona
+      aleatoriamente $\mathcal{S}$ en $\mathcal{D}$ y $\mathcal{D}'$ tomando $N$
+      muestras de $\mathcal{S}$ sin reemplazamiento para obtener $\mathcal{D}$,
+      y las $N$ restantes para $\mathcal{D}'$. Esto lleva a una muestra de tamaño
+      $N$ de los $\{a_n\}$ para $\mathcal{D}$, muestreados uniformemente
+      sin reemplazamiento. Por tanto,
 
-          \begin{displaymath}
-              E_{in}(h) = \frac{1}{N} \sum_{a_n \in \mathcal{D}} a_n, \ and \ E'_{in}(h) = \frac{1}{N} \sum_{a'_n \in \mathcal{D}'} a'_n.
-          \end{displaymath}
-         Since we are sampling without replacement, $\mathcal{S} = \mathcal{D} \cup \mathcal{D}'$ and $\mathcal{D} \cap \mathcal{D}' = 0$, and so
+      \begin{displaymath}
+          E_{in}(h) = \frac{1}{N} \sum_{a_n \in \mathcal{D}} a_n, \ \text{y} \ E'_{in}(h) = \frac{1}{N} \sum_{a'_n \in \mathcal{D}'} a'_n.
+      \end{displaymath}
+
+     Como muestreamos sin reemplazamiento, $\mathcal{S} = \mathcal{D} \cup \mathcal{D}'$
+     y $\mathcal{D} \cap \mathcal{D}' = \emptyset$, y por tanto
 
          \begin{displaymath}
-             \mu \ \ \ \frac{1}{2N} \sum_{n=1}^{2N} a_n - \frac{E_{in}(h) + E'_{in}(h)}{2}.
+             \mu = \frac{1}{2N} \sum_{n=1}^{2N} a_n = \frac{E_{in}(h) + E'_{in}(h)}{2}.
          \end{displaymath}
-         It follows that $| E_{in} - \mu | > t \Leftrightarrow | E_{in} - E'_{in} | > 2t$. By Lemma A.5,
+         Entonces es claro que $| E_{in} - \mu | > t \Leftrightarrow | E_{in} - E'_{in} | > 2t$.
+         Por el lema~\ref{lema:A5},
 
          \begin{displaymath}
-             \mathbb{P} \left[| E_in(h) - E'_{in}(h) | > 2t \right] \leq 2e^{-2t^2 N}.
+             \mathbb{P} \left[| E_{in}(h) - E'_{in}(h) | > 2t \right] \leq 2e^{-2t^2 N}.
          \end{displaymath}
 
-         Substituting $t = \frac{\epsilon}{4}$ gives the result.
+         Sustituyendo $t = \frac{\epsilon}{4}$ ofrece el resultado deseado.
 
-       \end{lema}
    \end{proof}
 \end{lema}
