@@ -37,6 +37,7 @@ software, por lo que en un entorno doméstico es suficiente.
 
 
 \section{Matemáticas}
+\label{sec:matematicas}
 <<mates, child='05_Desarrollo_Matematicas.Rnw'>>=
 @
 
@@ -372,7 +373,7 @@ ayudar a enfocar el modelado.
 \end{itemize}
 
 Estas dos conclusiones, unido a la enorme cantidad de datos de las que se
-dispone, casi siete millones de filas, conducen a intentar reducir el problema
+dispone, casi seis millones y medio de filas, conducen a intentar reducir el problema
 utilizando dos sencillas ideas: calcular la pendiente de la recta de regresión
 de cada una de las nubes de puntos que forman cada gráfica para un jugador,
 y calcular el área bajo la curva de cada una de las gráficas.
