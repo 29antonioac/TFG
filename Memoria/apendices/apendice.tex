@@ -1,0 +1,280 @@
+\appendix
+\chapter{Demostración de la cota de VC}
+\label{apendice:demVC}
+Se ha comentado en~\ref{th:VCBound} que la demostración del la cota de
+generalización de VC es muy técnica. Por ello, se expone aquí la demostración
+que viene en el libro~\cite{Abu-Mostafa:2012:LD:2207825}.
+
+\begin{teorema}[Vapnik, Chervonenkis, 1971]
+  \label{th:A1}
+   \begin{displaymath}
+       \mathbb{P} \left [\sup_{h \in \mathcal{H}} | E_{in}(h) - E_{out}(h) | > \epsilon \right] \leq 4m_{\mathcal{H}}(2N)e^{-\frac{1}{8} \epsilon^2 N}
+   \end{displaymath}
+\end{teorema}
+
+Este resultado es la desigualdad de VC, e implica directamente la cota de VC
+del Teorema~\ref{th:VCBound}. La desigualdad es válida para cualquier función
+objetivo, ya sea determinista o probabilística, y para cualquier distribución
+de los datos de entrada. La probabilidad se da en función de conjuntos de datos
+de tamaño $N$. Cada dato se genera independiente e idénticamente distribuido,
+donde cada punto sigue la distribución conjunta $P(x,y)$. El evento
+$\sup_{h \in \mathcal{H}} | E_{in}(h) - E{out}(h) | > \epsilon$ es equivalente
+a la unión sobre todas las $h \in \mathcal{H}$ del evento
+$| E_{in}(h) - E_{out}(h) | > \epsilon$. Esta unión contiene el evento que
+implica $g$ en~\ref{th:VCBound}. El uso del supremo es necesario ya que
+$\mathcal{H}$ puede tener un conjunto denso de hipótesis.
+
+El principal reto para probar este teorema es que $E_{out}(h)$ es difícil de
+manipular con respecto a $E_{in}(h)$, ya que $E_{out}(h)$ depende de todo el
+espacio de entrada y no sólo de un conjunto finito de puntos. El primer paso
+para sortear esta dificultad es la observación de que podemos deshacernos de
+$E_{out}(h)$ totalmente ya que la diferencia entre $E_{in}(h)$ y $E_{out}(h)$
+puede ser capturada por las diferencias entre dos errores dentro de la muestra:
+$E_{in}$, el error dentro de la muestra original, y el mismo error en otro
+conjunto de datos independiente, tal como se expone en~\ref{lema:A2}
+Es una idea similar a cuando usamos un conjunto de test para estimar $E_{out}$.
+Esto nos lleva a dos simplificaciones:
+
+\begin{enumerate}
+    \item
+    El supremo de las diferencias sobre infinitas $h \in \mathcal{H}$ pueden ser
+    reducidas considerando sólo las dicotomías implementables por $\mathcal{H}$
+    en los dos conjuntos de datos independientes. Aquí es donde la función
+    de crecimiento $m_{\mathcal{H}}(2N)$ entra en escena~\ref{lema:A3}.
+    \item
+    La diferencia entre dos errores dentro de la muestra \emph{independientes}
+    es ``fácil'' de analizar comparado con $E_{in}$ y $E_{out}$,\ref{lema:A4}.
+\end{enumerate}
+
+La combinación de \ref{lema:A2}, \ref{lema:A3} y \ref{lema:A4} prueba \ref{th:A1}.
+
+\section{Relacionando el error de generalización con las diferencias dentro
+de la muestra}
+
+Se introduce un segundo conjunto de datos $\mathcal{D}'$, independiente de
+$\mathcal{D}$ pero acorde a la misma distribución $P(x,y)$. Este segundo conjunto
+de datos se conocerá como conjunto de datos \emph{fantasma}, ya que realmente
+no existe, sólo es una herramienta utilizada en el análisis. Se espera poder
+acotar el término $\mathbb{P} \left[| E_{in} - E_{out} | \;\text{es grande} \right]$
+por otro término $\mathbb{P} \left[| E_{in} - E'_{in} | \;\text{es grande} \right]$
+el cual es más fácil de analizar.
+
+La intuición detrás de la demostración formal es la siguiente. Para cada hipótesis
+$h$, como $\mathcal{D}'$ está muestreado de manera independiente desde $P(x,y)$,
+la desigualdad de Hoeffding garantiza que $E'_{in}(h) \approx E_{out}(h)$ con
+una gran probabilidad. Cuando $| E_{in}(h) - E_{out}(h) |$ es grande, con una
+alta probabilidad $| E_{in}(h) - E'_{in}(h) |$ también lo es. Entonces,
+$\mathbb{P} \left[| E_{in}(h) - E_{out}(h) | \;\text{es grande} \right]$ puede acotarse aproximadamente por
+$\mathbb{P} \left[| E_{in}(h) - E'_{in}(h) | \;\text{es grande} \right]$.
+
+
+Se intenta acotar la probabilidad de que $E_{in}$ esté lejos $E_{out}$. Sea
+$E'_{in}(h)$ el error ``dentro de la muestra'' para una hipótesis $h$ en $\mathcal{D}'$.
+Se supone que $E_{in}$ está lejos de $E_{out}$, con alguna probabilidad
+(igualmente $E'_{in}(h)$ está lejos de $E{out}$, con la misma probabilidad, ya
+que $E_{in}$ y $E'_{in}$ están idénticamente distribuidas). Cuando N es grande,
+la probabilidad es aproximadamente una Gaussiana sobre $E_{out}$.
+
+\todo[inline]{The red region represents the cases when $E_{in}$ is far from $E_{out}$}
+
+En estos casos, $E'_{in}$ está lejos de $E_{in}$ la mitad del tiempo,
+\underline{como se ilustra en la región verde.} Esto es,
+$\mathbb{P} \left[| E_{in} - E_{out} | \;\text{es grande} \right]$
+puede ser acotado aproximadamente por
+$2   \mathbb{P} \left[| E_{in} - E'_{in} | \;\text{es grande} \right]$.
+
+Este argumento hace intuir que las diferencias entre $E_{in}$ y $E_{out}$ pueden
+ser capturadas por las diferencias entre $E_{in}$ y $E'_{in}$.
+Este argumento puede ser extendido para múltiples hipótesis
+
+
+\begin{lema}
+  \label{lema:A2}
+    \begin{displaymath}
+        \left(1-2e^{- \frac{1}{2} \epsilon^2 N} \right)
+        \mathbb{P} \left[ \sup_{h \in \mathcal{H}} | E_{in}(h) - E_{out}(h) | > \epsilon \right]
+        \leq
+        \mathbb{P} \left[ \sup_{h \in \mathcal{H}} | E_{in}(h) - E'_{in}(h) | > \frac{\epsilon}{2} \right]
+    \end{displaymath}
+Donde la probabilidad del miembro de la derecha es sobre $\mathcal{D}$ y
+$\mathcal{D}'$ en conjunto.
+\end{lema}
+
+\begin{proof}
+    Podemos asumir que $\mathbb{P} \left[ \sup\limits_{h \in \mathcal{H}} | E_{in}(h) - E_{out}(h) | > \epsilon \right] > 0$,
+    ya que en otro caso no hay nada que probar.
+    \begin{align}
+        & \ \mathbb{P} \left[ \sup_{h \in \mathcal{H}} | E_{in}(h) - E'_{in}(h) | > \frac{\epsilon}{2} \right] \nonumber \\
+        \geq & \ \mathbb{P} \left[ \sup_{h \in \mathcal{H}} | E_{in}(h) - E'_{in}(h) | > \frac{\epsilon}{2} \wedge
+        \sup_{h \in \mathcal{H}} | E_{in}(h) - E_{out}(h) | > \epsilon \right] \label{eq:A1} \\
+        =& \ \mathbb{P} \left[ \sup_{h \in \mathcal{H}} | E_{in}(h) - E_{out}(h) | > \epsilon \right] \times \nonumber \\
+        & \ \mathbb{P} \left[ \sup_{h \in \mathcal{H}} | E_{in}(h) - E'_{in}(h) | > \frac{\epsilon}{2} \Big\vert
+          \sup_{h \in \mathcal{H}} | E_{in}(h) - E_{out}(h) | > \epsilon \right] \nonumber
+    \end{align}
+    La desigualdad~\ref{eq:A1} se da ya que
+    $\mathbb{P}[\mathcal{B}_1] \geq \mathcal{P} \left[ \mathcal{B}_1 \ \wedge
+    \ \mathcal{B}_2 \right]$ para cualesquiera dos eventos
+    $\mathcal{B}_1$, $\mathcal{B}_2$.
+    Ahora, se considera el último término:
+
+
+    \begin{displaymath}
+        \mathbb{P} \left[ \sup_{h \in \mathcal{H}} | E_{in}(h) - E'_{in}(h) | > \frac{\epsilon}{2} \Big\vert
+          \sup_{h \in \mathcal{H}} | E_{in}(h) - E_{out}(h) | > \epsilon \right]
+    \end{displaymath}
+
+    El evento sobre el que condicionamos es un conjunto de conjuntos de datos
+    con probabilidad no cero. Se fija un conjunto de datos $\mathcal{D}$
+    en este evento, y sea $h^*$ cualquier hipótesis que cumpla
+    $ | E_{in}(h^*) - E_{out}(h^*) | > \epsilon $. Una de estas hipótesis debe
+    existir ya que $\mathcal{D}$ está en el evento o es con lo que condicionamos.
+    La hipótesis $h^*$ no depende de $\mathcal{D}'$, pero sí de $\mathcal{D}$.
+
+    \begin{align}
+          & \ \mathbb{P} \left[ \sup_{h \in \mathcal{H}} | E_{in}(h) - E'_{in}(h) | > \frac{\epsilon}{2}
+            \Big\vert
+            \sup_{h \in \mathcal{H}} | E_{in}(h) - E_{out}(h) | > \epsilon \right] \nonumber \\
+    \geq & \ \mathbb{P} \left[ | E_{in}(h^*) - E'_{in}(h^*) | > \frac{\epsilon}{2} \Big\vert
+            \sup_{h \in \mathcal{H}} | E_{in}(h) - E_{out}(h) | > \epsilon \right] \label{eq:A2} \\
+    \geq & \ \mathbb{P} \left[ | E'_{in}(h^*) - E_{out}(h^*) | \leq \frac{\epsilon}{2}
+            \Big\vert
+            \sup_{h \in \mathcal{H}} | E_{in}(h) - E_{out}(h) | > \epsilon \right] \label{eq:A3} \\
+    \geq & \ 1 - 2e^{-\frac{1}{2} \epsilon^2 N} \label{eq:A4}
+    \end{align}
+
+
+    \begin{enumerate}
+        \item La desigualdad~\ref{eq:A2} se cumple porque el evento ``$| E_{in}(h^*) - E'_{in}(h^*) | > \frac{\epsilon}{2}$'' implica ``$\sup_{h \in \mathcal{H}} | E_{in}(h) - E'_{in}(h) | > \frac{\epsilon}{2}$''.
+        \item La desigualdad~\ref{eq:A3} se cumple porque los eventos ``$| E'_{in}(h^*) - E_{out}(h^*) | \leq \frac{\epsilon}{2}$'' y ``$| E_{in}(h^*) - E_{out}(h^*) | > \epsilon$'' (que se cumple) implican ``$| E_{in}(h) - E'_{in}(h) | > \frac{\epsilon}{2}$''.
+        \item La desigualdad~\ref{eq:A4} se cumple porque $h^*$ es fijo con respecto a $\mathcal{D}'$
+        y podemos aplicar la desigualdad de Hoeffding a $\mathbb{P} \left[| E'_{in}(h^*) - E_{out}(h^*) |
+        \leq \frac{\epsilon}{2} \right]$.
+    \end{enumerate}
+    Es claro que la desigualdad de Hoeffding se aplica a $\mathbb{P} \left[| E'_{in}(h^*) - E_{out}(h^*) |
+    \leq \frac{\epsilon}{2} \right]$ para cada $h^*$, ya que es fijo con respecto a $\mathcal{D}'$.
+    Además también se aplica a cada media ponderada de $\mathbb{P} \left[| E'_{in}(h^*) - E_{out}(h^*) | \leq \frac{\epsilon}{2} \right]$ basada en $h^*$. Por último, como $h^*$ depende de una particular
+    $\mathcal{D}$,tomamos la media ponderada sobre todos los $\mathcal{D}$ en el evento
+
+    \begin{displaymath}
+        \sup_{h \in \mathcal{H}} | E_{in}(h) - E_{out}(h) | > \epsilon
+    \end{displaymath}
+
+    que es sobre el que condicionamos, wheredonde los pesos vienen de la probabilidad
+    de una $\mathcal{D}$ en particular. Como la cota sirve para cada $\mathcal{D}$
+    en este evento, se mantiene para la media ponderada.
+  \end{proof}
+
+  Aclarar que se puede asumir $e^{- \frac{1}{2} \epsilon^2N} < \frac{1}{4}$,
+  ya que en otro caso la cota dada en~\ref{th:A1} es clara.
+  En este caso, $1 - 2e^{- \frac{1}{2} \epsilon^2N} > \frac{1}{2}$, por lo que
+  el lema implica
+
+  \begin{displaymath}
+    \mathbb{P} \left[\sup_{h \in \mathcal{H}} | E_{in}(h) - E_{out}(h) | > \epsilon \right] \leq
+    2 \mathbb{P} \left[\sup_{h \in \mathcal{H}} | E_{in}(h) - E'_{in}(h) | > \frac{\epsilon}{2} \right].
+  \end{displaymath}
+
+
+
+
+\section{Bounding Worst Case Deviation Using the Growth Function}
+
+
+
+Now that we have related the generalization error to the deviations between in-sample errors, we can actually work with $\mathcal{H}$ restricted to two data sets of size N each, rather than the infinite $\mathcal{H}$. Specifically, we want to bound
+
+\begin{align}
+    \mathbb{P} \left[\sup_{h \in \mathcal{H}} | E_{in}(h) - E'_{in}(h) | > \frac{\epsilon}{2} \right],
+\end{align}
+
+where the probability is over the joint distribution of the data sets $\mathcal{D}$ and $\mathcal{D}'$. One equivalent way of sampling two data sets $\mathcal{D}$ and $\mathcal{D}'$ is to first sample a data set $\mathcal{S}$ of size 2N, then randomly partition $\mathcal{S}$ into $\mathcal{D}$ and $\mathcal{D}'$. This amounts to randomly sampling, without replacement, N examples from $\mathcal{S}$ for $\mathcal{D}$, leaving the remaining for $\mathcal{D}'$. Given the joint data set $\mathcal{S}$, let
+
+\begin{align}
+    \mathbb{P} \left[\sup_{h \in \mathcal{D}} | E_{in}(h) - E'_{in}(h) | > \frac{\epsilon}{2} \Big\vert \
+    \mathcal{S}  \right]
+\end{align}
+
+be the probability of deviation between the two in-sample errors, where the probability is taken over the random partitions of $\mathcal{S}$ into $\mathcal{D}$ and $\mathcal{D}'$. By the law of total probability (with $\sum$ denoting sum or integral as the case may be),
+
+\begin{align}
+    & \ \mathbb{P} \left[\sup_{h \in \mathcal{H}} | E_{in}(h) - E'_{in}(h) | > \frac{\epsilon}{2} \Big\vert \mathcal{S} \right] \nonumber \\ & \ = \sum_{\mathcal{S}} \mathcal{P} \left[\mathcal{S}  \right] \times \mathcal{P} \left[\sup_{h \in \mathcal{H}} |E_{in}(h) - E'_{in}(h) | > \frac{\epsilon}{2} \Big\vert \mathcal{S}  \right] \nonumber \\ & \ \leq \sup_{\mathcal{S}} \mathbb{P} \left[\sup_{h \in \mathcal{H}} | E_{in}(h) - E'_{in}(h) | > \frac{\epsilon}{2} \Big\vert \mathcal{S} \right].
+\end{align}
+
+Let $\mathcal{H}(\mathcal{S})$ be the dichotomies that $\mathcal{H}$ can be implement on the points in $\mathcal{S}$. By definition of the growth function, $\mathcal{H}(\mathcal{S})$ cannot have more than $m_{\mathcal{H}}(2N)$ dichotomies. Suppose it has $M \leq m_{\mathcal{H}}(2N)$ dichotomies, realized by $h_1,..., h_M$.
+Thus,
+
+\begin{align}
+    \sup_{h \in \mathcal{H}} | E_{in}(h) - E'_{h} | = \ \ \sup_{h \in \{h_1,..., h_M\}} \ \ | E_{in}(h) - E'_{in}(h) | \nonumber
+\end{align}
+
+Then,
+
+\begin{align}
+   & \ \mathbb{P} \left[\sup_{h \in \mathcal{H}} | E_{in}(h) - E'_{in}(h) | > \frac{\epsilon}{2} \Big\vert \mathcal{S} \right] \nonumber \\ & \ = \mathbb{P} \left[\sup_{h \in \{h_1,..., h_M\}} | E_{in}(h) - E'{in}(h) | > \frac{\epsilon}{2} \Big\vert \mathcal{S} \right] \nonumber \\ & \ \leq \sum_{m=1}^M \mathbb{P} \left[| E_{} | \_mr - E'_{in}(h_m)ig > \frac{\epsilon}{2} \Big\vert \mathcal{S} \right] \\ & \ \leq M \times \sup_{h \in \mathcal{H}} \mathbb{P} \left[ | E_{in}(h) - E'_{in}(h) | > \frac{\epsilon}{2} \Big\vert \mathcal{S} \right],
+\end{align}
+
+where we use the union bound in (A.5), and overestimate each term by the supremum over all possible hypotheses to get (A.6). After using $M \leq m_{\mathcal{H}}(2N)$ and taking the sup operation over $\mathcal{S}$, we have proved:
+
+% Lemma A.3 negrita
+\begin{lema}
+  \label{lema:A3}
+   \begin{align}
+     & \ \mathbb{P} \left[\sup_{h \in \mathcal{H}} | E_{in}(h) - E'_{in}(h) | > \frac{\epsilon}{2} \Big\vert \mathcal{S} \right] \nonumber \\ & \
+    \leq m_{\mathcal{H}}(2N) \times \sup_{\mathcal{S}} \sup_{h \in \mathcal{H}} \mathbb{P} \left[| E_{in}(h) - E'_{in}(h) | > \frac{\epsilon}{2} \Big\vert \mathcal{S} \right] \nonumber,
+   \end{align}
+\end{lema}
+
+where the probability on the LHS is over $\mathcal{D}$ and $\mathcal{D}'$ jointly, and the probability on the RHS is over random partitions of $\mathcal{S}$ into two sets $\mathcal{D}$ and $\mathcal{D}'$.
+
+    The main achievement of Lemma A.3 is that we have pulled the supremum over $h \in \mathcal{H}$ outside the probability, at the expense of the extra factor of $m_{\mathcal{H}}(2N)$.
+
+\section{Bounding the Deviation between In-Sample Errors}
+
+We now addres the purely combinatorial problem of bounding
+
+\begin{displaymath}
+    \sup_{\mathcal{S}} \sup_{h \in \mathcal{H}} \mathbb{P} \left[| E_{in}(h) - E'_{in}(h) | > \frac{\epsilon}{2} \Big\vert \mathcal{S} \right],
+\end{displaymath}
+
+which appears in Lemma A.3. We will prove the following lemma. Then, Theorem A.1 can be proved by combining Lemmas A.2, A.3 and A.4 taking $1 \ \ 2e^{- \frac{1}{2} \epsilon^2 N} \geq \frac{1}{2}$ (the only case we need to consider).
+
+\begin{lema}
+  \label{lema:A4}
+  For any h and any S
+   \begin{displaymath}
+       \mathbb{P} \left[| E_{in}(h) - E'_{in}(h) | > \frac{\epsilon}{2} \Big\vert \mathcal{S} \right] \leq 2e^{- \frac{1}{8} \epsilon^2 N},
+   \end{displaymath}
+
+   where the probability is over random partitions of $\mathcal{S}$ into two sets $\mathcal{D}$ and $\mathcal{D}'$.
+
+   \begin{proof}
+       To prove the result, we will use a result, wich is also due to Hoeffding, for sampling without replacement:
+       \begin{lema} [(Hoeffding, 1963)]
+         \label{lema:A5}
+          Let $\mathcal{A} = \{a_1,..., a_{2N}$\} be a set of values with $a_n \in [0,1]$, and let $\mu = \frac{1}{2N} \sum_{n=1}^{2N} a_n$ be their mean. Let $\mathcal{D} = \{z_1,..., z_N\}$ be a sample of size N, sampled from $\mathcal{A}$ without replacement. Then
+
+          \begin{displaymath}
+             \mathbb{P} \left[ \left| \frac{1}{N} \sum_{n=1}^N z_n - \mu \right| > \epsilon \right] \leq 2e^{-2 \epsilon^2 N}.
+          \end{displaymath}
+
+          We apply Lemma A.5 as follows. For the 2N examples in $\mathcal{S}$, let $a_n = 1$ if $h(x_n) \neq y_n$ and $a_n = 0$ otherwise. The $\{a_n\}$ are the errors made by h on $\mathcal{S}$. Now randomly partition $\mathcal{S}$ into $\mathcal{D}$ and $\mathcal{D}'$, i.e., sample N examples from $\mathcal{S}$ without replacement to get $\mathcal{D}$, leaving the remaining N examples for $\mathcal{D}'$. This results in a sample of size N of the $\{a_n\}$ for $\mathcal{D}$, sampled uniformly without replacement. Note that
+
+          \begin{displaymath}
+              E_{in}(h) = \frac{1}{N} \sum_{a_n \in \mathcal{D}} a_n, \ and \ E'_{in}(h) = \frac{1}{N} \sum_{a'_n \in \mathcal{D}'} a'_n.
+          \end{displaymath}
+         Since we are sampling without replacement, $\mathcal{S} = \mathcal{D} \cup \mathcal{D}'$ and $\mathcal{D} \cap \mathcal{D}' = 0$, and so
+
+         \begin{displaymath}
+             \mu \ \ \ \frac{1}{2N} \sum_{n=1}^{2N} a_n - \frac{E_{in}(h) + E'_{in}(h)}{2}.
+         \end{displaymath}
+         It follows that $| E_{in} - \mu | > t \Leftrightarrow | E_{in} - E'_{in} | > 2t$. By Lemma A.5,
+
+         \begin{displaymath}
+             \mathbb{P} \left[| E_in(h) - E'_{in}(h) | > 2t \right] \leq 2e^{-2t^2 N}.
+         \end{displaymath}
+
+         Substituting $t = \frac{\epsilon}{4}$ gives the result.
+
+       \end{lema}
+   \end{proof}
+\end{lema}
