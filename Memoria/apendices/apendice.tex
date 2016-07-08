@@ -6,7 +6,7 @@ generalización de VC es muy técnica. Por ello, se expone aquí la demostració
 que viene en el libro~\cite{Abu-Mostafa:2012:LD:2207825}.
 
 \begin{teorema}[Vapnik, Chervonenkis, 1971]
-  \label{th:A1}
+\label{th:A1}
    \begin{displaymath}
        \mathbb{P} \left [\sup_{h \in \mathcal{H}} | E_{in}(h) - E_{out}(h) | > \epsilon \right] \leq 4m_{\mathcal{H}}(2N)e^{-\frac{1}{8} \epsilon^2 N}
    \end{displaymath}
@@ -28,8 +28,8 @@ El principal reto para probar este teorema es que $E_{out}(h)$ es difícil de
 manipular con respecto a $E_{in}(h)$, ya que $E_{out}(h)$ depende de todo el
 espacio de entrada y no sólo de un conjunto finito de puntos. El primer paso
 para sortear esta dificultad es la observación de que podemos deshacernos de
-$E_{out}(h)$ totalmente ya que la diferencia entre $E_{in}(h)$ y $E_{out}(h)$
-puede ser capturada por las diferencias entre dos errores dentro de la muestra:
+$E_{out}(h)$ totalmente ya que la desviación entre $E_{in}(h)$ y $E_{out}(h)$
+puede ser capturada por las desviaciones entre dos errores dentro de la muestra:
 $E_{in}$, el error dentro de la muestra original, y el mismo error en otro
 conjunto de datos independiente, tal como se expone en~\ref{lema:A2}
 Es una idea similar a cuando usamos un conjunto de test para estimar $E_{out}$.
@@ -37,18 +37,18 @@ Esto nos lleva a dos simplificaciones:
 
 \begin{enumerate}
     \item
-    El supremo de las diferencias sobre infinitas $h \in \mathcal{H}$ pueden ser
+    El supremo de las desviaciones sobre infinitas $h \in \mathcal{H}$ pueden ser
     reducidas considerando sólo las dicotomías implementables por $\mathcal{H}$
     en los dos conjuntos de datos independientes. Aquí es donde la función
     de crecimiento $m_{\mathcal{H}}(2N)$ entra en escena~\ref{lema:A3}.
     \item
-    La diferencia entre dos errores dentro de la muestra \emph{independientes}
+    La desviación entre dos errores dentro de la muestra \emph{independientes}
     es ``fácil'' de analizar comparado con $E_{in}$ y $E_{out}$,\ref{lema:A4}.
 \end{enumerate}
 
-La combinación de \ref{lema:A2}, \ref{lema:A3} y \ref{lema:A4} prueba \ref{th:A1}.
+La combinación de~\ref{lema:A2},~\ref{lema:A3} y~\ref{lema:A4} prueba~\ref{th:A1}.
 
-\section{Relacionando el error de generalización con las diferencias dentro
+\section{Relacionando el error de generalización con las desviaciones dentro
 de la muestra}
 
 Se introduce un segundo conjunto de datos $\mathcal{D}'$, independiente de
@@ -83,13 +83,13 @@ $\mathbb{P} \left[| E_{in} - E_{out} | \;\text{es grande} \right]$
 puede ser acotado aproximadamente por
 $2   \mathbb{P} \left[| E_{in} - E'_{in} | \;\text{es grande} \right]$.
 
-Este argumento hace intuir que las diferencias entre $E_{in}$ y $E_{out}$ pueden
-ser capturadas por las diferencias entre $E_{in}$ y $E'_{in}$.
+Este argumento hace intuir que las desviaciones entre $E_{in}$ y $E_{out}$ pueden
+ser capturadas por las desviaciones entre $E_{in}$ y $E'_{in}$.
 Este argumento puede ser extendido para múltiples hipótesis
 
 
 \begin{lema}
-  \label{lema:A2}
+\label{lema:A2}
     \begin{displaymath}
         \left(1-2e^{- \frac{1}{2} \epsilon^2 N} \right)
         \mathbb{P} \left[ \sup_{h \in \mathcal{H}} | E_{in}(h) - E_{out}(h) | > \epsilon \right]
@@ -177,58 +177,88 @@ $\mathcal{D}'$ en conjunto.
 
 
 
-\section{Bounding Worst Case Deviation Using the Growth Function}
+\section{Acotando la desviación del peor caso usando la función de crecimiento}
 
 
+Ahora que se ha relacionado el error de generalización con las desviaciones entre
+los errores dentro de la muestra, se puede trabajar con $\mathcal{H}$ restringido
+a dos conjuntos de datos de tamaño $N$ cada uno, en vez de tamaño infinito.
+Se quiere acotar
 
-Now that we have related the generalization error to the deviations between in-sample errors, we can actually work with $\mathcal{H}$ restricted to two data sets of size N each, rather than the infinite $\mathcal{H}$. Specifically, we want to bound
+\begin{displaymath}
+  \mathbb{P} \left[\sup_{h \in \mathcal{H}} | E_{in}(h) - E'_{in}(h) | > \frac{\epsilon}{2} \right]
+\end{displaymath}
 
-\begin{align}
-    \mathbb{P} \left[\sup_{h \in \mathcal{H}} | E_{in}(h) - E'_{in}(h) | > \frac{\epsilon}{2} \right],
-\end{align}
+donde la probabilidad es sobre la distribución conjunta de los conjuntos de datos
+$\mathcal{D}$ y $\mathcal{D}'$. Una forma equivalente de muestrear dos conjuntos
+de datos $\mathcal{D}$ y $\mathcal{D}'$ es primero muestrear un conjunto de datos
+$\mathcal{S}$ de tamaño $2N$, y luego particionar aleatoriamente $\mathcal{S}$
+en $\mathcal{D}$ y $\mathcal{D}'$. Este muestreo aleatorio, sin
+reemplazamiento, tiene $N$ muestras de $\mathcal{S}$ para $\mathcal{D}$, dejando
+el resto para $\mathcal{D}'$. Dado el conjunto de datos unido $\mathcal{S}$, sea
 
-where the probability is over the joint distribution of the data sets $\mathcal{D}$ and $\mathcal{D}'$. One equivalent way of sampling two data sets $\mathcal{D}$ and $\mathcal{D}'$ is to first sample a data set $\mathcal{S}$ of size 2N, then randomly partition $\mathcal{S}$ into $\mathcal{D}$ and $\mathcal{D}'$. This amounts to randomly sampling, without replacement, N examples from $\mathcal{S}$ for $\mathcal{D}$, leaving the remaining for $\mathcal{D}'$. Given the joint data set $\mathcal{S}$, let
-
-\begin{align}
+\begin{displaymath}
     \mathbb{P} \left[\sup_{h \in \mathcal{D}} | E_{in}(h) - E'_{in}(h) | > \frac{\epsilon}{2} \Big\vert \
     \mathcal{S}  \right]
-\end{align}
+\end{displaymath}
 
-be the probability of deviation between the two in-sample errors, where the probability is taken over the random partitions of $\mathcal{S}$ into $\mathcal{D}$ and $\mathcal{D}'$. By the law of total probability (with $\sum$ denoting sum or integral as the case may be),
+la probabilidad de la desviación entre los dos errores dentro de la muestra,
+donde la probabilidad se toma sobre las particiones aleatorias de $\mathcal{S}$
+en $\mathcal{D}$ y $\mathcal{D}'$. Por la ley de la probabilidad total,
+(con $\sum$ denotando suma o integral, según el caso),
+
+\begin{align*}
+    & \ \mathbb{P} \left[\sup_{h \in \mathcal{H}} | E_{in}(h) - E'_{in}(h) | >
+    \frac{\epsilon}{2} \right]  \\
+    = & \ \sum_{\mathcal{S}} \mathbb{P} \left[\mathcal{S}  \right] \times
+    \mathbb{P} \left[\sup_{h \in \mathcal{H}} |E_{in}(h) - E'_{in}(h) | > \frac{\epsilon}{2}
+    \Big\vert \mathcal{S}  \right]  \\
+    \leq & \ \sup_{\mathcal{S}} \; \mathbb{P} \left[\sup_{h \in \mathcal{H}} | E_{in}(h) - E'_{in}(h) | > \frac{\epsilon}{2}
+    \Big\vert \mathcal{S} \right].
+\end{align*}
+
+Sean $\mathcal{H}(\mathcal{S})$ las dicotomías que $\mathcal{H}$ puede implementar
+en los puntos de $\mathcal{S}$. Por definición de la función de crecimiento,
+$\mathcal{H}(\mathcal{S})$ no puede tener más de $m_{\mathcal{H}}(2N)$ dicotomías.
+Se supone que tiene $M \leq m_{\mathcal{H}}(2N)$ dicotomías, notadas por $h_1,\ldots, h_M$.
+Entonces,
+
+\begin{displaymath}
+    \sup_{h \in \mathcal{H}} | E_{in}(h) - E'_{h} | = \sup_{h \in \{h_1,\ldots, h_M\}} | E_{in}(h) - E'_{in}(h) |.
+\end{displaymath}
+
+Además,
 
 \begin{align}
-    & \ \mathbb{P} \left[\sup_{h \in \mathcal{H}} | E_{in}(h) - E'_{in}(h) | > \frac{\epsilon}{2} \Big\vert \mathcal{S} \right] \nonumber \\ & \ = \sum_{\mathcal{S}} \mathcal{P} \left[\mathcal{S}  \right] \times \mathcal{P} \left[\sup_{h \in \mathcal{H}} |E_{in}(h) - E'_{in}(h) | > \frac{\epsilon}{2} \Big\vert \mathcal{S}  \right] \nonumber \\ & \ \leq \sup_{\mathcal{S}} \mathbb{P} \left[\sup_{h \in \mathcal{H}} | E_{in}(h) - E'_{in}(h) | > \frac{\epsilon}{2} \Big\vert \mathcal{S} \right].
+   & \ \mathbb{P} \left[\sup_{h \in \mathcal{H}} | E_{in}(h) - E'_{in}(h) | > \frac{\epsilon}{2} \Big\vert \mathcal{S} \right] \nonumber \\
+    = & \ \mathbb{P} \left[\sup_{h \in \{h_1,\ldots, h_M\}} | E_{in}(h) - E'_{in}(h) | > \frac{\epsilon}{2} \Big\vert \mathcal{S} \right] \nonumber \\
+    \leq & \ \sum_{m=1}^M \mathbb{P} \left[| E_{in}(h_m) - E'_{in}(h_m) | > \frac{\epsilon}{2} \Big\vert \mathcal{S} \right] \label{eq:A5} \\
+    \leq & \ M \times \sup_{h \in \mathcal{H}} \mathbb{P} \left[ | E_{in}(h) - E'_{in}(h) | > \frac{\epsilon}{2} \Big\vert \mathcal{S} \right], \label{eq:A6}
 \end{align}
 
-Let $\mathcal{H}(\mathcal{S})$ be the dichotomies that $\mathcal{H}$ can be implement on the points in $\mathcal{S}$. By definition of the growth function, $\mathcal{H}(\mathcal{S})$ cannot have more than $m_{\mathcal{H}}(2N)$ dichotomies. Suppose it has $M \leq m_{\mathcal{H}}(2N)$ dichotomies, realized by $h_1,..., h_M$.
-Thus,
+donde se ha usado la cota de la unión en~\ref{eq:A5}, y sobreestimando cada
+término por el supremo sobre todas las posibles hipótesis para conseguir~\ref{eq:A6}.
+Después, usando $M \leq m_{\mathcal{H}}(2N)$ y tomando el supremo sobre $\mathcal{S}$,
+se ha probado:
 
-\begin{align}
-    \sup_{h \in \mathcal{H}} | E_{in}(h) - E'_{h} | = \ \ \sup_{h \in \{h_1,..., h_M\}} \ \ | E_{in}(h) - E'_{in}(h) | \nonumber
-\end{align}
-
-Then,
-
-\begin{align}
-   & \ \mathbb{P} \left[\sup_{h \in \mathcal{H}} | E_{in}(h) - E'_{in}(h) | > \frac{\epsilon}{2} \Big\vert \mathcal{S} \right] \nonumber \\ & \ = \mathbb{P} \left[\sup_{h \in \{h_1,..., h_M\}} | E_{in}(h) - E'{in}(h) | > \frac{\epsilon}{2} \Big\vert \mathcal{S} \right] \nonumber \\ & \ \leq \sum_{m=1}^M \mathbb{P} \left[| E_{} | \_mr - E'_{in}(h_m)ig > \frac{\epsilon}{2} \Big\vert \mathcal{S} \right] \\ & \ \leq M \times \sup_{h \in \mathcal{H}} \mathbb{P} \left[ | E_{in}(h) - E'_{in}(h) | > \frac{\epsilon}{2} \Big\vert \mathcal{S} \right],
-\end{align}
-
-where we use the union bound in (A.5), and overestimate each term by the supremum over all possible hypotheses to get (A.6). After using $M \leq m_{\mathcal{H}}(2N)$ and taking the sup operation over $\mathcal{S}$, we have proved:
-
-% Lemma A.3 negrita
 \begin{lema}
-  \label{lema:A3}
+\label{lema:A3}
    \begin{align}
      & \ \mathbb{P} \left[\sup_{h \in \mathcal{H}} | E_{in}(h) - E'_{in}(h) | > \frac{\epsilon}{2} \Big\vert \mathcal{S} \right] \nonumber \\ & \
     \leq m_{\mathcal{H}}(2N) \times \sup_{\mathcal{S}} \sup_{h \in \mathcal{H}} \mathbb{P} \left[| E_{in}(h) - E'_{in}(h) | > \frac{\epsilon}{2} \Big\vert \mathcal{S} \right] \nonumber,
    \end{align}
 \end{lema}
 
-where the probability on the LHS is over $\mathcal{D}$ and $\mathcal{D}'$ jointly, and the probability on the RHS is over random partitions of $\mathcal{S}$ into two sets $\mathcal{D}$ and $\mathcal{D}'$.
+donde la probabilidad del miembro de la izquierda es sobre la distribución
+conjunta de $\mathcal{D}$ y $\mathcal{D}'$, y la probabilidad en el miembro de
+la derecha es sobre particiones aleatorias de $\mathcal{S}$ en dos conjuntos
+$\mathcal{D}$ y $\mathcal{D}'$.
 
-    The main achievement of Lemma A.3 is that we have pulled the supremum over $h \in \mathcal{H}$ outside the probability, at the expense of the extra factor of $m_{\mathcal{H}}(2N)$.
+La consecuencia más importante del lema~\ref{lema:A3} es que se ha sacado el
+supremo de $h \in \mathcal{H}$ fuera de la probabilidad, a expensas del factor
+extra de la función de crecimiento $m_{\mathcal{H}}(2N)$.
 
-\section{Bounding the Deviation between In-Sample Errors}
+\section{Acotando la desviación entre errores dentro de la muestra}
 
 We now addres the purely combinatorial problem of bounding
 
