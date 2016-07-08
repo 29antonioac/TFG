@@ -1,1 +1,6 @@
 \chapter{Resumen}
+Resumen
+
+\begin{keywords}
+  Estrategia, incertidumbre, datos, aprendizaje, predicción, clasificación.
+\end{keywords}
