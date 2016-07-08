@@ -1,1 +1,71 @@
-\chapter{Objetivos} 
+\chapter{Objetivos}
+
+% En este apartado deberán aparecer con claridad los objetivos inicialmente previstos en la
+% propuesta de TFG y los finalmente alcanzados con indicación de dificultades, cambios y
+% mejoras respecto a la propuesta inicial. Si procede, es conveniente apuntar de manera precisa
+% las interdependencias entre los distintos objetivos y conectarlos con los diferentes apartados
+% de la memoria.
+% Se pueden destacar aquí los aspectos formativos previos más utilizados.
+
+%%%%%%%%%%
+
+% Incertidumbre tiene, porque no sabes cuál va a ser el resultado
+% En realidad, lo tuyo sería un primer paso hacia la optimización
+% Me refiero que aunque en un paso determinado tu algoritmo diga que lo va a petar, hay una cierta incertidumbre.
+% Por lo tanto si tienes que optimizar la estrategia en base a las predicciones hechas por tu algoritmo hay que prever ese posible "ruido"
+% Puedes intentar justificarlo diciendo que la predicción en diferentes etapas del juego trata de reducir la incertidumbre a la hora de predecir el resultado.
+% Y que la predicción del resultado es imprescindeibol para algoritmos que modifiquen sus estrategias durante el juego, online, no offline y sin alterar la estrategia una vez se está jugando.
+% Ese tipo de estrategias de predecir el resultado se llaman "Montecarlo runs" y se usan un montón en Deep Learning en juegos.
+
+%%%%%%%%%
+
+% Dentro de la línea de investigación de inteligencia computacional en juegos de nuestro grupo, el alumno investigará la optimización de estrategias para juegos de estrategia en tiempo real tales como el Starcraft, haciendo especial énfasis en el tratamiento estadístico del coste de una estrategia, que es de tipo ruidoso.
+% Objetivos planteados
+% Objetivo
+% Nivel de dificultad (bajo, medio o alto)
+% Conocer el estado del arte en inteligencia computacional en juegos
+% bajo
+% Conocer el estado del arte en optimización con incertidumbre
+% medio
+% Crear un bot competitivo en un juego de estrategia en tiempo real que avance el estado del arte en los dos aspectos anteriores
+% alto
+
+Los objetivos inicialmente previstos de este trabajo eran realizar un estudio
+sobre la optimización de estrategias para juegos de estrategia en tiempo real,
+como StarCraft, además del desarrollo de un bot competitivo a partir de este
+estudio.
+
+En cambio, se ha variado un poco el objetivo principal un paso atrás:
+se realiza un análisis de un conjunto de estrategias tomadas por jugadores
+reales del videojuego para intentar realizar predicciones sobre el resultado
+final de éstas. Esto se ha decidido así ya que para optimizar una
+estrategia se debe intentar prever la incertidumbre de éstas, para así poder
+tomar decisiones más precisas a lo largo de una partida, modificándolas durante
+la misma en un momento determinado si es necesario.
+
+A la hora de predecir el resultado, será un aspecto clave el tiempo actual de
+la partida: cuanto más avanzada está, menos incertidumbre existe en su
+desenlace. Este objetivo se ha alcanzado en~\ref{sec:informatica}.
+
+Para poder abordar este objetivo, se precisa de conocimiento de técnicas de
+\emph{aprendizaje estadístico}, por lo que se ha hecho un estudio desde abajo,
+matemáticamente hablando, de estas técnicas, para asegurar de manera formal
+que la metodología usada se comporta según lo esperado. Este objetivo
+se ha alcanzado durante la sección~\ref{sec:matematicas}.
+
+Se exponen aquí las asignaturas del Doble Grado cuyo conocimiento ha estado
+relacionado con este trabajo.
+
+\begin{enumerate}
+  \item Cálculo I.
+  \item Estadística Descriptiva e Introducción a la Probabilidad.
+  \item Probabilidad.
+  \item Estadística Computacional.
+  \item Fundamentos de programación.
+  \item Metodología de la programación.
+  \item Lógica y Métodos Discretos
+  \item Estructuras de datos.
+  \item Fundamentos de bases de datos.
+  \item Diseño y Desarrollo de Sistemas de Información.
+  \item Aprendizaje Automático.
+\end{enumerate}
