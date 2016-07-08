@@ -28,9 +28,17 @@
 \usepackage{amsthm}
 \usepackage{amsmath}
 \usepackage{wasysym}
+\usepackage{cancel}
 \renewcommand\qedsymbol{\smiley{}}
 
 \usepackage[pdfborder={000}]{hyperref} %referencia
+
+%%%% Keywords
+% \newcommand{\keywords}[1]{\par\addvspace\baselineskip
+% \noindent\keywordname\enspace\ignorespaces#1}
+\providecommand{\keywords}[1]{\textbf{\textit{Palabras clave: }} #1}
+\providecommand{\engkeywords}[1]{\textbf{\textit{Keywords: }} #1}
+%%%%
 
 %%%%% TodoNotes
 \usepackage{xargs}                      % Use more than one optional parameter in a new commands
@@ -108,6 +116,7 @@ pdfproducer = {pdflatex}
 \theoremstyle{plain}
 \newtheorem{teorema}{Teorema}[chapter]
 \newtheorem{corolario}{Corolario}[chapter]
+\newtheorem{lema}{Lema}[chapter]
 \theoremstyle{definition}
 \newtheorem{ejemplo}{Ejemplo}[chapter]
 \newtheorem{definicion}{Definición}[chapter]
@@ -264,7 +273,7 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
 
 # opts_chunk$set(cache=TRUE, autodep=TRUE)
 # opts_chunk$set(fig.width=4, fig.height=3,fig.pos = '!hbt')
-opts_chunk$set(fig.pos = 'H')
+opts_chunk$set(fig.pos = 'H', cache=T, autodep=T)
 read_chunk("scripts/prueba.R")
 @
 
