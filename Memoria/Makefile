@@ -5,7 +5,7 @@ Rnw := $(wildcard capitulos/*.Rnw)
 proyecto.pdf: proyecto.tex bibliografia.bib
 	pdflatex proyecto.tex && bibtex proyecto.aux && pdflatex proyecto.tex && pdflatex proyecto.tex
 
-proyecto.tex: $(Rnw)
+proyecto.tex: proyecto.Rnw $(Rnw)
 	R -e 'library(knitr);knit("proyecto.Rnw")'
 
 install:
