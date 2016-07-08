@@ -374,6 +374,7 @@ Utilizando este punto de ruptura, se puede reescribir el teorema~\ref{th:boundMH
 como sigue:
 
 \begin{corolario}
+  \label{cor:cotaComb}
   Se puede acotar la función de crecimiento de $\mathcal{H}$ como sigue:
   \begin{equation}
     m_{\mathcal{H}}(N) \leq \sum_{i=0}^{d_{VC}} \dbinom{N}{i} \ \forall N \in \mathbb{N}
@@ -402,7 +403,66 @@ manejo.
 \end{corolario}
 
 \begin{proof}
-  revisar la inducción
+  Para demostrar este resultado se utilizará un lema previo.
+  \begin{lema}
+    \label{lema:cotaComb}
+    En combinatoria, se da esta cota:
+    \begin{equation}
+      \sum_{i=0}^{D} \dbinom{N}{i} \leq N^{D} + 1 \ \forall N,D \in \mathbb{N}
+    \end{equation}
+  \end{lema}
+
+  \begin{proof}
+    Se realizará por inducción sobre $D$.
+
+    \underline{$D = 1$}: Es claro que se cumple.
+
+    \begin{displaymath}
+      \dbinom{N}{0} + \dbinom{N}{1} \leq N^1 + 1 \Leftrightarrow N+1 \leq N+1
+      \ \forall N \in \mathbb{N} \ \checkmark
+    \end{displaymath}
+
+    \underline{$D \overset{?}{\Rightarrow} D+1$}:
+
+    \begin{displaymath}
+      \sum\limits_{i=0}^{D+1} \dbinom{N}{i} \leq N^{D+1} + 1 \Leftrightarrow
+      \sum_{i=0}^{D} \dbinom{N}{i} + \dbinom{N}{D+1} \leq N^{D+1} + 1
+    \end{displaymath}
+
+    Esto es implicado por
+
+    \begin{displaymath}
+      N^{D} + 1 + \dbinom{N}{D+1} \leq N^{D+1} + 1,
+    \end{displaymath}
+
+    debido a hipótesis de inducción y a la transitividad de la relación de orden
+    en los números reales. Se resuelve:
+
+    \begin{align*}
+      & N^{D}  + \dbinom{N}{D+1} \leq N^{D+1} \Leftrightarrow
+      \dbinom{N}{D+1} \leq N^D (N-1)
+      \Leftrightarrow \\
+      & \frac{N \cancel{(N-1)} (N-2) \cdots (N-D)}{(D+1)!}
+      \leq N^D \cancel{(N-1)} \Leftrightarrow \\
+      & \frac{\overbrace{N (N-2) \cdots (N-D)}^{\text{Hay D multiplicandos, luego }\leq N^D}}{(D+1)!}
+      \leq N^D \ \forall N \in \mathbb{N} \ \checkmark
+    \end{align*}
+
+    Queda entonces demostrado
+
+    \begin{equation*}
+      \sum_{i=0}^{D} \dbinom{N}{i} \leq N^{D} + 1 \ \forall N,D \in \mathbb{N}
+    \end{equation*}
+
+  \end{proof}
+  Para demostrar este resultado no hay más que aplicar el lema~\ref{lema:cotaComb}
+  y el corolario~\ref{cor:cotaComb}.
+
+  \begin{displaymath}
+    m_{\mathcal{H}}(N) \leq \sum_{i=0}^{d_{VC}} \dbinom{N}{i} \leq N^{d_{VC}} + 1
+  \end{displaymath}
+
+
 \end{proof}
 
 El último paso para llegar a la cota de generalización apropiada es sustituir
