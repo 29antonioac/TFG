@@ -113,6 +113,29 @@ transformData <- function(data, max.frame = NA, auc = FALSE) {
 
 }
 
+## ---- prepareCVResults ----
+prepareCVResults <- function(df, nround = 10){
+  df.train <- df[,c(1,2)]
+  df.train$Set <- "Train"
+  df.test <- df[,-c(1,2)]
+  df.test$Set <- "Test"
+  print(colnames(df.test))
+  colnames(df.test) <- c("Mean","Std","Set") 
+  colnames(df.train) <- c("Mean","Std","Set")
+  df.full <- rbind(df.train,df.test)
+  df.full$Round <- as.factor(rep(1:nround,2))
+  df.full
+}
+
+## ---- prepareCVErrorPlots ----
+prepareCVErrorPlots <- function(df, title){
+  df.full <- prepareCVResults(df)
+  gg <- ggplot(data=df.full, aes(x=Round, y = Mean, fill = Set))
+  gg <- gg + geom_bar(stat='identity', position=position_dodge())
+  gg <- gg + geom_errorbar(aes(ymin=Mean-Std, ymax = Mean+Std), width = 0.2, position = position_dodge(width=0.9))
+  gg <- gg + ggtitle(title)
+  gg <- gg + ylim(0, 0.3) + ylab("CV Error")
+}
 
 
 
@@ -212,27 +235,28 @@ gg <- ggplot(data=metadata.bound) +
         panel.grid.minor.x = element_blank())
 gg
 
-## ---- CVTest ----
-max_frame <- 75000
-positive.labels <- mean(as.numeric(data.subset.transformed[,Winner]=="A"))
-negative.labels <- mean(as.numeric(data.subset.transformed[,Winner]=="B"))
-
+## ---- CVRegression ----
 data.subset.transformed <- read.csv("../datos/data.full.transformed.regression.csv")
-xgb.data.regression <- xgb.DMatrix(data = as.matrix(data.subset.transformed[,!c("Winner", "ReplayID", "Max.Frame", "Duration"), with=F] ), 
-                        label = as.numeric(data.subset.transformed[,Winner] == "A"))
+positive.labels <- mean(as.numeric(data.subset.transformed[,"Winner"]=="A"))
+negative.labels <- mean(as.numeric(data.subset.transformed[,"Winner"]=="B"))
+
+
+xgb.data.regression <- xgb.DMatrix(data = as.matrix(data.subset.transformed[,!colnames(data.subset.transformed) %in% c("Winner", "ReplayID", "Max.Frame", "Duration")] ), 
+                        label = as.numeric(data.subset.transformed[,"Winner"] == "A"))
 cv.res.regression <- xgb.cv(data = xgb.data.regression, 
                             max.depth = 4, 
-                            scale_pos_weight = negative.labels / positive.labels,
+                            # scale_pos_weight = negative.labels / positive.labels,
                             # max_delta_step = 1,
-                            gamma = 1,
+                            # gamma = 1,
                             # min_child_weight = 3,
-                            subsample = 0.5,
-                            colsample_bytree = 0.5,
+                            # subsample = 0.5,
+                            # colsample_bytree = 0.5,
                             silent = 0,
                             # alpha = 0.01,
-                            lambda = 1.5,
+                            # lambda = 1.5,
                             # eta = 0.001, 
-                            nthread = 4, nround = 1000, objective = "binary:logistic", nfold = 10)
+                            nthread = 4, nround = 10, objective = "binary:logistic", nfold = 5)
+
 
 ## ---- CVAUC ----
 max_frame <- 75000
@@ -240,7 +264,7 @@ data.subset.transformed.auc <- transformData(data.full, max.frame = max_frame, a
 xgb.data.auc <- xgb.DMatrix(data = as.matrix(data.subset.transformed.auc[,!c("Winner", "ReplayID", "Max.Frame", "Duration"), with=F] ), 
                         label = as.numeric(data.subset.transformed.auc[,Winner] == "A"))
 cv.res.auc <- xgb.cv(data = xgb.data.auc, max.depth = 24, silent = 1,
-                 eta = 0.1, nthread = 4, nround = 30,objective = "binary:logistic", nfold = 10)
+                 eta = 0.1, nthread = 4, nround = 30,objective = "binary:logistic", nfold = 5)
 
 ## ---- ImportanceReg ----
 xgb.model.regression <- xgboost(data = xgb.data, max.depth = 10,
@@ -389,19 +413,9 @@ error.filenames <- list.files(path = "../datos", pattern = "xgb.data.*.mean.data
 error.plots <- lapply(error.filenames, function(filename){
                                         fraction <- unique(na.omit(as.numeric(unlist(strsplit(unlist(filename), "[^0-9]+")))))
                                         df <- read.csv(filename)
-                                        df.train <- df[,c(1,2)]
-                                        df.train$Set <- "Train"
-                                        df.test <- df[,-c(1,2)]
-                                        df.test$Set <- "Test"
-                                        colnames(df.test) <- c("Mean","Std","Set") 
-                                        colnames(df.train) <- c("Mean","Std","Set")
-                                        df.full <- rbind(df.train,df.test)
-                                        df.full$Round <- as.factor(rep(1:10,2))
-                                        gg <- ggplot(data=df.full, aes(x=Round, y = Mean, fill = Set))
-                                        gg <- gg + geom_bar(stat='identity', position=position_dodge())
-                                        gg <- gg + geom_errorbar(aes(ymin=Mean-Std, ymax = Mean+Std), width = 0.2, position = position_dodge(width=0.9))
-                                        gg <- gg + ggtitle(paste0(fraction,"% of the mean duration"))
-                                        gg <- gg + ylim(0, 0.3) + ylab("CV Error")
+                                        df.full <- prepareCVResults(df)
+                                        prepareCVErrorPlots(df.full, title = paste0(fraction,"% of the mean duration"))
+                                        
 })
 
 for (i in 1:length(error.plots)){
