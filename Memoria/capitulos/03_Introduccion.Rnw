@@ -3,10 +3,71 @@
 % por qué te has decidido a hacer el TFM sobre eso y qué importancia
 % puede tener en su contexto: IA en juegos, por ejemplo.
 
+\section{Contextualización del trabajo}
 
-Probando
 
-<<prueba, echo = FALSE, fig.align = "center", fig.cap="prueba">>=
-@
+\section{Descripción del problema}
+El problema a abordar es intentar cuantificar la incertidumbre del resultado
+de partidas del videojuego StarCraft a través de aprendizaje supervisado
+sobre dichas partidas.
+\improvement{Meter citas}
 
-Prueba terminada~\ref{fig:prueba}
+Para ello se debe realizar un estudio teórico del aprendizaje estadístico
+desde el punto de vista matemático y formal. Se comenzará introduciendo
+el problema del aprendizaje, seguido por los resultados teóricos que aseguran
+que se puede aprender desde los datos de una manera probabilística. Además,
+se estudiará qué es el sobreajuste y cómo reducirlo, ya que es un problema
+aún sin resolver del ámbito.
+
+Una vez se tiene una base formal del aprendizaje, se procede a tomar una serie
+de datos, los cuales hay que procesarlos previamente para asegurarnos obtener
+mejores resultados, o simplemente para poder trabajar con ellos. Una vez
+se puede comenzar a trabajar, se realizará un estudio de cómo la incertidumbre
+del resultado de una partida varía con respecto al tiempo, utilizando software
+estadístico.
+
+
+\section{Técnicas utilizadas}
+
+Las principales áreas matemáticas que se han usado en este proyecto son las
+siguientes:
+\begin{itemize}
+  \item Estadística y Probabilidad: Esperanza, Varianza, combinaciones,
+  permutaciones.
+  \item Análisis Matemático: Razonamiento matemático deductivo e inductivo.
+\end{itemize}
+
+Por otra parte, las herramientas informáticas usadas son:
+\begin{itemize}
+  \item Programación: Programación imperativa y funcional.
+  \item Bases de datos: Montaje y extracción de datos.
+  \item Sistemas: Configuraciones RAID y optimización del tiempo de respuesta
+  en bases de datos.
+  \item Algoritmia: Comprensión de algoritmos utilizados por las herramientas
+  usadas.
+\end{itemize}
+
+\section{Contenido de la memoria}
+
+El estudio formal del aprendizaje se realiza en el capítulo~\ref{sec:matematicas},
+en el que se distinguen varios apartados principales: una introducción al
+problema en~\ref{subsec:introduccion}, el estudio de la factibilidad
+en~\ref{subsec:factibilidad}, la teoría de generalización en~\ref{subsec:generalizacion},
+una introducción al sobreajuste en~\ref{subsec:sobreajuste} y por último una
+presentación de los modelos de árboles y ensemble en~\ref{subsec:boosting}.
+
+Sobre el propio estudio en~\ref{sec:informatica}, se puede encontrar la
+comprensión del problema y los datos en~\ref{subsec:comprension}, el trabajo
+de preprocesado en~\ref{subsec:preprocesamiento}, la extracción de información
+en~\ref{subsec:extraccion} y la evaluación de los resultados en~\ref{subsec:evaluacion}.
+
+En el capítulo~\ref{cap:conclusiones} se exponen las conclusiones, y en el
+apéndice~\ref{apendice:demVC} se detalla la demostración del resultado más
+fuerte en el ámbito del aprendizaje estadístico.
+
+\section{Principales fuentes}
+
+Las fuentes utilizadas son~\cite{Abu-Mostafa:2012:LD:2207825},
+~\cite{James:2014:ISL:2517747},
+~\cite{Bishop:2006:PRM:1162264},
+detalladas en la página~\pageref{bibliografia}.
