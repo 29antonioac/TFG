@@ -299,5 +299,6 @@ opts_chunk$set(fig.pos = 'H', cache=T, autodep=T)
 
 \bibliography{bibliografia}{}
 \bibliographystyle{plain}
+\label{bibliografia}
 
 \end{document}
