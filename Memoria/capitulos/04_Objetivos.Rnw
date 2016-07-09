@@ -63,9 +63,12 @@ relacionado con este trabajo.
   \item Estadística Computacional.
   \item Fundamentos de programación.
   \item Metodología de la programación.
-  \item Lógica y Métodos Discretos
+  \item Lógica y Métodos Discretos.
+  \item Algorítmica.
   \item Estructuras de datos.
   \item Fundamentos de bases de datos.
   \item Diseño y Desarrollo de Sistemas de Información.
+  \item Ingeniería de Servidores.
+  \item Servidores Web de Altas Prestaciones.
   \item Aprendizaje Automático.
 \end{enumerate}
