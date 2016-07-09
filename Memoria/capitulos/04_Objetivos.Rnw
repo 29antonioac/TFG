@@ -57,7 +57,7 @@ Se exponen aquí las asignaturas del Doble Grado cuyo conocimiento ha estado
 relacionado con este trabajo.
 
 \begin{enumerate}
-  \item Cálculo I.
+  \item Cálculo I y II.
   \item Estadística Descriptiva e Introducción a la Probabilidad.
   \item Probabilidad.
   \item Estadística Computacional.
