@@ -49,30 +49,33 @@
 % ********************************************************************
 % Re-usable information
 % ********************************************************************
-\newcommand{\myTitle}{Título del proyecto\xspace}
-\newcommand{\myDegree}{Grado en ...\xspace}
-\newcommand{\myName}{Nombre Apllido1 Apellido2 (alumno)\xspace}
-\newcommand{\myProf}{Nombre Apllido1 Apellido2 (tutor1)\xspace}
-\newcommand{\myOtherProf}{Nombre Apllido1 Apellido2 (tutor2)\xspace}
+\newcommand{\myTitle}{Estudio de optimización con incertidumbre en juegos de estrategia\xspace}
+\newcommand{\myDegree}{Doble Grado en Ingeniería Informática y Matemáticas\xspace}
+\newcommand{\myName}{Antonio Álvarez Caballero\xspace}
+\newcommand{\myProf}{Juan Julián Merelo Guervós\xspace}
+% \newcommand{\myOtherProf}{Nombre Apllido1 Apellido2 (tutor2)\xspace}
 %\newcommand{\mySupervisor}{Put name here\xspace}
 \newcommand{\myFaculty}{Escuela Técnica Superior de Ingenierías Informática y de
-Telecomunicación\xspace}
+Telecomunicación y Facultad de Ciencias\xspace}
 \newcommand{\myFacultyShort}{E.T.S. de Ingenierías Informática y de
-Telecomunicación\xspace}
-\newcommand{\myDepartment}{Departamento de ...\xspace}
+Telecomunicación y Facultad de Ciencias\xspace}
+\newcommand{\myDepartment}{Departamento de Arquitectura y Tecnología de Computadores\xspace}
 \newcommand{\myUni}{\protect{Universidad de Granada}\xspace}
 \newcommand{\myLocation}{Granada\xspace}
 \newcommand{\myTime}{\today\xspace}
-\newcommand{\myVersion}{Versión 0.1\xspace}
+\newcommand{\myVersion}{Versión 0.9\xspace}
 
 
 \hypersetup{
-pdfauthor = {\myName (email (en) ugr (punto) es)},
+pdfauthor = {\myName (analca3 (en) correo (punto) ugr (punto) es)},
 pdftitle = {\myTitle},
 pdfsubject = {},
-pdfkeywords = {palabra_clave1, palabra_clave2, palabra_clave3, ...},
-pdfcreator = {LaTeX con el paquete ....},
-pdfproducer = {pdflatex}
+pdfkeywords = {Estrategia, incertidumbre, aprendizaje sobre datos, predicción, clasificación},
+pdfcreator = {LaTeX con el paquete hyperref},
+pdfproducer = {pdflatex},
+colorlinks,
+urlcolor = blue,
+linkcolor = blue
 }
 
 %\hyphenation{}
