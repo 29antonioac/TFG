@@ -1,4 +1,3 @@
-%!TEX spellcheck = es_ES
 
 Se introducen las herramientas matemáticas necesarias para la consecución de este trabajo.
 
@@ -482,8 +481,10 @@ se debe ajustar un poco la cota.
   con probabilidad $1-\delta$.
 \end{teorema}
 
-La demostración de este teorema es sumamente técnica, y se presenta en
-\cite[apéndice A]{Abu-Mostafa:2012:LD:2207825}
+La demostración de este teorema es sumamente técnica, y se presenta en el
+apéndice~\ref{apendice:demVC}
+
+\improvement{Meter la demostración como apéndice}
 
 Este teorema es el más importante en la teoría del aprendizaje.
 Con datos suficientes, para cada hipótesis en un espacio infinito con
@@ -498,18 +499,18 @@ La cota de VC tiene algunos problemas, principalmente tres:
 
 \begin{enumerate}
   \item La desigualdad de Hoeffding básica que se ha usado no es muy fuerte.
-  Nos ofrece la misma cota tanto si $E_{out}$ es cercano a 0 o a 0.5, siendo
+  Ofrece la misma cota tanto si $E_{out}$ es cercano a 0 o a 0.5, siendo
   la varianza de $E_{in}$ muy diferente en ambos casos. Utilizar una misma cota
-  con ambos casos puede ser un déficit.
+  con ambos casos puede presentar un déficit.
   \item Utilizar la función de crecimiento con $N$ puntos sin importarnos cuáles
   son nos da una estimación del peor caso, lo que hace que la cota no dependa
   de la distribución de los datos, siendo una cota menos fuerte.
   \item Acotar la función de crecimiento con un polinomio de orden $d_{VC}$ como
-  se ha hecho en~\ref{eq:polBound} es también una debilidad de la cota.
+  se ha hecho en~\ref{eq:polBound} también afecta a la finura de la cota.
 \end{enumerate}
 
 Por estas razones se suele usar esta cota como una guía para la generalización,
-nada inamovible. Este análisis establece la factibilidad del aprendizaje para
+no como algo cerrado. Este análisis establece la factibilidad del aprendizaje para
 conjuntos de hipótesis infinitos, que es lo que se suele dar en la práctica.
 Además, también se usa para comparar el rendimiento de varios modelos, aunque
 esto está fuera del ámbito matemático y es algo más empírico.
@@ -603,6 +604,8 @@ cuadrático medio es, siendo $\mathbb{E}_{x}$ la esperanza con respecto a x
 
 Es importante para el análisis que se haga énfasis en que la función escogida
 $g$ depende del conjunto de datos $\mathcal{D}$.
+
+\improvement{Aquí falta bastante}
 
 \subsection{Sobreajuste}
 \label{subsec:sobreajuste}

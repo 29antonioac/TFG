@@ -33,13 +33,6 @@
 
 \usepackage[pdfborder={000}]{hyperref} %referencia
 
-%%%% Keywords
-% \newcommand{\keywords}[1]{\par\addvspace\baselineskip
-% \noindent\keywordname\enspace\ignorespaces#1}
-\providecommand{\keywords}[1]{\textbf{\textit{Palabras clave: }} #1}
-\providecommand{\engkeywords}[1]{\textbf{\textit{Keywords: }} #1}
-%%%%
-
 %%%%% TodoNotes
 \usepackage{xargs}                      % Use more than one optional parameter in a new commands
 \usepackage[pdftex,dvipsnames]{xcolor}  % Coloured text etc.
@@ -120,9 +113,6 @@ pdfproducer = {pdflatex}
 \theoremstyle{definition}
 \newtheorem{ejemplo}{Ejemplo}[chapter]
 \newtheorem{definicion}{Definición}[chapter]
-
-\newcommand{\Ein}{$E_{in}$}
-\newcommand{\Eout}{$E_{out}$}
 
 \definecolor{gray97}{gray}{.97}
 \definecolor{gray75}{gray}{.75}
@@ -209,8 +199,8 @@ pdfproducer = {pdflatex}
 \usepackage[T1]{fontenc}
 
 \begin{document}
-%\input{portada/portada}
-%\input{prefacios/prefacio}
+\input{portada/portada}
+\input{prefacios/prefacio}
 %\frontmatter
 \tableofcontents
 %\listoffigures
@@ -277,12 +267,6 @@ opts_chunk$set(fig.pos = 'H', cache=T, autodep=T)
 read_chunk("scripts/prueba.R")
 @
 
-<<Resumen, child='capitulos/01_Resumen.Rnw'>>=
-@
-
-<<Abstract, child='capitulos/02_Abstract.Rnw'>>=
-@
-
 <<Introduccion, child='capitulos/03_Introduccion.Rnw'>>=
 @
 
@@ -297,14 +281,14 @@ read_chunk("scripts/prueba.R")
 
 %%\chapter{Conclusiones y Trabajos Futuros}
 %
-%
+
 %%\nocite{*}
 %\bibliography{bibliografia/bibliografia}\addcontentsline{toc}{chapter}{Bibliografía}
 %\bibliographystyle{miunsrturl}
 %
-%\appendix
+
 %\input{apendices/manual_usuario/manual_usuario}
-%%\input{apendices/paper/paper}
+\input{apendices/apendice}
 %\input{glosario/entradas_glosario}
 % \addcontentsline{toc}{chapter}{Glosario}
 % \printglossary
