@@ -378,6 +378,8 @@ utilizando dos sencillas ideas: calcular la pendiente de la recta de regresión
 de cada una de las nubes de puntos que forman cada gráfica para un jugador,
 y calcular el área bajo la curva de cada una de las gráficas.
 
+\todo[inline]{Meter los resultados con los datos transformados aunque sean malos}
+
 \subsection{Extracción de información}
 \label{subsec:extraccion}
 
@@ -388,26 +390,70 @@ y calcular el área bajo la curva de cada una de las gráficas.
 plots <- readRDS("../resultados/errorplots.rds")
 @
 
+Una vez se han tenido que usar el conjunto de datos completo, se va bajando el
+límite de la partida a ver cuánto aguanta el modelo construido.
+
 <<plot100, echo = FALSE, fig.width = 7, fig.height = 7, fig.cap = "Error e importancia del clasificador con límite la media">>=
 multiplot(plotlist = plots[1,])
 @
+
+Con límite la media, se puede observar que el modelo es capaz de predecir el
+ganador de la partida con un error de validación cruzada de menos de un 5\%,
+lo cual es un gran resultado. Utilizando un conjunto de test se ratifica que
+el modelo no está sobreajustando mucho y ofrece un error del $4.2$\%.
+
+Al fijarse en el gráfico de importancia, se observa que las características
+más importantes son los valores de edificaciones que ve cada jugador del enemigo,
+seguidos de los de recursos observados. Esto lleva a pensar que el jugador que
+más investiga el entorno es quien se lleva la victoria.
+
+Ahora se toman varios límites, hasta ver cuánto se puede acortar la duración de
+la partida.
 
 <<plot75, echo = FALSE, fig.width = 7, fig.height = 7, fig.cap = "Error e importancia del clasificador con límite el 75 de la media">>=
 multiplot(plotlist = plots[6,])
 @
 
+Con el 75\% de la media los resultados son similares.
+
 <<plot50, echo = FALSE, fig.width = 7, fig.height = 7, fig.cap = "Error e importancia del clasificador con límite el 50 de la media">>=
 multiplot(plotlist = plots[5,])
 @
+
+Con el 50\% ya comienza a subir el error en test y en validación cruzada. Además,
+existe un cambio grande en la importancia de las características: las más importantes
+pasan a ser los recursos observados y las edificaciones observadas, además de
+las unidades de tierra observadas. Todas estas están organizadas en un mismo
+clúster de imporancia, ya que por sí solas tienen bastante más importancia
+que las demás.
 
 <<plot25, echo = FALSE, fig.width = 7, fig.height = 7, fig.cap = "Error e importancia del clasificador con límite el 25 de la media">>=
 multiplot(plotlist = plots[4,])
 @
 
+Con el 25\% de la partida, el error sigue subiendo, aunque un 9\% en test sigue
+siendo un resultado muy bueno. Siguen predominando como características
+más importantes los valores observados de recursos y edificaciones, aunque
+al estar en un estado más temprano de la partida la observación de recursos
+del mapa tiene una importancia mayor. Esto lleva a deducir lo que antes se
+ha supuesto: el jugador que más se dedica a investigar el entorno tiene más
+posibilidades de ganar.
+
 <<plot20, echo = FALSE, fig.width = 7, fig.height = 7, fig.cap = "Error e importancia del clasificador con límite el 20 de la media">>=
 multiplot(plotlist = plots[3,])
 @
 
+Con el 20\% de partida los resultados son similares a los del 25\%, confirmando
+la importancia de investigar el mapa.
+
 <<plot10, echo = FALSE, fig.width = 7, fig.height = 7, fig.cap = "Error e importancia del clasificador con límite el 10 de la media">>=
 multiplot(plotlist = plots[2,])
 @
+
+Con el 10\% de la partida, sin que sea un desastre, ya sube el error de test a
+un 22\%, teniendo en cuenta que se ha reducido en 10 veces la duración de la partida.
+Aún así, se termina de confirmar que en momentos prematuros de partida, la
+exploración es muy importante.
+
+Las partidas más cortas parecen decidirse por este hecho: tener más información
+que el contrario siempre es una ventaja.
