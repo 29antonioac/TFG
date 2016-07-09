@@ -383,15 +383,53 @@ y calcular el área bajo la curva de cada una de las gráficas.
 \subsection{Extracción de información}
 \label{subsec:extraccion}
 
+\todo[inline]{Explicar cómo funciona XGBoost y por qué se ha escogido}
+
+\newpage
 \subsection{Interpretación y Evaluación}
 \label{subsec:evaluacion}
 
-<<loadPlots, include = FALSE>>=
+<<loadPlots, include = FALSE, cache = FALSE>>=
+auc.plot <- readRDS("../resultados/auc.plots.rds")
+reg.plot <- readRDS("../resultados/reg.plots.rds")
 plots <- readRDS("../resultados/errorplots.rds")
 @
 
+Se muestran los resultados para los datos transformados con la pendiente de
+la recta de regresión.
+
+<<plotSlope, echo = FALSE, fig.width = 7, fig.height = 7, fig.cap = "Error e importancia del clasificador \\ utilizando la pendiente de la recta de regresión">>=
+multiplot(plotlist = reg.plot)
+@
+
+La verdad es que estos resultados no son buenos. Un error cercano al $30$\%
+en test de validación cruzada no es muy alentador. Aunque viendo la importancia
+de las características, se cumple la hipótesis que se propuso para calcular
+la pendiente de la recta de regresión: tanto el Supply como las unidades de
+tierra se ven muy afectadas por este coeficiente. Las demás características
+tienen una ganancia muy baja, por lo que este intento de reducir el problema
+y obtener buenos resultados ha sido fallido. Por ello, no se ha comenzado a
+acotar el tiempo de partida con este enfoque, ya que con menos tiempo la
+incertidumbre crecerá y se conseguirá más error aún.
+
+Se muestran los resultados para los datos transformados con el área bajo la
+curva.
+
+<<plotAUC, echo = FALSE, fig.width = 7, fig.height = 7, fig.cap = "Error e importancia del clasificador \\ utilizando el área bajo cada curva">>=
+multiplot(plotlist = auc.plot)
+@
+
+Estos resultados tampoco son buenos, es más, son aún peores. Parece que las
+hipótesis realizadas para reducir el conjunto de datos hacen que se pierda
+demasiada información. Es lógico ya que se pasa de tener información de
+distintos momentos de la partida a tener información de la partida al completo,
+la granularidad ha aumentado demasiado. Por tanto, se debe trabajar con los
+datos ``en crudo'', a expensas de lo que ocupe en tiempo y memoria.
+
 Una vez se han tenido que usar el conjunto de datos completo, se va bajando el
-límite de la partida a ver cuánto aguanta el modelo construido.
+límite de la partida a ver cuánto aguanta el modelo construido. Para comenzar
+a acotar el tiempo de la partida, se comenzará utilizando el tiempo medio de
+una partida y se irá bajando.
 
 <<plot100, echo = FALSE, fig.width = 7, fig.height = 7, fig.cap = "Error e importancia del clasificador con límite la media">>=
 multiplot(plotlist = plots[1,])
