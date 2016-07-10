@@ -2,7 +2,7 @@
 %\documentclass[a4paper,twoside,11pt,titlepage]{book}
 \usepackage{listings}
 \usepackage[utf8]{inputenc}
-\usepackage[spanish]{babel}
+\usepackage[british, spanish]{babel}
 \usepackage{float}
 
 % \usepackage[style=list, number=none]{glossary} %
@@ -16,6 +16,7 @@
 \addto\shorthandsspanish{\let\esperiod\es@period@code}
 \makeatother
 
+% \selectlanguage{spanish}
 
 %\usepackage[chapter]{algorithm}
 \RequirePackage{verbatim}
@@ -297,15 +298,17 @@ opts_chunk$set(fig.pos = 'H', cache=T, autodep=T)
 %
 
 %\input{apendices/manual_usuario/manual_usuario}
-\input{apendices/apendice}
+% \input{apendices/apendice}
 %\input{glosario/entradas_glosario}
 % \addcontentsline{toc}{chapter}{Glosario}
 % \printglossary
 \chapter*{}
 \thispagestyle{empty}
 
-\bibliography{bibliografia}{}
+\bibliography{bibliografia}\addcontentsline{toc}{chapter}{Bibliografía}
 \bibliographystyle{plain}
 \label{bibliografia}
+
+\input{apendices/apendice}
 
 \end{document}
