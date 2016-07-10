@@ -103,7 +103,7 @@ $E_{out}$, puesto que esta última se comporta como una variable aletatoria
 sobre la distribución de $\mathcal{X}$ y $E_{in}$ es sólo una muestra de lo que
 vale para una función $h$ fija.
 
-\begin{teorema}[Desigualdad de Hoeffding~\citep{10.2307/2282952}]
+\begin{teorema}[\cite{10.2307/2282952}]
   Si $X_1, X_2, \ldots, X_n$ son independientes y $a_i \leq X_i \leq b_i \; (i=1,2,\ldots,n)$,
   entonces para $\epsilon>0$ se da:
   \[
@@ -682,9 +682,96 @@ cuadrático medio es, siendo $\mathbb{E}_{x}$ la esperanza con respecto a x
 \end{equation}
 
 Es importante para el análisis que se haga énfasis en que la función escogida
-$g$ depende del conjunto de datos $\mathcal{D}$.
+$g$ depende del conjunto de datos $\mathcal{D}$. El primer paso es quitar la
+dependencia de un conjunto de datos $\mathcal{D}$ tomando la esperanza
+con respecto a todos los conjuntos de datos. Así se obtendrá un error fuera
+de la muestra esperado para el modelo de aprendizaje que no depende de un
+conjunto de datos particular. Las cuentas se realizarán añadiendo ruido
+(de media 0 y varianza $\sigma^2$)
+a la función objetivo, para ver el caso general.
 
-\improvement{Aquí falta bastante}
+\begin{displaymath}
+\mathbb{E}_{\mathcal{D}}\left[E_{out}\left(g^D(x)\right) \right] = \mathbb{E}_{\mathcal{D}} \left[\mathbb{E}_x \left[ \left(g^D(x) - y(x) \right)^ 2  \right] \right] = \mathbb{E}_{\mathcal{D}} \left[\mathbb{E}_x \left[ \left(g^D(x) - f(x) - \epsilon(x) \right)^ 2  \right] \right]
+\end{displaymath}
+
+\begin{displaymath}
+\mathbb{E}_{\mathcal{D}} \left[\mathbb{E}_x \left[ \left(g^D(x) - f(x) - \epsilon(x) \right)^ 2  \right] \right] = \mathbb{E}_x \left[\mathbb{E}_{\mathcal{D}} \left[ \left(g^D(x) - f(x) - \epsilon(x) \right)^ 2  \right] \right]
+\end{displaymath}
+
+Desarrollando el trinomio queda:
+
+\begin{displaymath}
+\mathbb{E}_x \left[\mathbb{E}_{\mathcal{D}} \left[ g^D(x)^2 + f(x)^2 + \epsilon(x)^2 - 2f(x)g^D(x) - 2g^D(x)\epsilon(x) - 2f(x)\epsilon(x) \right] \right]
+\end{displaymath}
+
+El término $\mathbb{E}_{\mathcal{D}} \left[ g^D(x) \right]$ provee una
+``función media'', que se denota por $\bar{g}(x)$.
+
+Ahora sumamos y restamos $\bar{g}(x)^2$ para obtener las expresiones para $bias(x)$ y $var(x)$.
+
+
+\begin{displaymath}
+\mathbb{E}_x \left[\mathbb{E}_{\mathcal{D}} \left[ g^D(x)^2 - \bar{g}(x)^2 + \bar{g}(x)^2 + f(x)^2 + \epsilon(x)^2 - 2f(x)g^D(x) - 2g^D(x)\epsilon(x) - 2f(x)\epsilon(x) \right] \right]
+\end{displaymath}
+
+Usamos la linealidad de la esperanza y reordenamos para obtener dichas expresiones. La varianza es la indicada porque el doble producto de que debe salir del binomio al cuadrado es $0$, ya que $\bar{g}(x)$ no depende de $\mathcal{D}$.
+
+\begin{align*}
+\mathbb{E}_x \Big[ & \underbrace{\mathbb{E}_{\mathcal{D}} \left[ g^D(x)^2 \right] - \bar{g}(x)^2}_{var(x)} + \underbrace{\bar{g}(x)^2 - 2f(x) \underbrace{\mathbb{E}_{\mathcal{D}}  \left[g^D(x) \right]}_{\bar{g}(x)} + f(x)^2}_{bias(x)}  - 2\epsilon(x) \underbrace{\mathbb{E}_{\mathcal{D}}  \left[g^D(x) \right]}_{\bar{g}(x)} \\
+& - 2f(x)\epsilon(x) + \epsilon(x)^2 \Big]
+\end{align*}
+
+Entonces nos queda
+
+\begin{displaymath}
+\mathbb{E}_{\mathcal{D}} [E_{out}(g^D(x))] = \mathbb{E}_x [var(x) + bias(x) - 2 \epsilon(x) \bar{g}(x) - 2f(x)\epsilon(x) + \epsilon(x)^2 ]
+\end{displaymath}
+
+Ahora usamos de nuevo la linealidad de la esperanza. Además, destacar que $f(x)$ y $\epsilon(x)$ son independientes, luego la esperanza del producto es el producto de las esperanzas.
+
+\begin{displaymath}
+\mathbb{E}_{\mathcal{D}}[E_{out}(g^D(x))] = var + bias -2 \underbrace{\mathbb{E}_x \left[ \epsilon(x) \right]}_{0} \mathbb{E}_x \left[\bar{g}(x) \right] - 2 \mathbb{E}_x \left[ f(x) \right] \underbrace{\mathbb{E}_x \left[ \epsilon(x) \right]}_{0} + \underbrace{\mathbb{E}_x \left[\epsilon(x)^2 \right]}_{\sigma^2}
+\end{displaymath}
+
+Con esto, ya lo tenemos: por hipótesis, sabemos que la media del ruido es 0 y la varianza $\sigma^2$, luego nos queda la expresión que buscábamos:
+
+\begin{displaymath}
+\mathbb{E}_{\mathcal{D}}[E_{out}(g^D(x))] = var + bias + \sigma^2
+\end{displaymath}
+
+En resumen:
+\begin{itemize}
+  \item $bias(x) = (\bar{g}(x) - f(x))^2$, el sesgo, mide la desviación de la función media con respecto a la función objetivo
+  \item $var(x) = \mathbb{E}_{\mathcal{D}} \left[ g^D(x)^2 \right] - \bar{g}(x)^2$, la varianza, mide la variación de la hipótesis final dependiendo del conjunto de datos.
+\end{itemize}
+
+El equilibrio aproximación-generalización viene implícito en esta descomposición.
+Si tenemos conjunto de hipótesis simple (una solo, para que quede más claro el ejemplo),
+la hipótesis final y la función media serán la misma para cualquier conjunto de
+datos, luego $var = 0$. El sesgo dependerá solamente de la función objetivo $f$.
+Al haber una sola, lo más probable es que el sesgo sea muy alto.
+
+En un conjunto de hipótesis grande, diferentes conjuntos de datos producirán
+distintas hipótesis que se acerquen a $f$, luego el sesgo es aproximadamente 0,
+ya que la función media estará cerca de $f$. La varianza es bastante grande al
+variar mucho la función media con respecto a cada una de las generadas con el
+conjunto de datos. También se puede ver como la inestabilidad del modelo, ya
+que si una función generada es muy distinta a otra, querrá decir que se
+comportará muy distinto en algunos de los datos.
+
+En general, calcular estos valores no es fácil y no se suele hacer, por lo que
+esta herramienta es puramente conceptual para el desarrollo de modelos. Cuando
+se considera este enfoque, se suelen intentar dos cosas:
+
+\begin{itemize}
+  \item Bajar la varianza sin subir mucho el sesgo: Se utilizan técnicas
+  generales como la regularización, que se estudia en el
+  capítulo~\ref{subsec:sobreajuste}.
+  \item Bajar el sesgo sin subir mucho la varianza: Requiere de mucha
+  información para seleccionar el modelo $\mathcal{H}$ en función de $f$, por
+  lo que es específico para cada aplicación.
+\end{itemize}
+
 
 \subsection{Sobreajuste}
 \label{subsec:sobreajuste}
