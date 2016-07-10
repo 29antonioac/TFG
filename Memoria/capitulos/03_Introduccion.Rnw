@@ -1,23 +1,63 @@
 \chapter{Introducción}
-% El primer paso es motivar el estudio del problema. Tienes que decir
-% por qué te has decidido a hacer el TFM sobre eso y qué importancia
-% puede tener en su contexto: IA en juegos, por ejemplo.
 
-\section{Contextualización del trabajo}
+\section{Contextualización del trabajo y motivación}
+En el ámbito de la Inteligencia Artificial, los juegos siempre han sido usados
+como banco de pruebas para algoritmos, teorías y distintas metodologías debido
+a sus específicas características. A veces éstos son muy simples y de
+información perfecta como las damas o el ajedrez. Otras, de una magnitud
+compleja y con información oculta entre jugadores. Ese es el caso de StarCraft,
+el clásico juego de estrategia en tiempo real que lleva desde 1998 en
+ordenadores de millones de jugadores.
+
+En StarCraft, el objetivo es sencillo: partiendo de un edificio central y pocas
+unidades, se debe formar una comunidad militar que permita derrotar a los
+bandos enemigos. Esto se consigue recogiendo recursos de varios tipos,
+construyendo edificaciones militares que permitan obtener unidades más potentes
+o mejorar el armamento, explorando el entorno con unidades exploradoras, etc.
+
+Esta sencillez esconde una complejidad enorme: los tiempos de
+comienzo al construir edificaciones, obtener un determinado tipo de unidad
+antes que los contrarios o atacar desde el principio con las unidades más
+básicas son factores que pueden determinar una partida.
+
+Por esta razón, StarCraft es objetivo de muchos investigadores que buscan
+diseñar el jugador o bot perfecto. Para ello, muchas de estas investigaciones
+tienen una componente común: adaptar la estrategia según la incertidumbre,
+qué podría pasar a partir de un determinado momento. Así, existen
+investigaciones sobre predicción en este ámbito, en las que se destacan
+predictores utilizando redes bayesianas como
+en~\cite{DBLP:conf/aiide/StanescuHEGB13} y~\cite{DBLP:conf/cig/SynnaeveB11a}.
+
+El caso más parecido al que se aborda en este trabajo
+es~\cite{DBLP:conf/cosecivi/Sanchez-Ruiz15}, donde se intenta predecir el
+ganador de una partida. Aún así, el enfoque tomado no es
+exactamente el mismo, teniendo aquí un entorno más grande y heterogéneo.
+
+La motivación de este trabajo es ampliar el estado del arte en este entorno,
+intentar estudiar cómo la incertidumbre de una partida baja al paso del tiempo.
+La incertidumbre es un gran problema de los investigadores ya que no permite
+actuar de manera totalmente determinista ante un problema, siempre hay un factor
+externo que, sin ser aleatorio, está fuera de control.
 
 
 \section{Descripción del problema}
 El problema a abordar es intentar cuantificar la incertidumbre del resultado
-de partidas del videojuego StarCraft a través de aprendizaje supervisado
-sobre dichas partidas.
-\improvement{Meter citas}
+de partidas de StarCraft a través de aprendizaje supervisado sobre un gran
+conjunto de partidas de competición. Este conjunto de partidas está sacado
+de~\cite{DBLP:conf/flairs/RobertsonW14}, ya que no es un conjunto muy
+estudiado por los investigadores y tiene algunas características que a priori
+parecen muy interesantes: completitud y precisión de la información guardada,
+además de datos derivados que luego se analizarán. Como última ventaja,
+proveen tanto el extractor de datos junto a su código fuente como los propios
+conjuntos de datos, lo que hace fácil su uso y el entendimiento de los datos
+almacenados.
 
-Para ello se debe realizar un estudio teórico del aprendizaje estadístico
-desde el punto de vista matemático y formal. Se comenzará introduciendo
-el problema del aprendizaje, seguido por los resultados teóricos que aseguran
-que se puede aprender desde los datos de una manera probabilística. Además,
-se estudiará qué es el sobreajuste y cómo reducirlo, ya que es un problema
-aún sin resolver del ámbito.
+Para abordar este problema se debe realizar un estudio teórico del aprendizaje
+estadístico  desde el punto de vista matemático y formal. Se comenzará
+introduciendo el problema del aprendizaje, seguido por los resultados teóricos
+que aseguran que se puede aprender desde los datos de una manera probabilística.
+Además, se estudiará qué es el sobreajuste y cómo reducirlo, ya que es un
+problema aún sin resolver del ámbito.
 
 Una vez se tiene una base formal del aprendizaje, se procede a tomar una serie
 de datos, los cuales hay que procesarlos previamente para asegurarnos obtener
