@@ -9,7 +9,7 @@ read_chunk("../scripts/05_Desarrollo_Matematicas.R")
 \subsection{Introducción al problema}
 \label{subsec:introduccion}
 
-Parafraseando a~\cite{Abu-Mostafa:2012:LD:2207825}, si a un niño pequeño se le pregunta si hay un árbol
+Parafraseando a~\citep{Abu-Mostafa:2012:LD:2207825}, si a un niño pequeño se le pregunta si hay un árbol
 en una foto, lo más probable es que dé la respuesta correcta. Si a uno algo mayor
 se le pregunta ``¿Qué es un árbol'', posiblemente no sabrá contestar o su respuesta
 no sea muy útil. Los seres humanos no han aprendido qué es un árbol con una definición
@@ -103,7 +103,7 @@ $E_{out}$, puesto que esta última se comporta como una variable aletatoria
 sobre la distribución de $\mathcal{X}$ y $E_{in}$ es sólo una muestra de lo que
 vale para una función $h$ fija.
 
-\begin{teorema}[Desigualdad de Hoeffding~\cite{10.2307/2282952}]
+\begin{teorema}[Desigualdad de Hoeffding~\citep{10.2307/2282952}]
   Si $X_1, X_2, \ldots, X_n$ son independientes y $a_i \leq X_i \leq b_i \; (i=1,2,\ldots,n)$,
   entonces para $\epsilon>0$ se da:
   \[

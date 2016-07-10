@@ -32,7 +32,7 @@
 \usepackage{cancel}
 \renewcommand\qedsymbol{\smiley{}}
 
-\usepackage[pdfborder={000}]{hyperref} %referencia
+\usepackage[pdfborder={000}, colorlinks]{hyperref} %referencia
 
 %%%%% TodoNotes
 \usepackage{xargs}                      % Use more than one optional parameter in a new commands
@@ -80,7 +80,8 @@ pdfcreator = {LaTeX con el paquete hyperref},
 pdfproducer = {pdflatex},
 colorlinks,
 urlcolor = blue,
-linkcolor = blue
+linkcolor = blue,
+citecolor = Violet
 }
 
 %\hyphenation{}
@@ -92,6 +93,9 @@ linkcolor = blue
 \usepackage{colortbl,longtable}
 \usepackage[stable]{footmisc}
 %\usepackage{index}
+
+\usepackage[round]{natbib}   % omit 'round' option if you prefer square brackets
+\bibliographystyle{plainnat}
 
 %\makeindex
 %\usepackage[style=long, cols=2,border=plain,toc=true,number=none]{glossary}
@@ -306,7 +310,7 @@ opts_chunk$set(fig.pos = 'H', cache=T, autodep=T)
 \thispagestyle{empty}
 
 \bibliography{bibliografia}\addcontentsline{toc}{chapter}{Bibliografía}
-\bibliographystyle{plain}
+% \bibliographystyle{plain}
 \label{bibliografia}
 
 \input{apendices/apendice}
