@@ -7,6 +7,7 @@ read_chunk("../scripts/05_Desarrollo_Matematicas.R")
 @
 
 \subsection{Introducción al problema}
+\label{subsec:introduccion}
 
 Parafraseando a~\cite{Abu-Mostafa:2012:LD:2207825}, si a un niño pequeño se le pregunta si hay un árbol
 en una foto, lo más probable es que dé la respuesta correcta. Si a uno algo mayor
@@ -71,6 +72,7 @@ a priori si, ante nuevos datos, esta recta los seguirá separando correctamente.
 Incluso, ante nuevos datos, el conjunto podría pasar a ser no linealmente separable.
 
 \subsection{Factibilidad del aprendizaje}
+\label{subsec:factibilidad}
 
 El aprendizaje estadístico busca \emph{obtener información desde los datos},
 utilizando para ello técnicas estadísticas. Se empezará estudiando una cuestión
@@ -96,11 +98,12 @@ un modelo adecuado? ¿Es factible aprender?
   \]
 \end{definicion}
 
-\unsure{Justificar que E\_out es la esperanza de E\_in}
+Es claro que $E_{in}$ se comporta como un estimador de la esperanza de
+$E_{out}$, puesto que esta última se comporta como una variable aletatoria
+sobre la distribución de $\mathcal{X}$ y $E_{in}$ es sólo una muestra de lo que
+vale para una función $h$ fija.
 
-% Justificar que E_out es la esperanza de E_in
-
-\begin{teorema}[Desigualdad de Hoeffding]
+\begin{teorema}[Desigualdad de Hoeffding~\cite{10.2307/2282952}]
   Si $X_1, X_2, \ldots, X_n$ son independientes y $a_i \leq X_i \leq b_i \; (i=1,2,\ldots,n)$,
   entonces para $\epsilon>0$ se da:
   \[
@@ -110,7 +113,89 @@ un modelo adecuado? ¿Es factible aprender?
 \end{teorema}
 
 \begin{proof}
-  Demostración
+  Primero se expondrán algunos resultados necesarios.
+  \begin{lema}
+  \label{lema:cotaConvexa}
+    Si $X$ es una variable aleatoria tal que $a \leq X_i \leq b$, entonces
+    para cualquier número real $h$
+
+    \begin{displaymath}
+      \mathbb{E}[e^{hX}] \leq \frac{b-\mathbb{E}[X]}{b-a}e^{ha} + \frac{\mathbb{E}[X]-a}{b-a}e^{hb}
+    \end{displaymath}
+  \end{lema}
+
+  \begin{proof}
+    Como la función exponencial $e^{hX}$ es convexa, su gráfica está acotada
+    superiormente por la línea recta que une $X=a$ y $X=b$.
+
+    \begin{displaymath}
+      e^{hX} \leq \frac{b-X}{b-a}e^{ha} + \frac{X-a}{b-a}e^{hb}
+    \end{displaymath}
+
+    La hipótesis queda probada por la linealidad de la esperanza.
+  \end{proof}
+
+
+\improvement{Meter los dos resultados anteriores}
+
+
+
+    Notaremos $\mu_i = \mathbb{E}[X_i]$. By (1.7) and (1.8),
+
+  \begin{equation}
+  \label{eq:Pleqe}
+    \mathbb{P}[\bar{X}-\mathbb{E}[\bar{X}] \geq t]\leq e^{-hnt} \prod_{i=1}^n Ee^{h(X_i- \mu_i)}
+  \end{equation}
+
+  Por el lema~\ref{lema:cotaConvexa},
+
+  \begin{equation}
+  \label{eq:Eleq}
+      \mathbb{E}[e^{h(X_i- \mu_i)}] \leq e^{-h \mu_i} \left(\frac{b_i- \mu_i}{b_i-a_i} e^{ha_i} + \frac{\mu_i-a_i}{b_i-a_i} \right) = e^{L(h_i)}
+  \end{equation}
+
+  donde
+
+  \begin{displaymath}
+      L(h_i) = -h_ip_i + \ln{(1-p_i + p_ie^{h_i})}
+  \end{displaymath}
+
+  \begin{displaymath}
+      h_i = h(b_i-a_i), \ \ \ p_i = \frac{\mu_i-a_i}{b_i-a_i}.
+  \end{displaymath}
+
+  Las primeras dos derivadas de $L(h_i)$ son
+
+  \begin{displaymath}
+      L'(h_i) = -p_i + \frac{p_i}{(1-p_i)e^{-h_i} + p_i}
+  \end{displaymath}
+
+  \begin{displaymath}
+      L''(h_i) = \frac{p_i(1-p_i)e^{-h_i}}{[(1-p_i)e^{-h_i}+ p_i]^2}
+  \end{displaymath}
+
+  La última proporción es del tipo $u(1-u)$ donde $0 \leq u \leq 1$. Por tanto
+  $L''(h_i) \leq \frac{1}{4}$. Entonces, utilizando la fórmula de Taylor,
+
+  \begin{displaymath}
+      L(h_i) \leq L(0) + L'(0)h_i + \frac{1}{8}h_i^2 = \frac{1}{8}h_i^2 = \frac{1}{8}h_i^2 (b_i-a_i)^2
+  \end{displaymath}
+
+  Entonces por~\ref{eq:Eleq}
+
+  \begin{displaymath}
+      \mathbb{E}[e^{h(x_i- \mu_i)}] \leq e^{\frac{1}{8}h^2 (b_i-a_i)^2}
+  \end{displaymath}
+
+  y por~\ref{eq:Pleqe}
+
+  \begin{equation}
+  \label{eq:final}
+      \mathbb{P}[\bar{X} - \mu \geq t] \leq e^ {-hnt + \frac{1}{8}h^2 \sum_{k=1}^n (b_i-a_i)}
+  \end{equation}
+
+  El miembro de la derecha de~\ref{eq:final} tiene un mínimo en $h=4nt/ \sum (b_i-a_i)^2$.
+  Insertando este valor en~\ref{eq:final} se obtiene la desigualdad deseada.
 \end{proof}
 
 \begin{corolario}
@@ -204,8 +289,6 @@ Lo primero está probado para conjuntos de hipótesis finito. Lo segundo es un v
 conocido: una vez un algoritmo de aprendizaje nos da una función $g$, podemos
 calcular su $E_{in}$ para evaluar su exactitud.
 
-\improvement{¿Meter aquí temas de complejidad de $f$ y $\mathcal{H}$?}
-
 \subsection{Generalización: Teoría de Vapnik-Chervonenkis}
 \label{subsec:generalizacion}
 En esta sección se desarrollará una teoría matemática que caracteriza la distinción
@@ -295,8 +378,6 @@ por lo que
 Si se da la igualdad, quiere decir que $\mathcal{H}$ puede generar todas las
 posibles dicotomías en $x_1,\ldots,x_N$, y se dirá que $\mathcal{H}$ puede
 \emph{separar} $x_1,\ldots,x_N$.
-
-\improvement{Meter algún ejemplo (sólo si da tiempo)}
 
 Para cada conjunto de hipótesis que se use, no es fácil calcular de manera exacta
 $m_{\mathcal{H}}$, aunque realmente no hay que hacerlo. Como $m_{\mathcal{H}}$
@@ -483,8 +564,6 @@ se debe ajustar un poco la cota.
 
 La demostración de este teorema es sumamente técnica, y se presenta en el
 apéndice~\ref{apendice:demVC}
-
-\improvement{Meter la demostración como apéndice}
 
 Este teorema es el más importante en la teoría del aprendizaje.
 Con datos suficientes, para cada hipótesis en un espacio infinito con

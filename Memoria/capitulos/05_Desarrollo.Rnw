@@ -15,10 +15,10 @@ Este trabajo ha sido desarrollando utilizando las siguientes herramientas:
   \item MariaDB como sistema gestor de bases de datos relacionales (SQL).
 \end{itemize}
 
-Estas decisiones se han tomado, principalmente, por ser las mejores herramientas
-en cada uno de sus ámbitos, con la grandísima ventaja de ser software libre.
+Estas decisiones se han tomado, principalmente, por ser las herramientas más
+usadas en cada uno de sus ámbitos, con la grandísima ventaja de ser software
+libre.
 
-\improvement{¿Por qué son las mejores?}
 
 Además, la plataforma donde se ha realizado la computación, es la siguiente:
 \begin{itemize}
@@ -55,13 +55,12 @@ se aborda en el trabajo.
 En primer lugar en cualquier problema de Ciencia de Datos, el primer
 paso es \emph{comprender el problema y los datos que se disponen}.
 
-\change{Meter cita!}
-El problema a abordar es el siguiente: a partir de un conjunto de
-partidas antiguas de StarCraft, se busca predecir
-el momento en el que la partida está decidida con una confianza
-determinada. Para ello, partimos de 6 bases de datos relacionales
-(SQL) con gran cantidad de partidas almacenadas, cada una con muchas
-características a observar. Cada una de ellas posee las
+
+El problema a abordar, como se ha explicado en~\ref{sec:descripcion} es el siguiente:
+a partir de un conjunto de partidas antiguas de StarCraft, se busca cuantificar
+la incertidumbre sobre el resultado de éstas. Para ello, partimos de 6 bases de
+datos relacionales (SQL) con gran cantidad de partidas almacenadas, cada una
+con muchas características a observar. Cada una de ellas posee las
 características presentes en la figura~\ref{dataset}.
 
 
@@ -82,8 +81,8 @@ investigadores.
 
 Las características están sacadas casi en su totalidad directamente de
 valores que proporciona la API que permite interactuar con StarCraft,
-\emph{BWAPI}. Otros son datos derivados, como la distancia de un
-jugador a la base más cercana, por ejemplo.
+\fnurl{\emph{BWAPI}}{http://bwapi.github.io/}. Otros son datos derivados,
+como la distancia de un jugador a la base más cercana, por ejemplo.
 
 Las características que van a ser usados en este trabajo son,
 principalmente, los recursos de cada jugador, sus batallones (que son
@@ -95,9 +94,7 @@ quedan. Estas características quedan reflejadas en la figura
 ~\ref{datasetSeleccionado}. Estas características han sido escogidas ya que se
 pretende realizar un análisis utilizando el estado actual del entorno, no
 una cola de eventos producidos por los jugadores. Este enfoque se ha realizado
-en otros trabajos.
-
-\change{Meter cita aquí}
+en otros trabajos como se ha detallado en~\ref{sec:contexto}.
 
 \begin{figure}
     \centering
@@ -163,14 +160,13 @@ para poder abordar el problema a resolver.
 
 En esta sección se expone el trabajo de preprocesado que se ha tenido que aplicar
 a los datos para poder obtener información.
-\todo[inline]{Aquí meter toda la lógica que se ha usado para extraer los datos. Qué y cómo se ha hecho.}
 
 \subsubsection{Preparación del sistema para almacenar los datos}
 \label{subsubsec:preparacion}
 
 En primer lugar, se tiene que ver qué formato tienen los datos para saber cómo
-manejarse con ellos. Los datos vienen estructurados en sendos scripts de bases
-de datos estructurales \emph{SQL}, por lo que el primer paso es montar un
+manejarse con ellos. Los datos vienen estructurados en sendos \fnurl{scripts}{http://scidrive.uoa.auckland.ac.nz/gameai/}
+de bases de datos estructurales \emph{SQL}, por lo que el primer paso es montar un
 \emph{Sistema Gestor de Bases de Datos}. Como se ha expuesto al comienzo del
 capítulo, el elegido ha sido \emph{MariaDB}, que es la implementación totalmente
 libre del archiconocido \emph{MySQL}.
@@ -378,12 +374,12 @@ utilizando dos sencillas ideas: calcular la pendiente de la recta de regresión
 de cada una de las nubes de puntos que forman cada gráfica para un jugador,
 y calcular el área bajo la curva de cada una de las gráficas.
 
-\todo[inline]{Meter los resultados con los datos transformados aunque sean malos}
 
 \subsection{Extracción de información}
 \label{subsec:extraccion}
 
-\todo[inline]{Explicar cómo funciona XGBoost y por qué se ha escogido}
+\todo[inline]{Explicar cómo funciona XGBoost y por qué se ha escogido\\
+  Comentar que el problema no está balanceado}
 
 \newpage
 \subsection{Interpretación y Evaluación}
@@ -426,6 +422,7 @@ distintos momentos de la partida a tener información de la partida al completo,
 la granularidad ha aumentado demasiado. Por tanto, se debe trabajar con los
 datos ``en crudo'', a expensas de lo que ocupe en tiempo y memoria.
 
+\newpage
 Una vez se han tenido que usar el conjunto de datos completo, se va bajando el
 límite de la partida a ver cuánto aguanta el modelo construido. Para comenzar
 a acotar el tiempo de la partida, se comenzará utilizando el tiempo medio de
