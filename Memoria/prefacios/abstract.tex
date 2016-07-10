@@ -1,20 +1,47 @@
-En este trabajo se realiza un estudio de la incertidumbre que presentan juegos
-de estrategia en tiempo real como StarCraft, utilizando técnicas estadísticas
-y de aprendizaje. Así se consigue evaluar la incertidumbre
-que presentan este tipo de problemas para, en un paso posterior de optimización,
-poder tenerla en cuenta y poder desarrollar agentes que sean capaces de evaluar
-esta incertidumbre y actuar o modificar su conducta según lo necesite.
-
 \begin{otherlanguage}{british}
-In this project, it is studied the uncertainty that Real Time Strategy games
-like StarCraft present, applying statistical techniques and learning ones. With all of this,
-uncertainty can be evaluated for a next optimization, so agents
-who can evaluate this uncertainty and modify its strategy could be developed.
 
-\subsubsection*{Statistical Learning}
+  In this project, the uncertainty that Real Time Strategy games like StarCraft present is studied, applying statistical and learning techniques . With all of this, uncertainty can be evaluated for next optimizations, and thus agents able to evaluate this uncertainty and modify its strategy could be developed.
 
-Firstly, it is defined the concept of \emph{statistical learning}. It is a
-branch of Mathematics that tries to learn unknown functions from data using
-statistical techniques.
+  \subsubsection*{Statistical Learning}
+
+  Firstly, the concept of \emph{statistical learning} is defined. It is a branch of Mathematics that aims to learn unknown functions from data using statistical techniques. This type of learning can be modelled mathematically to solve a large set of problems in Science, Engineering, Economy, etc.
+
+  \subsubsection*{Feasibility of learning}
+  Then, the feasibility of learning in finite hypothesis sets is proven, mainly using Hoeffding’s results. In-sample error and out-sample error concepts are introduced and used throughout  the entire project.
+
+  \subsubsection*{Generalization: VC Theory}
+  After that, generalizing to infinite hypothesis sets is needed. These are the most common sets in real life. For this purpose, the works of Vapnik and Chervonenkis are presented. Their work from the 60’s to the 90’s involved investigating in order to prove generalization and performing further relevant research for the statistical learning theory.
+  Furthermore, the bias-var analysis is introduced in this chapter. It models the out-of-sample error using the bias and the variance of the model, considerably useful to develop new learning techniques and prevent overfitting.
+
+  \subsubsection*{Overfitting}
+  Overfitting is the main problem of learning. It occurs when in-sample error is great, but it does not generalizes at all. This is due to the fact that the model is too complex and able to fit the noise of the data, giving a final hypothesis that is worse than a simpler one.
+
+  To combat overfitting Regularization could be used. Basically it constraints the algorithms to improve out-of-sample error instead of minimizing in-sample one. These methods are usually heuristics so there is a bit of art in this field.
+
+  In this chapter, the validation concept and the cross-validation method for estimating out-of sample error are explained.
+
+
+  \subsubsection*{Ensemble Methods}
+
+  Lastly, in the mathematical background, the ensemble methods for learning are described. These methods combine weak learners (only slightly better than throwing a coin) to produce strong learners. Gradient Boosting is the reference in this project.
+
+  \subsubsection*{Study of uncertainty}
+
+  · Comprehension of the problem and data
+  When anyone has to solve a data science problem the first step is understanding the data that could be obtained and the problem that will be solved. There are six StarCraft replays relational databases with a substantial amount of data, and thus the first step is understanding them and selecting a subset.
+
+  \subsubsection*{Preprocessing}
+  After that, the data have to be preprocessed in order to be able to work with statistical software. Dumping from a database, extracting the important features and organizing them are basically an art. Whoever handles the data best could have an important advantage.
+
+  The next step is doing an Exploratory Data Analysis, since obtaining a general vision of the data and their distribution is essential. R is used for the analysis because it is a good reference in statistics software. Barplots and time plots are good tools to handle these data, and could give some ideas to fight them. As the dataset is too large, these ideas involve calculating the slope of the regression line for each feature and each player, and calculating the Area Under Curve of the feature graphs.
+
+  \subsubsection*{Info extraction}
+  Then, XGBoost, the library used in this project, is described. It is an open source library that implements the Gradient Boosting algorithm in a definitely efficient way. It is the state of the art in learning libraries and it has great importance in Kaggle competitions. It is used in some companies as well.
+
+  It provides a very efficient and effective way to classify data with ensemble learning, with regularization techniques and parallel approaches; hence, it is rather fast and provides excellent results.
+
+  \subsubsection*{Evaluation}
+  Lastly, the results of playing with the data are explained, and conclusions will be presented in the last chapter.
+
 
 \end{otherlanguage}
