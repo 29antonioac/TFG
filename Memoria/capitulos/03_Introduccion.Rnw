@@ -33,7 +33,7 @@ importante o el desarrollo de unidades desequilibrantes.
 
 También existen estudios de estudiantes en los que exponen como tesis estudios
 sobre predicción y construcción de planes en base a éstas, como
-en~\citep{adaptativeStrategyPrediction} y~\citep{}
+en~\citep{adaptativeStrategyPrediction} y~\citep{makingAndActing}.
 
 El caso más parecido al que se aborda en este trabajo
 es~\citep{DBLP:conf/cosecivi/Sanchez-Ruiz15}, donde se intenta predecir el
