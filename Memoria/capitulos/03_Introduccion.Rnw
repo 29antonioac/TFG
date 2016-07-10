@@ -1,6 +1,7 @@
 \chapter{Introducción}
 
 \section{Contextualización del trabajo y motivación}
+\label{sec:contexto}
 En el ámbito de la Inteligencia Artificial, los juegos siempre han sido usados
 como banco de pruebas para algoritmos, teorías y distintas metodologías debido
 a sus específicas características. A veces éstos son muy simples y de
@@ -26,7 +27,9 @@ tienen una componente común: adaptar la estrategia según la incertidumbre,
 qué podría pasar a partir de un determinado momento. Así, existen
 investigaciones sobre predicción en este ámbito, en las que se destacan
 predictores utilizando redes bayesianas como
-en~\cite{DBLP:conf/aiide/StanescuHEGB13} y~\cite{DBLP:conf/cig/SynnaeveB11a}.
+en~\cite{DBLP:conf/aiide/StanescuHEGB13} y~\cite{DBLP:conf/cig/SynnaeveB11a},
+utilizando eventos generados en la partida como la creación de una edificación
+importante o el desarrollo de unidades desequilibrantes.
 
 El caso más parecido al que se aborda en este trabajo
 es~\cite{DBLP:conf/cosecivi/Sanchez-Ruiz15}, donde se intenta predecir el
@@ -41,6 +44,7 @@ externo que, sin ser aleatorio, está fuera de control.
 
 
 \section{Descripción del problema}
+\label{sec:descripcion}
 El problema a abordar es intentar cuantificar la incertidumbre del resultado
 de partidas de StarCraft a través de aprendizaje supervisado sobre un gran
 conjunto de partidas de competición. Este conjunto de partidas está sacado
@@ -68,6 +72,7 @@ estadístico.
 
 
 \section{Técnicas utilizadas}
+\label{sec:tecnicas}
 
 Las principales áreas matemáticas que se han usado en este proyecto son las
 siguientes:
@@ -88,6 +93,7 @@ Por otra parte, las herramientas informáticas usadas son:
 \end{itemize}
 
 \section{Contenido de la memoria}
+\label{sec:contenido}
 
 El estudio formal del aprendizaje se realiza en el capítulo~\ref{sec:matematicas},
 en el que se distinguen varios apartados principales: una introducción al
@@ -106,6 +112,7 @@ apéndice~\ref{apendice:demVC} se detalla la demostración del resultado más
 fuerte en el ámbito del aprendizaje estadístico.
 
 \section{Principales fuentes}
+\label{sec:fuentes}
 
 Las fuentes utilizadas son~\cite{Abu-Mostafa:2012:LD:2207825},
 ~\cite{James:2014:ISL:2517747},
