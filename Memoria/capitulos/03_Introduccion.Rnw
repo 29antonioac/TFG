@@ -27,12 +27,16 @@ tienen una componente común: adaptar la estrategia según la incertidumbre,
 qué podría pasar a partir de un determinado momento. Así, existen
 investigaciones sobre predicción en este ámbito, en las que se destacan
 predictores utilizando redes bayesianas como
-en~\cite{DBLP:conf/aiide/StanescuHEGB13} y~\cite{DBLP:conf/cig/SynnaeveB11a},
+en~\citep{DBLP:conf/aiide/StanescuHEGB13} y~\citep{DBLP:conf/cig/SynnaeveB11a},
 utilizando eventos generados en la partida como la creación de una edificación
 importante o el desarrollo de unidades desequilibrantes.
 
+También existen estudios de estudiantes en los que exponen como tesis estudios
+sobre predicción y construcción de planes en base a éstas, como
+en~\citep{adaptativeStrategyPrediction} y~\citep{makingAndActing}.
+
 El caso más parecido al que se aborda en este trabajo
-es~\cite{DBLP:conf/cosecivi/Sanchez-Ruiz15}, donde se intenta predecir el
+es~\citep{DBLP:conf/cosecivi/Sanchez-Ruiz15}, donde se intenta predecir el
 ganador de una partida. Aún así, el enfoque tomado no es
 exactamente el mismo, teniendo aquí un entorno más grande y heterogéneo.
 
@@ -48,7 +52,7 @@ externo que, sin ser aleatorio, está fuera de control.
 El problema a abordar es intentar cuantificar la incertidumbre del resultado
 de partidas de StarCraft a través de aprendizaje supervisado sobre un gran
 conjunto de partidas de competición. Este conjunto de partidas está sacado
-de~\cite{DBLP:conf/flairs/RobertsonW14}, ya que no es un conjunto muy
+de~\citep{DBLP:conf/flairs/RobertsonW14}, ya que no es un conjunto muy
 estudiado por los investigadores y tiene algunas características que a priori
 parecen muy interesantes: completitud y precisión de la información guardada,
 además de datos derivados que luego se analizarán. Como última ventaja,
@@ -79,7 +83,7 @@ siguientes:
 \begin{itemize}
   \item Estadística y Probabilidad: Esperanza, Varianza, combinaciones,
   permutaciones.
-  \item Análisis Matemático: Razonamiento matemático deductivo e inductivo.
+  \item Razonamiento matemático deductivo e inductivo.
 \end{itemize}
 
 Por otra parte, las herramientas informáticas usadas son:
@@ -114,7 +118,20 @@ fuerte en el ámbito del aprendizaje estadístico.
 \section{Principales fuentes}
 \label{sec:fuentes}
 
-Las fuentes utilizadas son~\cite{Abu-Mostafa:2012:LD:2207825},
-~\cite{James:2014:ISL:2517747},
-~\cite{Bishop:2006:PRM:1162264},
+Las fuentes utilizadas son~\citep{Abu-Mostafa:2012:LD:2207825},
+~\citep{James:2014:ISL:2517747},
+~\citep{Bishop:2006:PRM:1162264},
 detalladas en la página~\pageref{bibliografia}.
+
+Estos tres libros proveen una fuerte base de aprendizaje estadístico.
+~\citep{Abu-Mostafa:2012:LD:2207825} lo hace en formato curso, por lo que es muy
+fácil de seguir para gente que no está entrada en el tema.
+Además tiene explicaciones muy intuitivas
+para los aspectos matemáticos.
+
+~\citep{James:2014:ISL:2517747} ofrece un material de calidad similar, también en formato curso,
+con la ventaja de tener temario práctico con R.
+
+~\citep{Bishop:2006:PRM:1162264} es el más técnico, aunque también comienza desde el principio, no
+da nada por sabido. Está un nivel por encima en complejidad con respecto a los
+demás.

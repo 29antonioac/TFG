@@ -262,12 +262,12 @@ Con estas decisiones, y teniendo siempre en cuenta el importante detalle de que
 \texttt{regionvaluechange} es sólo en una región del mapa, por lo que hay que
 sumar todos los valores de unidades de cada jugador en todas las regiones del
 mapa; se ha resuelto este problema utilizando SQL. Se han conseguido seis dataset
-con la estructura de la tabla~\ref{}
+con la estructura de la tabla~\ref{tabla:features}
 
-% <<features, echo = FALSE>>=
-% features <- readRDS("../datos/features.rds")
-% kable(features, format = "latex", caption = "Tabla con características seleccionadas y con su orden")
-% @
+<<features, echo = FALSE>>=
+features <- readRDS("../datos/features.rds")
+kable(features, format = "latex", caption = "Tabla con características seleccionadas y con su orden")
+@
 
 \newpage
 \subsubsection{Análisis exploratorio de datos}
@@ -378,8 +378,41 @@ y calcular el área bajo la curva de cada una de las gráficas.
 \subsection{Extracción de información}
 \label{subsec:extraccion}
 
-\todo[inline]{Explicar cómo funciona XGBoost y por qué se ha escogido\\
-  Comentar que el problema no está balanceado}
+Para extraer información necesitamos elegir un modelo. Como por las
+investigaiones recientes parece un problema complejo, se ha dedicido utilizar
+un modelo ensemble como se ha explicado en~\ref{subsec:boosting}, ya que
+como se vio en~\ref{sec:contexto} lo más usado son redes bayesianas, modelos
+lineales, modelos de semejanza (KNN) y máquinas de vectores soporte.
+
+Más específicamente, se ha decidido utilizar la biblioteca \emph{XGBoost},
+de la que se puede estudiar su implementación a fondo en la publicación
+de~\citep{DBLP:journals/corr/ChenG16}. Básicamente es una implementación
+de Gradient Boosting escalable. Ofrece procesamiento en paralelo y/o
+distribuido, un uso de memoria equilibrado y es muy fácil de utilizar.
+
+Con respecto al modelado, ofrece entrenamiento con un objetivo regularizado
+para prevenir el sobreajuste, además de tener muchos parámetros para controlarlo
+en caso de que el problema así lo necesitara.
+
+Como se verá en el capítulo~\ref{subsec:evaluacion}, los resultados de los datos
+transformados no han sido buenos. Aún así se ha probado a tunear el modelo
+cambiando parámetros como el número de niveles,
+submuestreo de características, cambiando los pesos de los hijos,
+tomando valores que hacen el modelo más conservativo...
+Pero sobre estos datos no se ha podido conseguir mejores resultados que los
+que se muestran.
+
+Para el caso de los datos en crudo, ha sido suficiente con escoger $32$ niveles
+del árbol de manera empírica, empezando desde $6$, que es el parámetro por
+defecto. Este parámetro es es que más sobreajusta los datos, por lo que hay
+que tener cuidado de no subirlo en exceso. Con el valor indicado se han
+obtenido muy buenos resultados en validación cruzada y en test como se verá
+en~\ref{subsec:evaluacion}, por lo que no ha hecho falta tunear el modelo.
+
+En ambos casos se ha limitado a $10$ iteraciones del algoritmo. Poner más
+también puede llevar a sobreajuste, aunque si se ponen más y se establece
+el parámetro \texttt{early.stop.round} a un entero $N$, el modelado terminará
+si pasan $N$ rondas en las que no se mejora el error de test.
 
 \newpage
 \subsection{Interpretación y Evaluación}

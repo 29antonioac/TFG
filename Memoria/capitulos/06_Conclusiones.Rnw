@@ -1,2 +1,29 @@
-\chapter{Conclusiones}
+\chapter{Conclusiones y trabajo futuro}
 \label{cap:conclusiones}
+
+Después de este estudio, se pueden sacar sendas conclusiones. La primera de
+ellas es que la incertidumbre a lo largo del tiempo va bajando. Cuanto más
+tiempo pasa en una partida, las características que la definen van siendo más
+significativas y son capaces de decidir el estado de ésta con más precisión.
+
+La segunda de ellas, no menos importante, es que la elección de las
+características de la partida junto a un modelo de tipo ensemble ha sido correcta.
+En particular los valores de unidades y construcciones, tanto reales como
+observados, deciden el ganador de la partida con bastante exactitud. El modelo
+escogido para clasificación ha obtenido muy buenos resultados aún sin forzarlo
+demasiado para prevenir sobreajuste, aunque no parece que lo haya sufrido demasiado.
+También destacar, aunque se ha comentado en~\ref{sec:contexto},
+es totalmente heterogéneo: se han utilizado todas las combinaciones de razas
+posible para entrenar el clasificador, además de un conjunto muy grande de éstas.
+
+Existen distintas posibles vías de desarrollo futuro utilizando lo tratado aquí.
+
+\begin{itemize}
+  \item Crear un bot competitivo utilizando características y un modelo de
+  aprendizaje similares a los propuestos, mejorando la gestión de la
+  incertidumbre que presentan bots anteriores, pudiendo adaptar mejor su
+  estrategia o hacerlo en un momento anterior.
+  \item Combinar metaheurísticas y predicción del ganador para acelerar la
+  ejecución de los algoritmos. Por ejemplo, dando una partida por resuelta mucho
+  antes de que termine realmente.
+\end{itemize}

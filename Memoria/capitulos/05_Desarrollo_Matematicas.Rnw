@@ -9,7 +9,7 @@ read_chunk("../scripts/05_Desarrollo_Matematicas.R")
 \subsection{Introducción al problema}
 \label{subsec:introduccion}
 
-Parafraseando a~\cite{Abu-Mostafa:2012:LD:2207825}, si a un niño pequeño se le pregunta si hay un árbol
+Parafraseando a~\citep{Abu-Mostafa:2012:LD:2207825}, si a un niño pequeño se le pregunta si hay un árbol
 en una foto, lo más probable es que dé la respuesta correcta. Si a uno algo mayor
 se le pregunta ``¿Qué es un árbol'', posiblemente no sabrá contestar o su respuesta
 no sea muy útil. Los seres humanos no han aprendido qué es un árbol con una definición
@@ -21,24 +21,24 @@ las matemáticas se llama \emph{Aprendizaje Estadístico}.
 
 Matemáticamente, el problema del aprendizaje es, dado un conjunto de puntos de entrada
 $\mathcal{X} \in \mathbb{R}^d$, un espacio de salida $\mathcal{Y}$, una función objetivo
-\textbf{desconocida}$f:\mathcal{X} \rightarrow \mathcal{Y}$ y $N$ muestras
+\textbf{desconocida} \ $f:\mathcal{X} \rightarrow \mathcal{Y}$ y $N$ muestras
 $\big((x_1,y_1),\ldots,(x_N,y_N) \big)$
 tal que $f(x_i) = y_i, \; i = 1,\ldots,N$,
 se desea conseguir una función de un determinado espacio de hipótesis,
 $g \in \mathcal{H}$ que se asemeje todo lo posible a la función objetivo
 $f$, $g \approx f$.
 
-% Tengo que explicar matemáticamente los tres problemas.
-% No sé si para ser algo matemático es la mejor introducción posible.
-\improvement{Repasar introducción}
 
 En el aprendizaje se distinguen muchos problemas, siendo tres los más conocidos:
 \begin{itemize}
-  \item Regresión.
-  \item Clasificación.
-  \item Estimación de densidad.
+  \item Regresión: Se busca una relación entre la variable dependiente y la
+  independiente.
+  \item Clasificación: Se busca una función que para una entrada, le asigne
+  una etiqueta. En problemas binarios, esta etiqueta suele ser -1 o 1.
+  \item Estimación de densidad: Similar a clasificación, pero el objetivo no
+  es dar una clase, sino la probabilidad de pertenecer a dicha clase.
 \end{itemize}
-\change{Introducir los 3 problemas matemáticamente}
+
 
 Un ejemplo de clasificación sería el siguiente:
 sea $\mathcal{X} \subseteq [0,1] \times [0,1]$ e $\mathcal{Y} = \{+1,-1\}$ el espacio
@@ -103,7 +103,7 @@ $E_{out}$, puesto que esta última se comporta como una variable aletatoria
 sobre la distribución de $\mathcal{X}$ y $E_{in}$ es sólo una muestra de lo que
 vale para una función $h$ fija.
 
-\begin{teorema}[Desigualdad de Hoeffding~\cite{10.2307/2282952}]
+\begin{teorema}[\cite{10.2307/2282952}]
   Si $X_1, X_2, \ldots, X_n$ son independientes y $a_i \leq X_i \leq b_i \; (i=1,2,\ldots,n)$,
   entonces para $\epsilon>0$ se da:
   \[
@@ -135,12 +135,25 @@ vale para una función $h$ fija.
     La hipótesis queda probada por la linealidad de la esperanza.
   \end{proof}
 
+  \begin{lema}
+  \label{lema:17}
+    Siendo $S = X_1 + X_2 + \cdots + X_n \; h \in \mathbb{R}$,
+    \begin{displaymath}
+      \mathbb{P}[\bar{X}-\mathbb{E}[\bar{X}] \geq t] =
+      \mathbb{P}[S - \mathbb{E}[S] \geq nt] \leq
+      \mathbb{E}[e^{h(S- \mathbb{E}[S]-nt)}]
+    \end{displaymath}
 
-\improvement{Meter los dos resultados anteriores}
+    Además, si los sumandos de S son independientes,
+    \begin{displaymath}
+      \mathbb{E}[e^{h(S- \mathbb{E}[S]-nt)}] =
+      e^{-hnt} \prod_{i=1}^n \mathbb{E}[e^{h(X_i - \mathbb{E}[X_i])}]
+    \end{displaymath}
+  \end{lema}
 
 
 
-    Notaremos $\mu_i = \mathbb{E}[X_i]$. By (1.7) and (1.8),
+    Notaremos $\mu_i = \mathbb{E}[X_i]$. Por~\ref{lema:17},
 
   \begin{equation}
   \label{eq:Pleqe}
@@ -209,10 +222,13 @@ vale para una función $h$ fija.
 \end{corolario}
 
 \begin{proof}
-  Demostración. $a_i = 0\; b_i = 1$. Deducir simetría.
+  Se toman $a_i = 0\; b_i = 1$. La cota con el valor absoluto es clara,
+  ya que es claro que $\mathbb{P}[-a \geq t] \leq \mathbb{P}[a \geq t]\; t \geq 0$,
+  además que
+  \begin{displaymath}
+    \mathbb{P}[|a| \geq t] = \mathbb{P}[-a \geq t] + \mathbb{P}[a \geq t]
+  \end{displaymath}
 \end{proof}
-
-\info{No olvidar demostraciones!}
 
 Todo lo anterior tiene una gran limitación: se está fijando una función $h$ de
 antemano. Al fijarla previamente, esta probabilidad depende del conjunto
@@ -418,7 +434,8 @@ para un $k' > k$.
 Lo más importante acerca de las funciones de crecimiento es que si tienen puntos
 de ruptura, śe puede acotar por un polinomio basado en el punto de ruptura.
 
-\change{Explicar por qué es importante un polinomio}
+Al estar acotado por un polinomio, la derecha de la
+ecuación~\ref{eq:generalization} tenderá a 0 cuando $N \rightarrow \infty$.
 
 \begin{teorema}
   \label{th:boundMH}
@@ -428,10 +445,6 @@ de ruptura, śe puede acotar por un polinomio basado en el punto de ruptura.
   \end{equation}
   El miembro de la derecha es un polinomio en $N$ de grado $k-1$.
 \end{teorema}
-
-\begin{proof}
-  Meter sólo si hay tiempo (es algo técnica)
-\end{proof}
 
 La gran implicación de este teorema es que si $\mathcal{H}$ tiene algún punto
 de ruptura, se puede asegurar una buena generalización.
@@ -618,6 +631,7 @@ realizar los cálculos y tomar dicho resultado como $N$ nuevamente. Después de
 un par de pasos converge.
 
 \subsubsection{Complejidad del modelo}
+\label{subsubsec:complejidad}
 A veces, se tiene un conjunto de datos $\mathcal{D}$ fijo, por lo que $N$
 también lo está. Entonces la pregunta relevante es cuánto rendimiento se puede
 esperar con dicho $N$. Utilizando la cota~\ref{eq:VCBound}:
@@ -682,12 +696,222 @@ cuadrático medio es, siendo $\mathbb{E}_{x}$ la esperanza con respecto a x
 \end{equation}
 
 Es importante para el análisis que se haga énfasis en que la función escogida
-$g$ depende del conjunto de datos $\mathcal{D}$.
+$g$ depende del conjunto de datos $\mathcal{D}$. El primer paso es quitar la
+dependencia de un conjunto de datos $\mathcal{D}$ tomando la esperanza
+con respecto a todos los conjuntos de datos. Así se obtendrá un error fuera
+de la muestra esperado para el modelo de aprendizaje que no depende de un
+conjunto de datos particular. Las cuentas se realizarán añadiendo ruido
+(de media 0 y varianza $\sigma^2$)
+a la función objetivo, para ver el caso general.
 
-\improvement{Aquí falta bastante}
+\begin{displaymath}
+\mathbb{E}_{\mathcal{D}}\left[E_{out}\left(g^D(x)\right) \right] = \mathbb{E}_{\mathcal{D}} \left[\mathbb{E}_x \left[ \left(g^D(x) - y(x) \right)^ 2  \right] \right] = \mathbb{E}_{\mathcal{D}} \left[\mathbb{E}_x \left[ \left(g^D(x) - f(x) - \epsilon(x) \right)^ 2  \right] \right]
+\end{displaymath}
+
+\begin{displaymath}
+\mathbb{E}_{\mathcal{D}} \left[\mathbb{E}_x \left[ \left(g^D(x) - f(x) - \epsilon(x) \right)^ 2  \right] \right] = \mathbb{E}_x \left[\mathbb{E}_{\mathcal{D}} \left[ \left(g^D(x) - f(x) - \epsilon(x) \right)^ 2  \right] \right]
+\end{displaymath}
+
+Desarrollando el trinomio queda:
+
+\begin{displaymath}
+\mathbb{E}_x \left[\mathbb{E}_{\mathcal{D}} \left[ g^D(x)^2 + f(x)^2 + \epsilon(x)^2 - 2f(x)g^D(x) - 2g^D(x)\epsilon(x) - 2f(x)\epsilon(x) \right] \right]
+\end{displaymath}
+
+El término $\mathbb{E}_{\mathcal{D}} \left[ g^D(x) \right]$ provee una
+``función media'', que se denota por $\bar{g}(x)$.
+
+Ahora sumamos y restamos $\bar{g}(x)^2$ para obtener las expresiones para $bias(x)$ y $var(x)$.
+
+
+\begin{displaymath}
+\mathbb{E}_x \left[\mathbb{E}_{\mathcal{D}} \left[ g^D(x)^2 - \bar{g}(x)^2 + \bar{g}(x)^2 + f(x)^2 + \epsilon(x)^2 - 2f(x)g^D(x) - 2g^D(x)\epsilon(x) - 2f(x)\epsilon(x) \right] \right]
+\end{displaymath}
+
+Usamos la linealidad de la esperanza y reordenamos para obtener dichas expresiones. La varianza es la indicada porque el doble producto de que debe salir del binomio al cuadrado es $0$, ya que $\bar{g}(x)$ no depende de $\mathcal{D}$.
+
+\begin{align*}
+\mathbb{E}_x \Big[ & \underbrace{\mathbb{E}_{\mathcal{D}} \left[ g^D(x)^2 \right] - \bar{g}(x)^2}_{var(x)} + \underbrace{\bar{g}(x)^2 - 2f(x) \underbrace{\mathbb{E}_{\mathcal{D}}  \left[g^D(x) \right]}_{\bar{g}(x)} + f(x)^2}_{bias(x)}  - 2\epsilon(x) \underbrace{\mathbb{E}_{\mathcal{D}}  \left[g^D(x) \right]}_{\bar{g}(x)} \\
+& - 2f(x)\epsilon(x) + \epsilon(x)^2 \Big]
+\end{align*}
+
+Entonces nos queda
+
+\begin{displaymath}
+\mathbb{E}_{\mathcal{D}} [E_{out}(g^D(x))] = \mathbb{E}_x [var(x) + bias(x) - 2 \epsilon(x) \bar{g}(x) - 2f(x)\epsilon(x) + \epsilon(x)^2 ]
+\end{displaymath}
+
+Ahora usamos de nuevo la linealidad de la esperanza. Además, destacar que $f(x)$ y $\epsilon(x)$ son independientes, luego la esperanza del producto es el producto de las esperanzas.
+
+\begin{displaymath}
+\mathbb{E}_{\mathcal{D}}[E_{out}(g^D(x))] = var + bias -2 \underbrace{\mathbb{E}_x \left[ \epsilon(x) \right]}_{0} \mathbb{E}_x \left[\bar{g}(x) \right] - 2 \mathbb{E}_x \left[ f(x) \right] \underbrace{\mathbb{E}_x \left[ \epsilon(x) \right]}_{0} + \underbrace{\mathbb{E}_x \left[\epsilon(x)^2 \right]}_{\sigma^2}
+\end{displaymath}
+
+Con esto, ya lo tenemos: por hipótesis, sabemos que la media del ruido es 0 y la varianza $\sigma^2$, luego nos queda la expresión que buscábamos:
+
+\begin{displaymath}
+\mathbb{E}_{\mathcal{D}}[E_{out}(g^D(x))] = var + bias + \sigma^2
+\end{displaymath}
+
+En resumen:
+\begin{itemize}
+  \item $bias(x) = (\bar{g}(x) - f(x))^2$, el sesgo, mide la desviación de la función media con respecto a la función objetivo
+  \item $var(x) = \mathbb{E}_{\mathcal{D}} \left[ g^D(x)^2 \right] - \bar{g}(x)^2$, la varianza, mide la variación de la hipótesis final dependiendo del conjunto de datos.
+\end{itemize}
+
+El equilibrio aproximación-generalización viene implícito en esta descomposición.
+Si tenemos conjunto de hipótesis simple (una solo, para que quede más claro el ejemplo),
+la hipótesis final y la función media serán la misma para cualquier conjunto de
+datos, luego $var = 0$. El sesgo dependerá solamente de la función objetivo $f$.
+Al haber una sola, lo más probable es que el sesgo sea muy alto.
+
+En un conjunto de hipótesis grande, diferentes conjuntos de datos producirán
+distintas hipótesis que se acerquen a $f$, luego el sesgo es aproximadamente 0,
+ya que la función media estará cerca de $f$. La varianza es bastante grande al
+variar mucho la función media con respecto a cada una de las generadas con el
+conjunto de datos. También se puede ver como la inestabilidad del modelo, ya
+que si una función generada es muy distinta a otra, querrá decir que se
+comportará muy distinto en algunos de los datos.
+
+En general, calcular estos valores no es fácil y no se suele hacer, por lo que
+esta herramienta es puramente conceptual para el desarrollo de modelos. Cuando
+se considera este enfoque, se suelen intentar dos cosas:
+
+\begin{itemize}
+  \item Bajar la varianza sin subir mucho el sesgo: Se utilizan técnicas
+  generales como la regularización, que se estudia en el
+  capítulo~\ref{subsec:sobreajuste}.
+  \item Bajar el sesgo sin subir mucho la varianza: Requiere de mucha
+  información para seleccionar el modelo $\mathcal{H}$ en función de $f$, por
+  lo que es específico para cada aplicación.
+\end{itemize}
+
 
 \subsection{Sobreajuste}
 \label{subsec:sobreajuste}
 
+El sobreajuste es el hecho que se da cuando se ajustan los datos más de lo que
+debieran. La principal causa es elegir una hipótesis con el menos $E_{in}$
+y darse cuenta que su $E_{out}$ es mucho mayor, dando a entender que el error
+dentro de la muestra no está siendo un buen guía para el aprendizaje.
+
+Con un ejemplo se verá más claro. La función objetivo es una parábola, pero
+los datos obtenidos tenían ruido. Al tener 5 datos, se puede pensar que lo mejor
+es aprender usando polinomios de grado 4, ya que podrá ajustarlo perfectamente
+(se estaría interpolando). Pero puede pasar lo que se ve en la
+figura~\ref{fig:overfitting}.
+
+<<overfitting, echo = FALSE, fig.cap = "Ejemplo de sobreajuste">>=
+options(warn=-1)
+set.seed(43556457)
+
+f <- function(x) {x^2 + 5}
+
+x <- c(1,2,5,10,12)
+y <- sapply(x, f)
+
+noise <- runif(n = 5, min = -20, max = 20)
+df  <- data.frame(X = x,
+                  Y = y + noise)
+
+gg <- ggplot(df, aes(x = X, y = Y)) + geom_point(aes(size = "Data")) +
+        stat_function(fun = f,aes(colour = "Target")) +
+        theme(legend.title = element_blank())
+gg + geom_smooth(method = "lm", formula = y ~ poly(x, 4), size = 1, se = F, aes(colour = "Fit"))
+@
+
+Se estaría atacando el ruido para ajustarlo totalmente, perdiendo así toda la
+generalidad de la función objetivo.
+
+El ruido se puede clasificar en dos tipos:
+
+\begin{itemize}
+  \item Ruido estocástico: Es el ruido presente en el anterior ejemplo, el
+  ruido aleatorio. No puede ser modelado.
+  \item Ruido determinista: Es la porción de función que la función hipótesis
+  no puede ajustar de la objetivo. Es una parte de la función objetivo que no
+  puede ser modelada.
+\end{itemize}
+
+Si un algoritmo de aprendizaje intenta ajustar el ruido, se producirá
+sobreajuste. El algoritmo usará los grados de libertad que tenga para ajustarlo.
+
+La descomposición bias-varianza estudiada en~\ref{subsubsec:equilibrio}
+es una herramienta para entender cómo afecta el ruido al modelado.
+
+\begin{displaymath}
+\mathbb{E}_{\mathcal{D}}[E_{out}(g^D(x))] = \sigma^2 + bias + var
+\end{displaymath}
+
+Los primeros dos términos indican el impacto del ruido estocástico y determinan
+el ruido determinista. La varianza del ruido estocástico es $\sigma^2$ y el
+sesgo está directamente relacionado con el ruido determinista, al capturar
+lo lejos que está de modelar $f$. La varianza está modificada por ambos
+tipos de ruido, modelando la susceptibilidad del modelo a ser lastrado por
+el ruido.
+
+\subsubsection{Regularización}
+\label{subsubsec:regularizacion}
+
+La primera herramienta para intentar reducir el sobreajuste es la
+regularización. Restringe al algoritmo de apendizaje a mejorar el $E_{out}$,
+sobre todo cuando hay ruido presente. Un ejemplo se ve en la
+figura~\ref{fig:firstRegularizer}.
+
+<<firstRegularizer, echo = FALSE, fig.cap = "Ejemplo de regularización">>=
+options(warn=-1)
+gg + geom_smooth(method = "lm", formula = y ~ poly(x, 2), size = 1, se = F, aes(colour = "Fit"))
+@
+
+Muchos de los métodos de regularización existentes son heurísticos: no existe
+un algoritmo perfecto para tratar el sobreajuste. Utilizando la cota de VC
+tal como se estudió en~\ref{subsubsec:complejidad}, se puede acotar el $E_{out}$
+por el $E_{in}$ y una penalización por el modelo.
+
+\begin{displaymath}
+  E_{out}(g) \leq E_{in}(g) + \Omega(\mathcal{H})
+\end{displaymath}
+
+Así que la clave está no en minimizar $E_{in}$, sino la combinación de éste
+con la penalización $\Omega(\mathcal{H})$. Cada método tiene una manera de
+medir esta penalización, haciendo que unos se comporten mejor que otros en
+determinados problemas.
+
+\subsubsection{Validación}
+\label{subsubsec:validacion}
+
+En esta sección se presenta otro remedio para el sobreajuste: la validación.
+
+Se ha expuesto que la regularización consiste en estimar la penalización
+que sufre cada modelo al aplicar un algoritmo de aprendizaje. En cambio,
+la validación intenta estimar directamente el $E_{out}$.
+
+Existe el concepto de conjunto de validación, el cual el similar al de
+conjunto de test, pero con una sutil diferencia. Es desconocido para el
+algoritmo de aprendizaje al igual que el de test, pero este conjunto sí toma
+decisiones en el proceso de aprendizaje.
+
+Reglas empíricas dictan que un tamaño adecuado para este conjunto es el 20\%
+de las muestras totales.
+
+Se introduce el concepto de validación cruzada. Intuitivamente, se toman $M$
+particiones distintas del conjunto de datos, con las proporciones deseadas
+(suele ser 80-20 como se ha propuesto antes o también 50-50) y, para cada modelo
+$M$, se entrena con un conjunto y se valida con el otro, y se entrena con el
+otro y se valida con el uno. Se toma el valor mínimo de los errores producidos,
+y este modelo será el que mejor estime $E_{out}$.
+
 \subsection{Modelos de árboles: Boosting}
 \label{subsec:boosting}
+
+En esta sección se exponen las técnicas más modernas en el ámbito del
+aprendizje estadístico, las técnicas ensemble. Estas técnicas se basan en
+combinar modelos ``débiles'' (que sean poco mejores que una moneda) para unirlos
+y formar uno de gran precisión.
+
+Entre los métodos ensemble el clásico es AdaBoost, pero el estado del arte lo
+forma ahora Gradient Boosting, más específicamente la librería \emph{XGBoost},
+de~\citep{DBLP:journals/corr/ChenG16}. Está al tanto con el estado del arte
+en este tipo de modelos, además de incluir modelos regularizados para prevenir
+el sobreajuste. En la cita anterior se explica detalladamente cómo funciona
+este tipo de métodos, además de los algoritmos propios que implementan.
