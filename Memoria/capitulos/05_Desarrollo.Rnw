@@ -264,10 +264,10 @@ sumar todos los valores de unidades de cada jugador en todas las regiones del
 mapa; se ha resuelto este problema utilizando SQL. Se han conseguido seis dataset
 con la estructura de la tabla~\ref{}
 
-% <<features, echo = FALSE>>=
-% features <- readRDS("../datos/features.rds")
-% kable(features, format = "latex", caption = "Tabla con características seleccionadas y con su orden")
-% @
+<<features, echo = FALSE>>=
+features <- readRDS("../datos/features.rds")
+kable(features, format = "latex", caption = "Tabla con características seleccionadas y con su orden")
+@
 
 \newpage
 \subsubsection{Análisis exploratorio de datos}

@@ -122,3 +122,16 @@ Las fuentes utilizadas son~\citep{Abu-Mostafa:2012:LD:2207825},
 ~\citep{James:2014:ISL:2517747},
 ~\citep{Bishop:2006:PRM:1162264},
 detalladas en la página~\pageref{bibliografia}.
+
+Estos tres libros proveen una fuerte base de aprendizaje estadístico.
+~\citep{Abu-Mostafa:2012:LD:2207825} lo hace en formato curso, por lo que es muy
+fácil de seguir para gente que no está entrada en el tema.
+Además tiene explicaciones muy intuitivas
+para los aspectos matemáticos.
+
+~\citep{James:2014:ISL:2517747} ofrece un material de calidad similar, también en formato curso,
+con la ventaja de tener temario práctico con R.
+
+~\citep{Bishop:2006:PRM:1162264} es el más técnico, aunque también comienza desde el principio, no
+da nada por sabido. Está un nivel por encima en complejidad con respecto a los
+demás.

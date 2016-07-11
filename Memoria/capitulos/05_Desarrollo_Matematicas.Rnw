@@ -21,24 +21,24 @@ las matemáticas se llama \emph{Aprendizaje Estadístico}.
 
 Matemáticamente, el problema del aprendizaje es, dado un conjunto de puntos de entrada
 $\mathcal{X} \in \mathbb{R}^d$, un espacio de salida $\mathcal{Y}$, una función objetivo
-\textbf{desconocida}$f:\mathcal{X} \rightarrow \mathcal{Y}$ y $N$ muestras
+\textbf{desconocida} \ $f:\mathcal{X} \rightarrow \mathcal{Y}$ y $N$ muestras
 $\big((x_1,y_1),\ldots,(x_N,y_N) \big)$
 tal que $f(x_i) = y_i, \; i = 1,\ldots,N$,
 se desea conseguir una función de un determinado espacio de hipótesis,
 $g \in \mathcal{H}$ que se asemeje todo lo posible a la función objetivo
 $f$, $g \approx f$.
 
-% Tengo que explicar matemáticamente los tres problemas.
-% No sé si para ser algo matemático es la mejor introducción posible.
-\improvement{Repasar introducción}
 
 En el aprendizaje se distinguen muchos problemas, siendo tres los más conocidos:
 \begin{itemize}
-  \item Regresión.
-  \item Clasificación.
-  \item Estimación de densidad.
+  \item Regresión: Se busca una relación entre la variable dependiente y la
+  independiente.
+  \item Clasificación: Se busca una función que para una entrada, le asigne
+  una etiqueta. En problemas binarios, esta etiqueta suele ser -1 o 1.
+  \item Estimación de densidad: Similar a clasificación, pero el objetivo no
+  es dar una clase, sino la probabilidad de pertenecer a dicha clase.
 \end{itemize}
-\change{Introducir los 3 problemas matemáticamente}
+
 
 Un ejemplo de clasificación sería el siguiente:
 sea $\mathcal{X} \subseteq [0,1] \times [0,1]$ e $\mathcal{Y} = \{+1,-1\}$ el espacio
@@ -135,12 +135,25 @@ vale para una función $h$ fija.
     La hipótesis queda probada por la linealidad de la esperanza.
   \end{proof}
 
+  \begin{lema}
+  \label{lema:17}
+    Siendo $S = X_1 + X_2 + \cdots + X_n \; h \in \mathbb{R}$,
+    \begin{displaymath}
+      \mathbb{P}[\bar{X}-\mathbb{E}[\bar{X}] \geq t] =
+      \mathbb{P}[S - \mathbb{E}[S] \geq nt] \leq
+      \mathbb{E}[e^{h(S- \mathbb{E}[S]-nt)}]
+    \end{displaymath}
 
-\improvement{Meter los dos resultados anteriores}
+    Además, si los sumandos de S son independientes,
+    \begin{displaymath}
+      \mathbb{E}[e^{h(S- \mathbb{E}[S]-nt)}] =
+      e^{-hnt} \prod_{i=1}^n \mathbb{E}[e^{h(X_i - \mathbb{E}[X_i])}]
+    \end{displaymath}
+  \end{lema}
 
 
 
-    Notaremos $\mu_i = \mathbb{E}[X_i]$. By (1.7) and (1.8),
+    Notaremos $\mu_i = \mathbb{E}[X_i]$. Por~\ref{lema:17},
 
   \begin{equation}
   \label{eq:Pleqe}
@@ -209,10 +222,13 @@ vale para una función $h$ fija.
 \end{corolario}
 
 \begin{proof}
-  Demostración. $a_i = 0\; b_i = 1$. Deducir simetría.
+  Se toman $a_i = 0\; b_i = 1$. La cota con el valor absoluto es clara,
+  ya que es claro que $\mathbb{P}[-a \geq t] \leq \mathbb{P}[a \geq t]\; t \geq 0$,
+  además que
+  \begin{displaymath}
+    \mathbb{P}[|a| \geq t] = \mathbb{P}[-a \geq t] + \mathbb{P}[a \geq t]
+  \end{displaymath}
 \end{proof}
-
-\info{No olvidar demostraciones!}
 
 Todo lo anterior tiene una gran limitación: se está fijando una función $h$ de
 antemano. Al fijarla previamente, esta probabilidad depende del conjunto
@@ -418,7 +434,8 @@ para un $k' > k$.
 Lo más importante acerca de las funciones de crecimiento es que si tienen puntos
 de ruptura, śe puede acotar por un polinomio basado en el punto de ruptura.
 
-\change{Explicar por qué es importante un polinomio}
+Al estar acotado por un polinomio, la derecha de la
+ecuación~\ref{eq:generalization} tenderá a 0 cuando $N \rightarrow \infty$.
 
 \begin{teorema}
   \label{th:boundMH}
@@ -428,10 +445,6 @@ de ruptura, śe puede acotar por un polinomio basado en el punto de ruptura.
   \end{equation}
   El miembro de la derecha es un polinomio en $N$ de grado $k-1$.
 \end{teorema}
-
-\begin{proof}
-  Meter sólo si hay tiempo (es algo técnica)
-\end{proof}
 
 La gran implicación de este teorema es que si $\mathcal{H}$ tiene algún punto
 de ruptura, se puede asegurar una buena generalización.
@@ -867,7 +880,38 @@ determinados problemas.
 \subsubsection{Validación}
 \label{subsubsec:validacion}
 
+En esta sección se presenta otro remedio para el sobreajuste: la validación.
 
+Se ha expuesto que la regularización consiste en estimar la penalización
+que sufre cada modelo al aplicar un algoritmo de aprendizaje. En cambio,
+la validación intenta estimar directamente el $E_{out}$.
+
+Existe el concepto de conjunto de validación, el cual el similar al de
+conjunto de test, pero con una sutil diferencia. Es desconocido para el
+algoritmo de aprendizaje al igual que el de test, pero este conjunto sí toma
+decisiones en el proceso de aprendizaje.
+
+Reglas empíricas dictan que un tamaño adecuado para este conjunto es el 20\%
+de las muestras totales.
+
+Se introduce el concepto de validación cruzada. Intuitivamente, se toman $M$
+particiones distintas del conjunto de datos, con las proporciones deseadas
+(suele ser 80-20 como se ha propuesto antes o también 50-50) y, para cada modelo
+$M$, se entrena con un conjunto y se valida con el otro, y se entrena con el
+otro y se valida con el uno. Se toma el valor mínimo de los errores producidos,
+y este modelo será el que mejor estime $E_{out}$.
 
 \subsection{Modelos de árboles: Boosting}
 \label{subsec:boosting}
+
+En esta sección se exponen las técnicas más modernas en el ámbito del
+aprendizje estadístico, las técnicas ensemble. Estas técnicas se basan en
+combinar modelos ``débiles'' (que sean poco mejores que una moneda) para unirlos
+y formar uno de gran precisión.
+
+Entre los métodos ensemble el clásico es AdaBoost, pero el estado del arte lo
+forma ahora Gradient Boosting, más específicamente la librería \emph{XGBoost},
+de~\citep{DBLP:journals/corr/ChenG16}. Está al tanto con el estado del arte
+en este tipo de modelos, además de incluir modelos regularizados para prevenir
+el sobreajuste. En la cita anterior se explica detalladamente cómo funciona
+este tipo de métodos, además de los algoritmos propios que implementan.
