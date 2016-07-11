@@ -262,7 +262,7 @@ Con estas decisiones, y teniendo siempre en cuenta el importante detalle de que
 \texttt{regionvaluechange} es sólo en una región del mapa, por lo que hay que
 sumar todos los valores de unidades de cada jugador en todas las regiones del
 mapa; se ha resuelto este problema utilizando SQL. Se han conseguido seis dataset
-con la estructura de la tabla~\ref{}
+con la estructura de la tabla~\ref{tabla:features}
 
 <<features, echo = FALSE>>=
 features <- readRDS("../datos/features.rds")
