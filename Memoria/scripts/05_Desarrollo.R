@@ -115,11 +115,11 @@ transformData <- function(data, max.frame = NA, auc = FALSE) {
 
 ## ---- prepareCVResults ----
 prepareCVResults <- function(df, nround = 10){
+  df <- data.frame(df)
   df.train <- df[,c(1,2)]
   df.train$Set <- "Train"
   df.test <- df[,-c(1,2)]
   df.test$Set <- "Test"
-  print(colnames(df.test))
   colnames(df.test) <- c("Mean","Std","Set") 
   colnames(df.train) <- c("Mean","Std","Set")
   df.full <- rbind(df.train,df.test)
@@ -128,13 +128,13 @@ prepareCVResults <- function(df, nround = 10){
 }
 
 ## ---- prepareCVErrorPlots ----
-prepareCVErrorPlots <- function(df, title){
+prepareCVErrorPlots <- function(df, title, ymax = 0.3){
   df.full <- prepareCVResults(df)
   gg <- ggplot(data=df.full, aes(x=Round, y = Mean, fill = Set))
   gg <- gg + geom_bar(stat='identity', position=position_dodge())
   gg <- gg + geom_errorbar(aes(ymin=Mean-Std, ymax = Mean+Std), width = 0.2, position = position_dodge(width=0.9))
   gg <- gg + ggtitle(title)
-  gg <- gg + ylim(0, 0.3) + ylab("CV Error")
+  gg <- gg + ylim(0, ymax) + ylab("CV Error")
 }
 
 
@@ -208,21 +208,10 @@ gg <- ggplot(data=metadata) +
         panel.grid.minor.x = element_blank())
 gg
 
-## ---- replaysRacesHistogram ----
-gg.facet <- ggplot(data=metadata) +
-  geom_bar(aes(x=ReplayID,y=Duration,fill=Races), stat="identity") +
-  geom_hline(yintercept = mean(metadata$Duration), color = "red",linetype="dashed", size=.1) +
-  theme(panel.grid.major.x = element_blank(),
-        panel.grid.minor.x = element_blank()) +
-  facet_grid(Races ~ .)
-gg.facet
-
 ## ---- cleanReplays ----
 frame.bound <- 75000
 data.full.bound <- data.full[data.full$Duration <= frame.bound,]
 output.label <- as.numeric(data.full.bound[,"Winner"] == "A")
-# data.clean.transformed <- data.full.transformed[data.full.transformed$Duration <= frame.bound,]
-# data.clean.transformed.auc <- data.full.transformed.auc[data.full.transformed.auc$Duration <= frame.bound,]
 metadata.bound <- metadata[metadata$Duration <= frame.bound,]
 write.csv(metadata.bound, "../datos/metadata.bound.csv", row.names = FALSE)
 
@@ -257,87 +246,74 @@ cv.res.regression <- xgb.cv(data = xgb.data.regression,
                             # eta = 0.001, 
                             nthread = 4, nround = 10, objective = "binary:logistic", nfold = 5)
 
+reg.error.plots <-  prepareCVErrorPlots(cv.res.regression, "Slope of regression rect transform", ymax = 0.5)
+
+
+xgb.model.regression <- xgboost(data = xgb.data.regression, 
+                                max.depth = 4, 
+                                # scale_pos_weight = negative.labels / positive.labels,
+                                # max_delta_step = 1,
+                                # gamma = 1,
+                                # min_child_weight = 3,
+                                # subsample = 0.5,
+                                # colsample_bytree = 0.5,
+                                silent = 0,
+                                # alpha = 0.01,
+                                # lambda = 1.5,
+                                # eta = 0.001, 
+                                nthread = 4, nround = 10, objective = "binary:logistic")
+
+importance.matrix.regression <- xgb.importance(feature_names = data.subset.transformed[,!colnames(data.subset.transformed) %in% c("Winner", "ReplayID", "Max.Frame", "Duration")] , 
+                model = xgb.model.regression)
+
+reg.importance.plot <- xgb.plot.importance(xgb.importance(feature_names = colnames(data.subset.transformed)[!colnames(data.subset.transformed) %in% c("Winner", "ReplayID", "Max.Frame", "Duration")],
+                                                          model = xgb.model.regression))
+
+
+reg.plots <- list(reg.error.plots, reg.importance.plot)
+saveRDS(reg.plots, "../resultados/reg.plots.rds")
+
 
 ## ---- CVAUC ----
-max_frame <- 75000
-data.subset.transformed.auc <- transformData(data.full, max.frame = max_frame, auc = T)
-xgb.data.auc <- xgb.DMatrix(data = as.matrix(data.subset.transformed.auc[,!c("Winner", "ReplayID", "Max.Frame", "Duration"), with=F] ), 
-                        label = as.numeric(data.subset.transformed.auc[,Winner] == "A"))
-cv.res.auc <- xgb.cv(data = xgb.data.auc, max.depth = 24, silent = 1,
-                 eta = 0.1, nthread = 4, nround = 30,objective = "binary:logistic", nfold = 5)
+data.subset.transformed.auc <- read.csv("../datos/data.full.transformed.auc.csv")
+xgb.data.auc <- xgb.DMatrix(data = as.matrix(data.subset.transformed.auc[,!colnames(data.subset.transformed.auc) %in% c("Winner", "ReplayID", "Max.Frame", "Duration")] ), 
+                        label = as.numeric(data.subset.transformed.auc[,"Winner"] == "A"))
+cv.res.auc <- xgb.cv(data = xgb.data.auc, 
+                            max.depth = 4, 
+                            # scale_pos_weight = negative.labels / positive.labels,
+                            # max_delta_step = 1,
+                            # gamma = 1,
+                            # min_child_weight = 3,
+                            # subsample = 0.5,
+                            # colsample_bytree = 0.5,
+                            silent = 0,
+                            # alpha = 0.01,
+                            # lambda = 1.5,
+                            # eta = 0.001, 
+                            nthread = 4, nround = 10, objective = "binary:logistic", nfold = 5)
 
-## ---- ImportanceReg ----
-xgb.model.regression <- xgboost(data = xgb.data, max.depth = 10,
-               eta = 0.1, nthread = 4, nround = 30,objective = "binary:logistic")
+auc.error.plots <-  prepareCVErrorPlots(cv.res.auc, "AUC transform", ymax = 0.5)
 
-importance.matrix.regression <- xgb.importance(colnames(data.full.transformed[,!c("Winner", "ReplayID", "Max.Frame", "Duration"), with=F] ), model = xgb.model.regression)
-xgb.plot.importance(importance.matrix.regression)
 
-## ---- ImportanceAUC ----
-xgb.model.auc <- xgboost(data = xgb.data.auc, max.depth = 10,
-               eta = 0.1, nthread = 4, nround = 30,objective = "binary:logistic")
+xgb.model.auc <- xgboost(data = xgb.data.auc, 
+                         max.depth = 4, 
+                         # scale_pos_weight = negative.labels / positive.labels,
+                         # max_delta_step = 1,
+                         # gamma = 1,
+                         # min_child_weight = 3,
+                         # subsample = 0.5,
+                         # colsample_bytree = 0.5,
+                         silent = 0,
+                         # alpha = 0.01,
+                         # lambda = 1.5,
+                         # eta = 0.001, 
+                         nthread = 4, nround = 10, objective = "binary:logistic")
 
-importance.matrix.auc <- xgb.importance(colnames(data.full.transformed.auc[,!c("Winner", "ReplayID", "Max.Frame", "Duration"), with=F] ), model = xgb.model.auc)
-xgb.plot.importance(importance.matrix.auc)
 
-## ---- ImportanceFull ----
-# data.full.clean <- data.full[,!c("Winner", "ReplayID", "Races"), with=F] 
-data.full.clean <- data.full.bound[, !colnames(data.full.bound) %in% c("Duration","Winner","ReplayID","Races")]
-xgb.data.full <- xgb.DMatrix(data = data.matrix(data.full.clean), 
-                             label = output.label)
-# rm(data.full)
-# rm(data.full.bound)
-cv.res.full <- xgb.cv(data = xgb.data.full, 
-                      max.depth = 32, 
-                      # scale_pos_weight = negative.labels / positive.labels,
-                      # max_delta_step = 1,
-                      # gamma = 1,
-                      # min_child_weight = 3,
-                      # subsample = 0.5,
-                      # colsample_bytree = 0.5,
-                      silent = 0,
-                      # alpha = 0.01,
-                      # lambda = 1.5,
-                      # eta = 0.001, 
-                      nthread = 4, nround = 10, objective = "binary:logistic", nfold = 5)
-
-model.full <- xgboost(data = xgb.data.full,
-                      max.depth = 24,
-                      silent = 0,
-                      nthread = 4, nround = 5, objective = "binary:logistic")
-
-importance_matrix <- xgb.importance(colnames(data.full[, !colnames(data.full) %in% c("Duration","Winner","ReplayID","Races")] ), model = model.full)
-xgb.plot.importance(importance_matrix)
-
-## ---- ImportanceMean ----
-data.mean <- data.full.bound[data.full.bound$Frame <= mean(metadata$Duration),]
-output.label.mean <- as.numeric(data.mean[,"Winner"] == "A")
-data.mean.clean <- data.mean[, !colnames(data.full.bound) %in% c("Duration","Winner","ReplayID","Races")]
-xgb.data.mean <- xgb.DMatrix(data = data.matrix(data.mean.clean), 
-                             label = output.label.mean)
-# rm(data.full)
-# rm(data.full.bound)
-cv.res.mean <- xgb.cv(data = xgb.data.mean, 
-                      max.depth = 32, 
-                      # scale_pos_weight = negative.labels / positive.labels,
-                      # max_delta_step = 1,
-                      # gamma = 1,
-                      # min_child_weight = 3,
-                      # subsample = 0.5,
-                      # colsample_bytree = 0.5,
-                      silent = 0,
-                      # alpha = 0.01,
-                      # lambda = 1.5,
-                      # eta = 0.001, 
-                      nthread = 4, nround = 10, objective = "binary:logistic", nfold = 5)
-
-model.mean <- xgboost(data = xgb.data.mean,
-                      max.depth = 32,
-                      silent = 0,
-                      nthread = 4, nround = 10, objective = "binary:logistic")
-
-importance_matrix <- xgb.importance(model = model.mean)
-xgb.plot.importance(importance_matrix)
+auc.importance.plot <- xgb.plot.importance(xgb.importance(feature_names = colnames(data.subset.transformed)[!colnames(data.subset.transformed) %in% c("Winner", "ReplayID", "Max.Frame", "Duration")],
+                                                          model = xgb.model.auc))
+auc.plots <- list(auc.error.plots, auc.importance.plot)
+saveRDS(auc.plots, "../resultados/auc.plots.rds")
 
 
 ## ---- PrepareDMatrixFiles ----
@@ -412,9 +388,7 @@ xgb.importance.plots <- lapply(xgb.models, function(model){
 error.filenames <- list.files(path = "../datos", pattern = "xgb.data.*.mean.data.train.csv", full.names = TRUE)
 error.plots <- lapply(error.filenames, function(filename){
                                         fraction <- unique(na.omit(as.numeric(unlist(strsplit(unlist(filename), "[^0-9]+")))))
-                                        df <- read.csv(filename)
-                                        df.full <- prepareCVResults(df)
-                                        prepareCVErrorPlots(df.full, title = paste0(fraction,"% of the mean duration"))
+                                        prepareCVErrorPlots(read.csv(filename), title = paste0(fraction,"% of the mean duration"))
                                         
 })
 
