@@ -618,6 +618,7 @@ realizar los cálculos y tomar dicho resultado como $N$ nuevamente. Después de
 un par de pasos converge.
 
 \subsubsection{Complejidad del modelo}
+\label{subsubsec:complejidad}
 A veces, se tiene un conjunto de datos $\mathcal{D}$ fijo, por lo que $N$
 también lo está. Entonces la pregunta relevante es cuánto rendimiento se puede
 esperar con dicho $N$. Utilizando la cota~\ref{eq:VCBound}:
@@ -775,6 +776,98 @@ se considera este enfoque, se suelen intentar dos cosas:
 
 \subsection{Sobreajuste}
 \label{subsec:sobreajuste}
+
+El sobreajuste es el hecho que se da cuando se ajustan los datos más de lo que
+debieran. La principal causa es elegir una hipótesis con el menos $E_{in}$
+y darse cuenta que su $E_{out}$ es mucho mayor, dando a entender que el error
+dentro de la muestra no está siendo un buen guía para el aprendizaje.
+
+Con un ejemplo se verá más claro. La función objetivo es una parábola, pero
+los datos obtenidos tenían ruido. Al tener 5 datos, se puede pensar que lo mejor
+es aprender usando polinomios de grado 4, ya que podrá ajustarlo perfectamente
+(se estaría interpolando). Pero puede pasar lo que se ve en la
+figura~\ref{fig:overfitting}.
+
+<<overfitting, echo = FALSE, fig.cap = "Ejemplo de sobreajuste">>=
+options(warn=-1)
+set.seed(43556457)
+
+f <- function(x) {x^2 + 5}
+
+x <- c(1,2,5,10,12)
+y <- sapply(x, f)
+
+noise <- runif(n = 5, min = -20, max = 20)
+df  <- data.frame(X = x,
+                  Y = y + noise)
+
+gg <- ggplot(df, aes(x = X, y = Y)) + geom_point(aes(size = "Data")) +
+        stat_function(fun = f,aes(colour = "Target")) +
+        theme(legend.title = element_blank())
+gg + geom_smooth(method = "lm", formula = y ~ poly(x, 4), size = 1, se = F, aes(colour = "Fit"))
+@
+
+Se estaría atacando el ruido para ajustarlo totalmente, perdiendo así toda la
+generalidad de la función objetivo.
+
+El ruido se puede clasificar en dos tipos:
+
+\begin{itemize}
+  \item Ruido estocástico: Es el ruido presente en el anterior ejemplo, el
+  ruido aleatorio. No puede ser modelado.
+  \item Ruido determinista: Es la porción de función que la función hipótesis
+  no puede ajustar de la objetivo. Es una parte de la función objetivo que no
+  puede ser modelada.
+\end{itemize}
+
+Si un algoritmo de aprendizaje intenta ajustar el ruido, se producirá
+sobreajuste. El algoritmo usará los grados de libertad que tenga para ajustarlo.
+
+La descomposición bias-varianza estudiada en~\ref{subsubsec:equilibrio}
+es una herramienta para entender cómo afecta el ruido al modelado.
+
+\begin{displaymath}
+\mathbb{E}_{\mathcal{D}}[E_{out}(g^D(x))] = \sigma^2 + bias + var
+\end{displaymath}
+
+Los primeros dos términos indican el impacto del ruido estocástico y determinan
+el ruido determinista. La varianza del ruido estocástico es $\sigma^2$ y el
+sesgo está directamente relacionado con el ruido determinista, al capturar
+lo lejos que está de modelar $f$. La varianza está modificada por ambos
+tipos de ruido, modelando la susceptibilidad del modelo a ser lastrado por
+el ruido.
+
+\subsubsection{Regularización}
+\label{subsubsec:regularizacion}
+
+La primera herramienta para intentar reducir el sobreajuste es la
+regularización. Restringe al algoritmo de apendizaje a mejorar el $E_{out}$,
+sobre todo cuando hay ruido presente. Un ejemplo se ve en la
+figura~\ref{fig:firstRegularizer}.
+
+<<firstRegularizer, echo = FALSE, fig.cap = "Ejemplo de regularización">>=
+options(warn=-1)
+gg + geom_smooth(method = "lm", formula = y ~ poly(x, 2), size = 1, se = F, aes(colour = "Fit"))
+@
+
+Muchos de los métodos de regularización existentes son heurísticos: no existe
+un algoritmo perfecto para tratar el sobreajuste. Utilizando la cota de VC
+tal como se estudió en~\ref{subsubsec:complejidad}, se puede acotar el $E_{out}$
+por el $E_{in}$ y una penalización por el modelo.
+
+\begin{displaymath}
+  E_{out}(g) \leq E_{in}(g) + \Omega(\mathcal{H})
+\end{displaymath}
+
+Así que la clave está no en minimizar $E_{in}$, sino la combinación de éste
+con la penalización $\Omega(\mathcal{H})$. Cada método tiene una manera de
+medir esta penalización, haciendo que unos se comporten mejor que otros en
+determinados problemas.
+
+\subsubsection{Validación}
+\label{subsubsec:validacion}
+
+
 
 \subsection{Modelos de árboles: Boosting}
 \label{subsec:boosting}
