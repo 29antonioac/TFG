@@ -5,6 +5,8 @@ date: "14 de julio de 2016"
 output: 
   ioslides_presentation
 bibliography: ../bibliografia.bib
+nocite: | 
+  @Abu-Mostafa:2012:LD:2207825, @James:2014:ISL:2517747, @Bishop:2006:PRM:1162264
 ---
 
 ```{r setup, include=FALSE}
@@ -98,7 +100,7 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
 ## Aprendizaje estadístico
 
 - Rama de las matemáticas que estudia el aprendizaje desde datos utlizando técnicas estadísticas.
-- Espacio de entrada $\mathcal{X} \in \mathbb{R}^d$
+- Espacio de entrada $\mathcal{X} \subset \mathbb{R}^d$
 - Espacio de salida $\mathcal{Y}$
 - Función objetivo **desconocida** $f:\mathcal{X} \rightarrow \mathcal{Y}$
 - $\{(x_1,y_1),(x_2,y_2),\ldots,(x_N,y_N)\} \subset \mathcal{X} \times \mathcal{Y} \mid f(x_i) = y_i$
@@ -136,13 +138,69 @@ plotly_build(g)
 
 $g = \text{signo}(X2 - (`r I(line.random["m"])`)X1 - (`r I(line.random["b"])`))$
 
+## Factibilidad del aprendizaje
+
+- $E_{in}(h) = \frac{1}{N} \sum_{n=1}^N \chi(h(x_n) \neq f(x_n))$
+- $E_{out}(h) = \mathbb{P}[h(\textbf{x}) \neq f(\textbf{x})], \; \textbf{x} \in \mathcal{X}$
+
+- $E_{in}(g) \approx E_{out}(g)$
+- $E_{in}(g) \approx 0$
+
+## Factibilidad del aprendizaje {.smaller}
+
+Si $X_1, X_2, \ldots, X_n$ son independientes y $0 \leq X_i \leq 1 \; (i=1,2,\ldots,n)$, entonces para $\epsilon>0$ y una función $h$ se da:
+
+$$\mathbb{P}\left[ | E_{in}(h) - E_{out}(h) | \geq \epsilon \right] \leq 2 e^{-2 n \epsilon^2}$$
+
+Para una función binaria **f**, un conjunto de hipótesis $\mathcal{H}$, cualquier algoritmo de aprendizaje $\mathcal{A}$ y cualquier distribución de probabilidad P, se da:
+
+$$E_{out}(g) \leq E_{in}(g) + \sqrt{\frac{8}{N} \ln \frac{4m_{\mathcal{H}}(2N)}{\delta}} ,\; \delta \ \text{nivel de tolerancia.}$$
+
+Donde $m_{\mathcal{H}}(N)$ está acotado por un polinomio de grado $d_{VC}$.
+
+## Sobreajuste
+
+```{r overfitting, echo = FALSE}
+options(warn=-1)
+set.seed(43556457)
+
+f <- function(x) {x^2 + 5}
+
+x <- c(1,2,5,10,12)
+y <- sapply(x, f)
+
+noise <- runif(n = 5, min = -20, max = 20)
+df  <- data.frame(X = x,
+                  Y = y + noise)
+
+gg <- ggplot(df, aes(x = X, y = Y)) + geom_point(aes(size = "Data")) +
+        stat_function(fun = f,aes(colour = "Target")) +
+        theme(legend.title = element_blank())
+gg + geom_smooth(method = "lm", formula = y ~ poly(x, 4), size = 1, se = F, aes(colour = "Fit"))
+
+```
+
+## Regularización
+
+```{r firstRegularizer, echo = FALSE}
+options(warn=-1)
+gg + geom_smooth(method = "lm", formula = y ~ poly(x, 2), size = 1, se = F, aes(colour = "Fit"))
+```
+
+
+
 # Ingeniería Informática
 
 ## Datos disponibles
 
 - 6 bases de datos relacionales.
 - Más de 4000 partidas.
-- Meter imagen.
+
+<!-- ![](../figure/Robertson14DatabaseDiagramSeleccion.png) -->
+
+```{r, out.width = 700}
+knitr::include_graphics("../figure/Robertson14DatabaseDiagramSeleccion.png")
+```
 
 <div class="notes">
 - Recursos
@@ -154,12 +212,12 @@ $g = \text{signo}(X2 - (`r I(line.random["m"])`)X1 - (`r I(line.random["b"])`))$
 
 ## Distribución de la duración de partidas
 
-```{r replaysHistogram, echo = FALSE}
+```{r replaysHistogram, fig.width=8, echo = FALSE}
 ```
 
-## Distribución de la duración de partidas < 75000
+## Distribución de la duración < 75000
 
-```{r replaysBoundHistogram, echo = FALSE}
+```{r replaysBoundHistogram, fig.width=8, echo = FALSE}
 ```
 
 ## Componentes de una partida
@@ -189,13 +247,16 @@ replays.melt.plots[[3]]
 ## Extracción de información
 
 - XGBoost: biblioteca que implementa **Gradient Boosting** de manera eficiente y con gran rendimiento. Regularización evita sobreajuste.
+- Boosting es un modelo de tipo ensemble (unión de clasificadores débiles).
+- Los detalles de la implementación se encuentran en (@DBLP:journals/corr/ChenG16 ).
 
-## Resultados con pendiente recta de regresión
+## Resultados con recta de regresión
 
 ```{r loadPlots, include = FALSE }
 auc.plot <- readRDS("../resultados/auc.plots.rds")
 reg.plot <- readRDS("../resultados/reg.plots.rds")
 plots <- readRDS("../resultados/errorplots.rds")
+opts_chunk$set(fig.height=5.75)
 ```
 
 ```{r plotSlope, echo = FALSE}
