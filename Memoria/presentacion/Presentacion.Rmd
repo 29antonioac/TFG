@@ -1,0 +1,260 @@
+---
+title: "Estudio de optimización con incertidumbre en juegos de estrategia"
+author: "Antonio Álvarez Caballero"
+date: "14 de julio de 2016"
+output: 
+  ioslides_presentation
+bibliography: ../bibliografia.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+require(ggplot2)
+require(plotly)
+require(knitr)
+
+read_chunk("../scripts/05_Desarrollo_Matematicas.R")
+read_chunk("../scripts/05_Desarrollo.R")
+
+set.seed(1565215)
+```
+
+```{r setupMultiplot, include = FALSE}
+# Multiple plot function
+#
+# ggplot objects can be passed in ..., or to plotlist (as a list of ggplot objects)
+# - cols:   Number of columns in layout
+# - layout: A matrix specifying the layout. If present, 'cols' is ignored.
+#
+# If the layout is something like matrix(c(1,2,3,3), nrow=2, byrow=TRUE),
+# then plot 1 will go in the upper left, 2 will go in the upper right, and
+# 3 will go all the way across the bottom.
+#
+multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+  library(grid)
+  
+  # Make a list from the ... arguments and plotlist
+  plots <- c(list(...), plotlist)
+  
+  numPlots = length(plots)
+  
+  # If layout is NULL, then use 'cols' to determine layout
+  if (is.null(layout)) {
+    # Make the panel
+    # ncol: Number of columns of plots
+    # nrow: Number of rows needed, calculated from # of cols
+    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                     ncol = cols, nrow = ceiling(numPlots/cols))
+  }
+  
+  if (numPlots==1) {
+    print(plots[[1]])
+    
+  } else {
+    # Set up the page
+    grid.newpage()
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+    
+    # Make each plot, in the correct location
+    for (i in 1:numPlots) {
+      # Get the i,j matrix positions of the regions that contain this subplot
+      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+      
+      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                      layout.pos.col = matchidx$col))
+    }
+  }
+}
+
+```
+
+
+```{r randomLine}
+```
+
+```{r signOfPoint}
+```
+
+## Objetivos
+
+- Estudiar la incertidumbre que presentan partidas de StarCraft, el clásico juego de estrategia en tiempo real.
+- Paso previo a la optimización con incertidumbre: vamos a estudiarla primero.
+- La incertidumbre es un factor "aleatorio", ya que está fuera de control.
+- El tiempo de partida es un factor clave. Aunque veremos que hay más factores importantes.
+
+## Partes del desarrollo
+
+- Matemáticas: Aprendizaje estadístico
+- Informática: R + MariaDB (SQL)
+
+<div class="notes">
+- Aprendizaje estadístico
+- Software libre
+
+</div>
+
+# Matemáticas
+
+## Aprendizaje estadístico
+
+- Rama de las matemáticas que estudia el aprendizaje desde datos utlizando técnicas estadísticas.
+- Espacio de entrada $\mathcal{X} \in \mathbb{R}^d$
+- Espacio de salida $\mathcal{Y}$
+- Función objetivo **desconocida** $f:\mathcal{X} \rightarrow \mathcal{Y}$
+- $\{(x_1,y_1),(x_2,y_2),\ldots,(x_N,y_N)\} \subset \mathcal{X} \times \mathcal{Y} \mid f(x_i) = y_i$
+- Buscar una función $g \in \mathcal{H} \mid g \approx f$
+
+<div class="notes">
+- Aprendizaje Supervisado
+
+</div>
+
+## Aprendizaje estadístico
+
+- Regresión: Se busca una relación entre la variable dependiente y la
+  independiente.
+- **Clasificación**: Se busca una función que para una entrada, le asigne
+  una etiqueta. En problemas binarios, esta etiqueta suele ser -1 o 1.
+- Estimación de densidad: Similar a clasificación, pero el objetivo no
+  es dar una clase, sino la probabilidad de pertenecer a dicha clase.
+
+## Ejemplo
+
+```{r dataExample, fig.width = 4, include = FALSE}
+```
+```{r}
+ggplotly(g)
+```
+
+## Ejemplo clasificado
+
+```{r classificationExample, fig.width = 4, include = FALSE}
+```
+```{r}
+plotly_build(g)
+```
+
+$g = \text{signo}(X2 - (`r I(line.random["m"])`)X1 - (`r I(line.random["b"])`))$
+
+# Ingeniería Informática
+
+## Datos disponibles
+
+- 6 bases de datos relacionales.
+- Más de 4000 partidas.
+- Meter imagen.
+
+<div class="notes">
+- Recursos
+- Valores de unidades
+- Quizás hablar un poco aquí de SQL: Valores de jugador y de jugador-región
+- ¿Meter estructura del dataset?
+
+</div>
+
+## Distribución de la duración de partidas
+
+```{r replaysHistogram, echo = FALSE}
+```
+
+## Distribución de la duración de partidas < 75000
+
+```{r replaysBoundHistogram, echo = FALSE}
+```
+
+## Componentes de una partida
+
+```{r loadReplayMelt, include = FALSE}
+replays.melt.plots <- readRDS("../datos/replays.melt.plots.rds")
+```
+
+```{r replaysMelt1, echo = FALSE}
+replays.melt.plots[[1]]
+```
+
+## Componentes de una partida
+
+```{r replaysMelt3, echo = FALSE}
+replays.melt.plots[[3]]
+```
+
+## ¿Reducir los datos?
+
+- Algunas características, como el Supply, los valores de unidades o
+  edificios del jugador que pierde caen rápidamente en un determinado momento
+  de la partida.
+- En general, el jugador que gana tiene sus gráficas por encima de las
+  del jugador contrario.
+  
+## Extracción de información
+
+- XGBoost: biblioteca que implementa **Gradient Boosting** de manera eficiente y con gran rendimiento. Regularización evita sobreajuste.
+
+## Resultados con pendiente recta de regresión
+
+```{r loadPlots, include = FALSE }
+auc.plot <- readRDS("../resultados/auc.plots.rds")
+reg.plot <- readRDS("../resultados/reg.plots.rds")
+plots <- readRDS("../resultados/errorplots.rds")
+```
+
+```{r plotSlope, echo = FALSE}
+multiplot(plotlist = reg.plot)
+```
+
+## Resultados con área bajo la curva
+
+```{r plotAUC, echo = FALSE}
+multiplot(plotlist = auc.plot)
+```
+
+## Resultados con datos en crudo
+
+```{r plot100, echo = FALSE}
+multiplot(plotlist = plots[1,])
+```
+
+## Resultados con datos en crudo
+
+```{r plot75, echo = FALSE}
+multiplot(plotlist = plots[6,])
+```
+
+## Resultados con datos en crudo
+
+```{r plot50, echo = FALSE}
+multiplot(plotlist = plots[5,])
+```
+
+## Resultados con datos en crudo
+
+```{r plot25, echo = FALSE}
+multiplot(plotlist = plots[4,])
+```
+
+## Resultados con datos en crudo
+
+```{r plot20, echo = FALSE}
+multiplot(plotlist = plots[3,])
+```
+
+## Resultados con datos en crudo
+
+```{r plot10, echo = FALSE}
+multiplot(plotlist = plots[2,])
+```
+
+# Conclusiones
+
+## Conclusiones
+
+- La incertidumbre baja a lo largo de la partida
+- La elección de las características y del modelo han sido acertadas.
+
+## Trabajo futuro
+
+- Crear un bot competitivo utilizando características y un modelo de aprendizaje similares a los propuestos, mejorando la gestión de la incertidumbre que presentan bots anteriores, pudiendo adaptar mejor su estrategia o hacerlo en un momento anterior. 
+- Combinar metaheurísticas y predicción del ganador para acelerar la ejecución de los algoritmos. Por ejemplo, dando una partida por resuelta mucho antes de que termine realmente.
+
+## Referencias
+
